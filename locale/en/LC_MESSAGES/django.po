@@ -1,0 +1,438 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-10-20 16:00+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "碳排放管理系统"
+msgstr "Carbon Emission Management System"
+
+msgid "酒店碳排放管理平台"
+msgstr "Hotel Carbon Emission Management Platform"
+
+msgid "精准测算酒店碳排放，助力可持续经营"
+msgstr "Accurate carbon emission calculation for sustainable hotel operations"
+
+msgid "登录"
+msgstr "Login"
+
+msgid "绿色环保 · 智慧酒店"
+msgstr "Green & Smart Hotel"
+
+msgid "酒店代码"
+msgstr "Hotel Code"
+
+msgid "用户名"
+msgstr "Username"
+
+msgid "请输入用户名"
+msgstr "Please enter username"
+
+msgid "密码"
+msgstr "Password"
+
+msgid "请输入密码"
+msgstr "Please enter password"
+
+msgid "记住我"
+msgstr "Remember Me"
+
+msgid "登录中..."
+msgstr "Logging in..."
+
+msgid "数据看板"
+msgstr "Dashboard"
+
+msgid "系数管理"
+msgstr "Coefficient Management"
+
+msgid "退出"
+msgstr "Logout"
+
+msgid "登录成功！"
+msgstr "Login successful!"
+
+msgid "您的账号尚未通过审批，请联系管理员"
+msgstr "Your account has not been approved yet, please contact the administrator"
+
+msgid "用户名或密码错误"
+msgstr "Incorrect username or password"
+
+msgid "您已成功退出登录"
+msgstr "You have successfully logged out"
+
+msgid "系数删除成功！"
+msgstr "Coefficient deleted successfully!"
+
+msgid "系数创建成功！"
+msgstr "Coefficient created successfully!"
+
+msgid "系数更新成功！"
+msgstr "Coefficient updated successfully!"
+
+msgid "欢迎使用碳排放管理系统"
+msgstr "Welcome to Carbon Emission Management System"
+
+msgid "用户信息"
+msgstr "User Information"
+
+msgid "酒店"
+msgstr "Hotel"
+
+msgid "岗位"
+msgstr "Position"
+
+msgid "管理碳排放系数库，支持增删改查和批量导入导出"
+msgstr "Manage carbon emission coefficient database with CRUD and batch import/export"
+
+msgid "进入管理"
+msgstr "Enter Management"
+
+msgid "数据录入"
+msgstr "Data Entry"
+
+msgid "录入和导入碳排放数据，进行自动匹配和计算"
+msgstr "Enter and import carbon emission data for automatic matching and calculation"
+
+msgid "即将上线"
+msgstr "Coming Soon"
+
+msgid "系统说明"
+msgstr "System Description"
+
+msgid "功能特点"
+msgstr "Features"
+
+msgid "多酒店支持，数据隔离"
+msgstr "Multi-hotel support with data isolation"
+
+msgid "权限管理，分级授权"
+msgstr "Permission management with hierarchical authorization"
+
+msgid "系数库统一管理"
+msgstr "Unified coefficient database management"
+
+msgid "智能匹配算法"
+msgstr "Intelligent matching algorithm"
+
+msgid "批量导入"
+msgstr "Batch Import"
+
+msgid "批量导入导出"
+msgstr "Batch import and export"
+
+msgid "中英文双语支持"
+msgstr "Bilingual support (Chinese and English)"
+
+msgid "使用流程"
+msgstr "Usage Process"
+
+msgid "管理员维护碳排放系数库"
+msgstr "Administrator maintains the carbon emission coefficient database"
+
+msgid "用户录入或导入消耗数据"
+msgstr "Users enter or import consumption data"
+
+msgid "系统自动匹配系数并计算"
+msgstr "System automatically matches coefficients and calculates"
+
+msgid "查看数据分析和报表"
+msgstr "View data analysis and reports"
+
+msgid "碳排放系数管理"
+msgstr "Carbon Emission Coefficient Management"
+
+msgid "统一管理碳排放系数库"
+msgstr "Unified management of carbon emission coefficient database"
+
+msgid "搜索"
+msgstr "Search"
+
+msgid "新增系数"
+msgstr "Add Coefficient"
+
+msgid "下载模板"
+msgstr "Download Template"
+
+msgid "导出数据"
+msgstr "Export Data"
+
+msgid "产品编号"
+msgstr "Product Code"
+
+msgid "一级分类"
+msgstr "Level 1 Category"
+
+msgid "二级分类"
+msgstr "Level 2 Category"
+
+msgid "产品名称"
+msgstr "Product Name"
+
+msgid "单位"
+msgstr "Unit"
+
+msgid "碳排放系数"
+msgstr "Emission Coefficient"
+
+msgid "特殊备注"
+msgstr "Special Notes"
+
+msgid "最后更新"
+msgstr "Last Updated"
+
+msgid "操作"
+msgstr "Actions"
+
+msgid "编辑"
+msgstr "Edit"
+
+msgid "删除"
+msgstr "Delete"
+
+msgid "暂无数据"
+msgstr "No data available"
+
+msgid "第"
+msgstr "Page"
+
+msgid "页，共"
+msgstr "of"
+
+msgid "页"
+msgstr "pages"
+
+msgid "批量导入系数"
+msgstr "Batch Import Coefficients"
+
+msgid "首页"
+msgstr "Home"
+
+msgid "导入说明"
+msgstr "Import Instructions"
+
+msgid "点击下方按钮下载导入模板"
+msgstr "Click the button below to download the import template"
+
+msgid "在模板中填写数据，必填字段：产品编号、一级分类、二级分类、产品名称、单位、碳排放系数"
+msgstr "Fill in the data in the template. Required fields: Product Code, Level 1 Category, Level 2 Category, Product Name, Unit, Emission Coefficient"
+
+msgid "碳排放系数必须为数字，保留小数点后2位"
+msgstr "Emission coefficient must be a number with up to 2 decimal places"
+
+msgid "上传填写好的Excel文件进行导入"
+msgstr "Upload the completed Excel file to import"
+
+msgid "如果产品编号已存在，将更新该记录"
+msgstr "If the product code already exists, the record will be updated"
+
+msgid "下载导入模板"
+msgstr "Download Import Template"
+
+msgid "选择Excel文件"
+msgstr "Select Excel File"
+
+msgid "支持 .xlsx 和 .xls 格式"
+msgstr "Supports .xlsx and .xls formats"
+
+msgid "取消"
+msgstr "Cancel"
+
+msgid "开始导入"
+msgstr "Start Import"
+
+msgid "导入中..."
+msgstr "Importing..."
+
+msgid "例如: F101000319"
+msgstr "e.g.: F101000319"
+
+msgid "Product Name (English)"
+msgstr "Product Name (English)"
+
+msgid "特殊备注（可选）"
+msgstr "Special Notes (Optional)"
+
+msgid "搜索产品编号、分类或产品名称..."
+msgstr "Search by product code, category or product name..."
+
+msgid "编辑系数"
+msgstr "Edit Coefficient"
+
+msgid "新增"
+msgstr "Add"
+
+msgid "可输入新分类或从列表选择"
+msgstr "Enter a new category or select from the list"
+
+msgid "保留小数点后2位"
+msgstr "Keep up to 2 decimal places"
+
+msgid "保存"
+msgstr "Save"
+
+msgid "产品名称(英文)"
+msgstr "Product Name (English)"
+
+msgid "碳排放系数库"
+msgstr "Carbon Emission Coefficient Database"
+
+msgid "选择文件"
+msgstr "Choose File"
+
+msgid "未选择任何文件"
+msgstr "No file selected"
+
+msgid "碳排放系数导入模板"
+msgstr "Carbon_Coefficient_Import_Template"
+
+msgid "酒店名称"
+msgstr "Hotel Name"
+
+msgid "酒店名称(英文)"
+msgstr "Hotel Name (English)"
+
+msgid "创建时间"
+msgstr "Created At"
+
+msgid "更新时间"
+msgstr "Updated At"
+
+msgid "是否启用"
+msgstr "Is Active"
+
+msgid "所属酒店"
+msgstr "Hotel"
+
+msgid "电话"
+msgstr "Phone"
+
+msgid "是否审批通过"
+msgstr "Is Approved"
+
+msgid "可管理系数"
+msgstr "Can Manage Coefficients"
+
+msgid "分类名称"
+msgstr "Category Name"
+
+msgid "分类名称(英文)"
+msgstr "Category Name (English)"
+
+msgid "分类级别"
+msgstr "Category Level"
+
+msgid "父级分类"
+msgstr "Parent Category"
+
+msgid "排放分类"
+msgstr "Emission Category"
+
+msgid "更新人"
+msgstr "Updated By"
+
+msgid "用户"
+msgstr "User"
+
+msgid "系数添加成功！"
+msgstr "Coefficient added successfully!"
+
+msgid "成功导入 %(count)s 条记录"
+msgstr "Successfully imported %(count)s records"
+
+msgid "失败 %(count)s 条记录"
+msgstr "Failed %(count)s records"
+
+msgid "文件处理失败: %(error)s"
+msgstr "File processing failed: %(error)s"
+
+msgid "个人中心"
+msgstr "Profile Center"
+
+msgid "查看和编辑您的个人信息"
+msgstr "View and edit your personal information"
+
+msgid "基本信息"
+msgstr "Basic Information"
+
+msgid "电子邮件"
+msgstr "Email"
+
+msgid "用户名不可修改"
+msgstr "Username cannot be changed"
+
+msgid "名"
+msgstr "First Name"
+
+msgid "姓"
+msgstr "Last Name"
+
+msgid "加入时间"
+msgstr "Join Date"
+
+msgid "保存修改"
+msgstr "Save Changes"
+
+msgid "返回首页"
+msgstr "Back to Home"
+
+msgid "账号状态"
+msgstr "Account Status"
+
+msgid "审批状态"
+msgstr "Approval Status"
+
+msgid "已审批"
+msgstr "Approved"
+
+msgid "待审批"
+msgstr "Pending Approval"
+
+msgid "系数管理权限"
+msgstr "Coefficient Management Permission"
+
+msgid "已开通"
+msgstr "Enabled"
+
+msgid "未开通"
+msgstr "Disabled"
+
+msgid "管理员权限"
+msgstr "Admin Permission"
+
+msgid "超级管理员"
+msgstr "Super Admin"
+
+msgid "管理员"
+msgstr "Admin"
+
+msgid "普通用户"
+msgstr "Regular User"
+
+msgid "最后登录"
+msgstr "Last Login"
+
+msgid "密码修改"
+msgstr "Change Password"
+
+msgid "如需修改密码，请联系系统管理员"
+msgstr "Please contact the system administrator to change your password"
+
+msgid "访问管理后台"
+msgstr "Visit Admin Panel"
+
+msgid "个人信息更新成功！"
+msgstr "Profile updated successfully!"

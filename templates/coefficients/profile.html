@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "个人中心" %} - {% trans "碳排放管理系统" %}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-person-circle"></i> {% trans "个人中心" %}</h2>
+            <p class="text-muted">{% trans "查看和编辑您的个人信息" %}</p>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-info-circle"></i> {% trans "基本信息" %}</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="username" class="form-label">{% trans "用户名" %}</label>
+                                <input type="text" class="form-control" id="username" value="{{ user.username }}" disabled>
+                                <div class="form-text">{% trans "用户名不可修改" %}</div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="email" class="form-label">{% trans "电子邮件" %}</label>
+                                <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}">
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="first_name" class="form-label">{% trans "名" %}</label>
+                                <input type="text" class="form-control" id="first_name" name="first_name" value="{{ user.first_name }}">
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="last_name" class="form-label">{% trans "姓" %}</label>
+                                <input type="text" class="form-control" id="last_name" name="last_name" value="{{ user.last_name }}">
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="position" class="form-label">{% trans "岗位" %}</label>
+                                <input type="text" class="form-control" id="position" name="position" value="{{ user.position }}">
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="phone" class="form-label">{% trans "电话" %}</label>
+                                <input type="text" class="form-control" id="phone" name="phone" value="{{ user.phone }}">
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="hotel" class="form-label">{% trans "所属酒店" %}</label>
+                                <input type="text" class="form-control" id="hotel" value="{% if user.hotel %}{{ user.hotel.name }}{% else %}-{% endif %}" disabled>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="date_joined" class="form-label">{% trans "加入时间" %}</label>
+                                <input type="text" class="form-control" id="date_joined" value="{{ user.date_joined|date:'Y-m-d H:i' }}" disabled>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> {% trans "保存修改" %}
+                            </button>
+                            <a href="{% url 'dashboard' %}" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> {% trans "返回首页" %}
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="bi bi-shield-check"></i> {% trans "账号状态" %}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <strong>{% trans "审批状态" %}:</strong>
+                        {% if user.is_approved %}
+                            <span class="badge bg-success">{% trans "已审批" %}</span>
+                        {% else %}
+                            <span class="badge bg-warning">{% trans "待审批" %}</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <strong>{% trans "系数管理权限" %}:</strong>
+                        {% if user.can_manage_coefficients or user.is_superuser %}
+                            <span class="badge bg-success">{% trans "已开通" %}</span>
+                        {% else %}
+                            <span class="badge bg-secondary">{% trans "未开通" %}</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <strong>{% trans "管理员权限" %}:</strong>
+                        {% if user.is_superuser %}
+                            <span class="badge bg-danger">{% trans "超级管理员" %}</span>
+                        {% elif user.is_staff %}
+                            <span class="badge bg-info">{% trans "管理员" %}</span>
+                        {% else %}
+                            <span class="badge bg-secondary">{% trans "普通用户" %}</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <strong>{% trans "最后登录" %}:</strong>
+                        <div class="text-muted">{{ user.last_login|date:'Y-m-d H:i' }}</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0"><i class="bi bi-key"></i> {% trans "密码修改" %}</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">{% trans "如需修改密码，请联系系统管理员" %}</p>
+                    <a href="{% url 'admin:index' %}" class="btn btn-sm btn-outline-primary" target="_blank">
+                        <i class="bi bi-box-arrow-up-right"></i> {% trans "访问管理后台" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

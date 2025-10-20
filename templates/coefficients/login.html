@@ -1,0 +1,355 @@
+{% load static %}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% trans "登录" %} - {% trans "碳排放管理系统" %}</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <style>
+        :root {
+            --primary-color: #2ecc71;
+            --secondary-color: #27ae60;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%232ecc71" fill-opacity="0.05" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,138.7C960,139,1056,117,1152,101.3C1248,85,1344,75,1392,69.3L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+            background-size: cover;
+            background-position: bottom;
+        }
+        
+        .login-container {
+            max-width: 580px;
+            width: 100%;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .login-card {
+            background: #ffffff;
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 48px 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e0e0e0;
+        }
+        
+        .login-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 40px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .login-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(46, 204, 113, 0.25);
+            overflow: hidden;
+        }
+        
+        .login-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .login-header-text {
+            flex: 1;
+        }
+        
+        .login-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 6px;
+            line-height: 1.2;
+        }
+        
+        .login-subtitle {
+            color: #666;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .form-control, .form-select {
+            border-radius: 12px;
+            border: 2px solid #e0e0e0;
+            padding: 12px 16px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(46, 204, 113, 0.15);
+        }
+        
+        .input-group-text {
+            background: transparent;
+            border: 2px solid #e0e0e0;
+            border-right: none;
+            border-radius: 12px 0 0 12px;
+            color: #666;
+        }
+        
+        .input-group .form-control {
+            border-left: none;
+            border-radius: 0 12px 12px 0;
+        }
+        
+        .input-group:focus-within .input-group-text {
+            border-color: var(--primary-color);
+        }
+        
+        .btn-login {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            border-radius: 12px;
+            padding: 14px;
+            font-weight: 600;
+            font-size: 16px;
+            color: white;
+            width: 100%;
+            transition: all 0.3s;
+            margin-top: 24px;
+        }
+        
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(46, 204, 113, 0.4);
+        }
+        
+        .btn-login:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .form-check-input:checked {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .language-switcher {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+        }
+        
+        .language-switcher button {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1.5px solid rgba(46, 204, 113, 0.3);
+            color: var(--primary-color);
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all 0.3s;
+            font-weight: 500;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+        
+        .language-switcher button:hover {
+            background: rgba(255, 255, 255, 1);
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(46, 204, 113, 0.2);
+        }
+        
+        .language-switcher button i {
+            font-size: 16px;
+        }
+        
+        .alert {
+            border-radius: 12px;
+            border: none;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+        }
+        
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="language-switcher">
+        <form action="{% url 'set_language' %}" method="post" id="languageForm">
+            {% csrf_token %}
+            <input name="next" type="hidden" value="{{ request.path }}">
+            <input type="hidden" name="language" id="languageInput" value="">
+            <button type="button" class="btn btn-sm" id="languageToggle">
+                <i class="bi bi-globe"></i>
+                <span id="languageText">{% if LANGUAGE_CODE == 'zh-hans' %}CN 简体中文{% else %}EN English{% endif %}</span>
+            </button>
+        </form>
+    </div>
+    
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="login-icon">
+                    <img src="{% static 'images/leaf-icon.svg' %}" alt="Leaf Icon">
+                </div>
+                <div class="login-header-text">
+                    <h1 class="login-title">{% trans "酒店碳排放管理平台" %}</h1>
+                    <p class="login-subtitle">{% trans "精准测算酒店碳排放，助力可持续经营" %}</p>
+                </div>
+            </div>
+            
+            {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                {% endfor %}
+            {% endif %}
+            
+            <form method="post" id="loginForm">
+                {% csrf_token %}
+                
+                <div class="mb-3">
+                    <label for="{{ form.hotel.id_for_label }}" class="form-label">
+                        <i class="bi bi-building"></i> {{ form.hotel.label }}
+                    </label>
+                    {{ form.hotel }}
+                    {% if form.hotel.errors %}
+                        <div class="text-danger small mt-1">{{ form.hotel.errors }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="mb-3">
+                    <label for="{{ form.username.id_for_label }}" class="form-label">
+                        <i class="bi bi-person"></i> {{ form.username.label }}
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-person"></i></span>
+                        {{ form.username }}
+                    </div>
+                    {% if form.username.errors %}
+                        <div class="text-danger small mt-1">{{ form.username.errors }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="mb-3">
+                    <label for="{{ form.password.id_for_label }}" class="form-label">
+                        <i class="bi bi-lock"></i> {{ form.password.label }}
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                        {{ form.password }}
+                    </div>
+                    {% if form.password.errors %}
+                        <div class="text-danger small mt-1">{{ form.password.errors }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="remember-me">
+                    {{ form.remember_me }}
+                    <label for="{{ form.remember_me.id_for_label }}" class="form-check-label">
+                        {{ form.remember_me.label }}
+                    </label>
+                </div>
+                
+                <button type="submit" class="btn btn-login" id="loginBtn">
+                    <i class="bi bi-box-arrow-in-right"></i> {% trans "登录" %}
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Form validation
+        const form = document.getElementById('loginForm');
+        const loginBtn = document.getElementById('loginBtn');
+        const inputs = form.querySelectorAll('input[required], select[required]');
+        
+        function validateForm() {
+            let isValid = true;
+            inputs.forEach(input => {
+                if (!input.value.trim()) {
+                    isValid = false;
+                }
+            });
+            loginBtn.disabled = !isValid;
+        }
+        
+        inputs.forEach(input => {
+            input.addEventListener('input', validateForm);
+            input.addEventListener('change', validateForm);
+        });
+        
+        validateForm();
+        
+        // Show loading state on submit
+        form.addEventListener('submit', function() {
+            loginBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>{% trans "登录中..." %}';
+            loginBtn.disabled = true;
+        });
+        
+        // Language toggle functionality
+        const languageToggle = document.getElementById('languageToggle');
+        const languageForm = document.getElementById('languageForm');
+        const languageInput = document.getElementById('languageInput');
+        const languageText = document.getElementById('languageText');
+        
+        if (languageToggle) {
+            languageToggle.addEventListener('click', function() {
+                const currentLang = '{{ LANGUAGE_CODE }}';
+                const newLang = currentLang === 'zh-hans' ? 'en' : 'zh-hans';
+                const newText = newLang === 'zh-hans' ? 'CN 简体中文' : 'EN English';
+                
+                languageInput.value = newLang;
+                languageText.textContent = newText;
+                languageForm.submit();
+            });
+        }
+    </script>
+</body>
+</html>

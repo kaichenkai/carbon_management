@@ -1,0 +1,243 @@
+{% load static %}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% trans "碳排放管理系统" %}{% endblock %}</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-color: #2ecc71;
+            --secondary-color: #27ae60;
+            --dark-color: #1a1a1a;
+            --light-color: #f8f9fa;
+            --border-radius: 12px;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--light-color);
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .navbar-brand {
+            font-weight: 600;
+            color: white !important;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .navbar-brand img {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+        }
+        
+        .nav-link {
+            color: rgba(255,255,255,0.9) !important;
+            transition: all 0.3s;
+        }
+        
+        .nav-link:hover {
+            color: white !important;
+            transform: translateY(-2px);
+        }
+        
+        .btn-primary {
+            background: var(--primary-color);
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 10px 24px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3);
+        }
+        
+        .card {
+            border: none;
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+        }
+        
+        .card:hover {
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+        }
+        
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            padding: 10px 16px;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(46, 204, 113, 0.25);
+        }
+        
+        .table {
+            background: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+        
+        .table thead {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+        
+        .badge {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+        
+        .alert {
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 16px 20px;
+        }
+        
+        .language-switcher {
+            position: relative;
+        }
+        
+        .language-switcher button {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1.5px solid rgba(46, 204, 113, 0.3);
+            color: var(--primary-color);
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all 0.3s;
+            font-weight: 500;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+        
+        .language-switcher button:hover {
+            background: rgba(255, 255, 255, 1);
+            border-color: var(--primary-color);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(46, 204, 113, 0.2);
+        }
+        
+        .language-switcher button i {
+            font-size: 16px;
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    {% if user.is_authenticated %}
+    <nav class="navbar navbar-expand-lg navbar-dark mb-4">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'dashboard' %}">
+                <img src="{% static 'images/leaf-icon.svg' %}" alt="Leaf Icon">
+                {% trans "碳排放管理系统" %}
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'dashboard' %}">
+                            <i class="bi bi-speedometer2"></i> {% trans "数据看板" %}
+                        </a>
+                    </li>
+                    {% if user.can_manage_coefficients or user.is_superuser %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'coefficient_list' %}">
+                            <i class="bi bi-calculator"></i> {% trans "系数管理" %}
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+                <div class="d-flex align-items-center gap-3">
+                    <div class="language-switcher">
+                        <form action="{% url 'set_language' %}" method="post" id="languageForm">
+                            {% csrf_token %}
+                            <input name="next" type="hidden" value="{{ request.path }}">
+                            <input type="hidden" name="language" id="languageInput" value="">
+                            <button type="button" class="btn btn-sm" id="languageToggle">
+                                <i class="bi bi-globe"></i>
+                                <span id="languageText">{% if LANGUAGE_CODE == 'zh-hans' %}CN 简体中文{% else %}EN English{% endif %}</span>
+                            </button>
+                        </form>
+                    </div>
+                    <a href="{% url 'profile' %}" class="text-white text-decoration-none">
+                        <i class="bi bi-person-circle"></i> {{ user.username }}
+                        {% if user.hotel %}({{ user.hotel.code }}){% endif %}
+                    </a>
+                    <a href="{% url 'logout' %}" class="btn btn-sm btn-outline-light">
+                        <i class="bi bi-box-arrow-right"></i> {% trans "退出" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    {% endif %}
+    
+    <div class="container-fluid">
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% endfor %}
+        {% endif %}
+        
+        {% block content %}{% endblock %}
+    </div>
+    
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Language toggle functionality
+        const languageToggle = document.getElementById('languageToggle');
+        const languageForm = document.getElementById('languageForm');
+        const languageInput = document.getElementById('languageInput');
+        const languageText = document.getElementById('languageText');
+        
+        if (languageToggle) {
+            languageToggle.addEventListener('click', function() {
+                const currentLang = '{{ LANGUAGE_CODE }}';
+                const newLang = currentLang === 'zh-hans' ? 'en' : 'zh-hans';
+                const newText = newLang === 'zh-hans' ? 'CN 简体中文' : 'EN English';
+                
+                languageInput.value = newLang;
+                languageText.textContent = newText;
+                languageForm.submit();
+            });
+        }
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "系数管理" %} - {% trans "碳排放管理系统" %}{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-calculator"></i> {% trans "碳排放系数管理" %}</h2>
+            <p class="text-muted">{% trans "统一管理碳排放系数库" %}</p>
+        </div>
+    </div>
+    
+    <!-- Operation Bar -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row g-3 align-items-center">
+                <div class="col-md-6">
+                    <form method="get" class="d-flex gap-2">
+                        {{ search_form.query }}
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-search"></i> {% trans "搜索" %}
+                        </button>
+                    </form>
+                </div>
+                <div class="col-md-6 text-end">
+                    <div class="btn-group">
+                        <a href="{% url 'coefficient_create' %}" class="btn btn-success">
+                            <i class="bi bi-plus-circle"></i> {% trans "新增系数" %}
+                        </a>
+                        <a href="{% url 'coefficient_import' %}" class="btn btn-info">
+                            <i class="bi bi-upload"></i> {% trans "批量导入" %}
+                        </a>
+                        <a href="{% url 'coefficient_template' %}" class="btn btn-secondary">
+                            <i class="bi bi-download"></i> {% trans "下载模板" %}
+                        </a>
+                        <a href="{% url 'coefficient_export' %}" class="btn btn-primary">
+                            <i class="bi bi-file-earmark-excel"></i> {% trans "导出数据" %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Coefficient Table -->
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>{% trans "产品编号" %}</th>
+                            <th>{% trans "一级分类" %}</th>
+                            <th>{% trans "二级分类" %}</th>
+                            <th>{% trans "产品名称" %}</th>
+                            <th>{% trans "单位" %}</th>
+                            <th>{% trans "碳排放系数" %}</th>
+                            <th>{% trans "特殊备注" %}</th>
+                            <th>{% trans "最后更新" %}</th>
+                            <th>{% trans "操作" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for coefficient in page_obj %}
+                        <tr>
+                            <td><code>{{ coefficient.product_code }}</code></td>
+                            <td>{{ coefficient.category_level1.name }}</td>
+                            <td>{{ coefficient.category_level2.name }}</td>
+                            <td>
+                                {{ coefficient.product_name }}
+                                {% if coefficient.product_name_en %}
+                                <br><small class="text-muted">{{ coefficient.product_name_en }}</small>
+                                {% endif %}
+                            </td>
+                            <td><span class="badge bg-secondary">{{ coefficient.unit }}</span></td>
+                            <td><strong>{{ coefficient.coefficient }}</strong></td>
+                            <td>
+                                {% if coefficient.special_note %}
+                                <small>{{ coefficient.special_note|truncatewords:10 }}</small>
+                                {% else %}
+                                <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                            <td><small>{{ coefficient.updated_at|date:"Y/m/d" }}</small></td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <a href="{% url 'coefficient_edit' coefficient.pk %}" class="btn btn-outline-primary">
+                                        <i class="bi bi-pencil"></i> {% trans "编辑" %}
+                                    </a>
+                                    <a href="{% url 'coefficient_delete' coefficient.pk %}" class="btn btn-outline-danger">
+                                        <i class="bi bi-trash"></i> {% trans "删除" %}
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="9" class="text-center py-5">
+                                <i class="bi bi-inbox" style="font-size: 48px; color: #ccc;"></i>
+                                <p class="text-muted mt-3">{% trans "暂无数据" %}</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination -->
+            {% if page_obj.has_other_pages %}
+            <nav aria-label="Page navigation" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}">
+                            <i class="bi bi-chevron-double-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}">
+                            <i class="bi bi-chevron-left"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                    
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                        <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}">{{ num }}</a>
+                        </li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}">
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}">
+                            <i class="bi bi-chevron-double-right"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+                <p class="text-center text-muted">
+                    {% trans "第" %} {{ page_obj.number }} {% trans "页，共" %} {{ page_obj.paginator.num_pages }} {% trans "页" %}
+                </p>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

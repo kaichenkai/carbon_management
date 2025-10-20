@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "数据看板" %} - {% trans "碳排放管理系统" %}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-speedometer2"></i> {% trans "数据看板" %}</h2>
+            <p class="text-muted">{% trans "欢迎使用碳排放管理系统" %}</p>
+        </div>
+    </div>
+    
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="bi bi-person-circle" style="font-size: 48px; color: var(--primary-color);"></i>
+                    </div>
+                    <h5 class="card-title">{% trans "用户信息" %}</h5>
+                    <p class="card-text">
+                        <strong>{% trans "用户名" %}:</strong> {{ user.username }}<br>
+                        {% if user.hotel %}
+                        <strong>{% trans "酒店" %}:</strong> {{ user.hotel.name }}<br>
+                        <strong>{% trans "酒店代码" %}:</strong> {{ user.hotel.code }}<br>
+                        {% endif %}
+                        {% if user.position %}
+                        <strong>{% trans "岗位" %}:</strong> {{ user.position }}<br>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        {% if user.can_manage_coefficients or user.is_superuser %}
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="bi bi-calculator" style="font-size: 48px; color: var(--primary-color);"></i>
+                    </div>
+                    <h5 class="card-title">{% trans "系数管理" %}</h5>
+                    <p class="card-text">{% trans "管理碳排放系数库，支持增删改查和批量导入导出" %}</p>
+                    <a href="{% url 'coefficient_list' %}" class="btn btn-primary">
+                        <i class="bi bi-arrow-right-circle"></i> {% trans "进入管理" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="bi bi-graph-up" style="font-size: 48px; color: var(--primary-color);"></i>
+                    </div>
+                    <h5 class="card-title">{% trans "数据录入" %}</h5>
+                    <p class="card-text">{% trans "录入和导入碳排放数据，进行自动匹配和计算" %}</p>
+                    <button class="btn btn-secondary" disabled>
+                        <i class="bi bi-hourglass-split"></i> {% trans "即将上线" %}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-info-circle"></i> {% trans "系统说明" %}
+                    </h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>{% trans "功能特点" %}</h6>
+                            <ul>
+                                <li>{% trans "多酒店支持，数据隔离" %}</li>
+                                <li>{% trans "权限管理，分级授权" %}</li>
+                                <li>{% trans "系数库统一管理" %}</li>
+                                <li>{% trans "智能匹配算法" %}</li>
+                                <li>{% trans "批量导入导出" %}</li>
+                                <li>{% trans "中英文双语支持" %}</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>{% trans "使用流程" %}</h6>
+                            <ol>
+                                <li>{% trans "管理员维护碳排放系数库" %}</li>
+                                <li>{% trans "用户录入或导入消耗数据" %}</li>
+                                <li>{% trans "系统自动匹配系数并计算" %}</li>
+                                <li>{% trans "查看数据分析和报表" %}</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

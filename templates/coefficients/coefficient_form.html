@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}
+{% if coefficient %}{% trans "编辑系数" %}{% else %}{% trans "新增系数" %}{% endif %} - {% trans "碳排放管理系统" %}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2>
+                <i class="bi bi-{% if coefficient %}pencil{% else %}plus-circle{% endif %}"></i>
+                {% if coefficient %}{% trans "编辑系数" %}{% else %}{% trans "新增系数" %}{% endif %}
+            </h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">{% trans "首页" %}</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'coefficient_list' %}">{% trans "系数管理" %}</a></li>
+                    <li class="breadcrumb-item active">
+                        {% if coefficient %}{% trans "编辑" %}{% else %}{% trans "新增" %}{% endif %}
+                    </li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-body p-4">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.product_code.id_for_label }}" class="form-label">
+                                    {{ form.product_code.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.product_code }}
+                                {% if form.product_code.errors %}
+                                    <div class="text-danger small mt-1">{{ form.product_code.errors }}</div>
+                                {% endif %}
+                                <div class="form-text">{% trans "例如: F101000319" %}</div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="{{ form.unit.id_for_label }}" class="form-label">
+                                    {{ form.unit.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.unit }}
+                                {% if form.unit.errors %}
+                                    <div class="text-danger small mt-1">{{ form.unit.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="{{ form.category_level1_name.id_for_label }}" class="form-label">
+                                    {{ form.category_level1_name.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.category_level1_name }}
+                                <datalist id="level1-datalist">
+                                    {% for category in level1_categories %}
+                                    <option value="{{ category }}">
+                                    {% endfor %}
+                                </datalist>
+                                {% if form.category_level1_name.errors %}
+                                    <div class="text-danger small mt-1">{{ form.category_level1_name.errors }}</div>
+                                {% endif %}
+                                <div class="form-text">{% trans "可输入新分类或从列表选择" %}</div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="{{ form.category_level2_name.id_for_label }}" class="form-label">
+                                    {{ form.category_level2_name.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.category_level2_name }}
+                                <datalist id="level2-datalist">
+                                    {% for category in level2_categories %}
+                                    <option value="{{ category }}">
+                                    {% endfor %}
+                                </datalist>
+                                {% if form.category_level2_name.errors %}
+                                    <div class="text-danger small mt-1">{{ form.category_level2_name.errors }}</div>
+                                {% endif %}
+                                <div class="form-text">{% trans "可输入新分类或从列表选择" %}</div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="{{ form.product_name.id_for_label }}" class="form-label">
+                                    {{ form.product_name.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.product_name }}
+                                {% if form.product_name.errors %}
+                                    <div class="text-danger small mt-1">{{ form.product_name.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="{{ form.product_name_en.id_for_label }}" class="form-label">
+                                    {{ form.product_name_en.label }}
+                                </label>
+                                {{ form.product_name_en }}
+                                {% if form.product_name_en.errors %}
+                                    <div class="text-danger small mt-1">{{ form.product_name_en.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-12">
+                                <label for="{{ form.coefficient.id_for_label }}" class="form-label">
+                                    {{ form.coefficient.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.coefficient }}
+                                {% if form.coefficient.errors %}
+                                    <div class="text-danger small mt-1">{{ form.coefficient.errors }}</div>
+                                {% endif %}
+                                <div class="form-text">{% trans "保留小数点后2位" %}</div>
+                            </div>
+                            
+                            <div class="col-md-12">
+                                <label for="{{ form.special_note.id_for_label }}" class="form-label">
+                                    {{ form.special_note.label }}
+                                </label>
+                                {{ form.special_note }}
+                                {% if form.special_note.errors %}
+                                    <div class="text-danger small mt-1">{{ form.special_note.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex gap-2 justify-content-end mt-4">
+                            <a href="{% url 'coefficient_list' %}" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> {% trans "取消" %}
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> {% trans "保存" %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

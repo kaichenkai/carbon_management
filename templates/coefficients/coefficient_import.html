@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "批量导入" %} - {% trans "碳排放管理系统" %}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-upload"></i> {% trans "批量导入系数" %}</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">{% trans "首页" %}</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'coefficient_list' %}">{% trans "系数管理" %}</a></li>
+                    <li class="breadcrumb-item active">{% trans "批量导入" %}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-info-circle"></i> {% trans "导入说明" %}</h5>
+                    <ol>
+                        <li>{% trans "点击下方按钮下载导入模板" %}</li>
+                        <li>{% trans "在模板中填写数据，必填字段：产品编号、一级分类、二级分类、产品名称、单位、碳排放系数" %}</li>
+                        <li>{% trans "碳排放系数必须为数字，保留小数点后2位" %}</li>
+                        <li>{% trans "上传填写好的Excel文件进行导入" %}</li>
+                        <li>{% trans "如果产品编号已存在，将更新该记录" %}</li>
+                    </ol>
+                    
+                    <a href="{% url 'coefficient_template' %}" class="btn btn-secondary">
+                        <i class="bi bi-download"></i> {% trans "下载导入模板" %}
+                    </a>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-body p-4">
+                    <form method="post" enctype="multipart/form-data" id="importForm">
+                        {% csrf_token %}
+                        
+                        <div class="mb-4">
+                            <label for="fileInput" class="form-label">
+                                <i class="bi bi-file-earmark-excel"></i> {% trans "选择Excel文件" %}
+                            </label>
+                            <div class="custom-file-upload">
+                                <input type="file" class="form-control" id="fileInput" name="file" accept=".xlsx,.xls" required style="display: none;">
+                                <button type="button" class="btn btn-outline-secondary" id="fileButton">
+                                    <i class="bi bi-folder2-open"></i> {% trans "选择文件" %}
+                                </button>
+                                <span id="fileName" class="ms-3 text-muted">{% trans "未选择任何文件" %}</span>
+                            </div>
+                            <div class="form-text">{% trans "支持 .xlsx 和 .xls 格式" %}</div>
+                        </div>
+                        
+                        <div class="d-flex gap-2 justify-content-end">
+                            <a href="{% url 'coefficient_list' %}" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> {% trans "取消" %}
+                            </a>
+                            <button type="submit" class="btn btn-primary" id="importBtn">
+                                <i class="bi bi-upload"></i> {% trans "开始导入" %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const form = document.getElementById('importForm');
+    const importBtn = document.getElementById('importBtn');
+    const fileInput = document.getElementById('fileInput');
+    const fileButton = document.getElementById('fileButton');
+    const fileName = document.getElementById('fileName');
+    
+    // Custom file input button
+    fileButton.addEventListener('click', function() {
+        fileInput.click();
+    });
+    
+    fileInput.addEventListener('change', function() {
+        if (this.files && this.files.length > 0) {
+            fileName.textContent = this.files[0].name;
+            fileName.classList.remove('text-muted');
+            fileName.classList.add('text-success');
+        } else {
+            fileName.textContent = '{% trans "未选择任何文件" %}';
+            fileName.classList.remove('text-success');
+            fileName.classList.add('text-muted');
+        }
+    });
+    
+    form.addEventListener('submit', function() {
+        importBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>{% trans "导入中..." %}';
+        importBtn.disabled = true;
+    });
+</script>
+{% endblock %}
