@@ -80,12 +80,15 @@ class EmissionCategory(models.Model):
 class EmissionCoefficient(models.Model):
     """Carbon emission coefficient database"""
     UNIT_CHOICES = [
-        ('KG', 'KG'),
-        ('L', 'L'),
-        ('个', '个'),
-        ('吨', '吨'),
-        ('度', '度'),
-        ('立方米', '立方米'),
+        ('KG', _('KG')),
+        ('L', _('L')),
+    ]
+    
+    DEPARTMENT_CHOICES = [
+        ('production', _('生产部')),
+        ('rd', _('研发部')),
+        ('administration', _('行政部')),
+        ('logistics', _('后勤部')),
     ]
     
     product_code = models.CharField(_('产品编号'), max_length=50, unique=True, db_index=True)
@@ -107,6 +110,7 @@ class EmissionCoefficient(models.Model):
     product_name_en = models.CharField(_('产品名称(英文)'), max_length=200, blank=True)
     unit = models.CharField(_('单位'), max_length=20, choices=UNIT_CHOICES)
     coefficient = models.DecimalField(_('碳排放系数'), max_digits=10, decimal_places=2)
+    department = models.CharField(_('部门名称'), max_length=50, choices=DEPARTMENT_CHOICES)
     special_note = models.TextField(_('特殊备注'), blank=True)
     created_at = models.DateTimeField(_('创建时间'), auto_now_add=True)
     updated_at = models.DateTimeField(_('最后更新'), auto_now=True)

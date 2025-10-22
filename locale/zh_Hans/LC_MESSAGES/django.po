@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-20 16:00+0800\n"
+"POT-Creation-Date: 2025-10-23 00:09+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,422 +17,851 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-msgid "碳排放管理系统"
-msgstr "碳排放管理系统"
+#: coefficients/admin.py:21
+msgid "额外信息"
+msgstr ""
 
-msgid "酒店碳排放管理平台"
-msgstr "酒店碳排放管理平台"
-
-msgid "精准测算酒店碳排放，助力可持续经营"
-msgstr "精准测算酒店碳排放，助力可持续经营"
-
-msgid "登录"
-msgstr "登录"
-
-msgid "绿色环保 · 智慧酒店"
-msgstr "绿色环保 · 智慧酒店"
-
-msgid "酒店代码"
-msgstr "酒店代码"
-
-msgid "用户名"
-msgstr "用户名"
-
-msgid "请输入用户名"
-msgstr "请输入用户名"
-
-msgid "密码"
-msgstr "密码"
-
-msgid "请输入密码"
-msgstr "请输入密码"
-
-msgid "记住我"
-msgstr "记住我"
-
-msgid "登录中..."
-msgstr "登录中..."
-
-msgid "数据看板"
-msgstr "数据看板"
-
+#: coefficients/apps.py:8 templates/base.html:180
+#: templates/coefficients/coefficient_form.html:19
+#: templates/coefficients/coefficient_import.html:14
+#: templates/coefficients/coefficient_list.html:4
+#: templates/coefficients/dashboard.html:44
 msgid "系数管理"
 msgstr "系数管理"
 
-msgid "退出"
-msgstr "退出"
+#: coefficients/forms.py:12 coefficients/models.py:8
+#: templates/coefficients/dashboard.html:27
+msgid "酒店代码"
+msgstr "酒店代码"
 
-msgid "登录成功！"
-msgstr "登录成功！"
+#: coefficients/forms.py:20 templates/coefficients/dashboard.html:24
+#: templates/coefficients/profile.html:27
+msgid "用户名"
+msgstr "用户名"
 
-msgid "您的账号尚未通过审批，请联系管理员"
-msgstr "您的账号尚未通过审批，请联系管理员"
+#: coefficients/forms.py:23
+msgid "请输入用户名"
+msgstr "请输入用户名"
 
-msgid "用户名或密码错误"
-msgstr "用户名或密码错误"
+#: coefficients/forms.py:29
+msgid "密码"
+msgstr "密码"
 
-msgid "您已成功退出登录"
-msgstr "您已成功退出登录"
+#: coefficients/forms.py:32
+msgid "请输入密码"
+msgstr "请输入密码"
 
-msgid "系数删除成功！"
-msgstr "系数删除成功！"
+#: coefficients/forms.py:37
+msgid "记住我"
+msgstr "记住我"
 
-msgid "系数创建成功！"
-msgstr "系数创建成功！"
-
-msgid "系数更新成功！"
-msgstr "系数更新成功！"
-
-msgid "欢迎使用碳排放管理系统"
-msgstr "欢迎使用碳排放管理系统"
-
-msgid "用户信息"
-msgstr "用户信息"
-
-msgid "酒店"
-msgstr "酒店"
-
-msgid "岗位"
-msgstr "岗位"
-
-msgid "管理碳排放系数库，支持增删改查和批量导入导出"
-msgstr "管理碳排放系数库，支持增删改查和批量导入导出"
-
-msgid "进入管理"
-msgstr "进入管理"
-
-msgid "数据录入"
-msgstr "数据录入"
-
-msgid "录入和导入碳排放数据，进行自动匹配和计算"
-msgstr "录入和导入碳排放数据，进行自动匹配和计算"
-
-msgid "即将上线"
-msgstr "即将上线"
-
-msgid "系统说明"
-msgstr "系统说明"
-
-msgid "功能特点"
-msgstr "功能特点"
-
-msgid "多酒店支持，数据隔离"
-msgstr "多酒店支持，数据隔离"
-
-msgid "权限管理，分级授权"
-msgstr "权限管理，分级授权"
-
-msgid "系数库统一管理"
-msgstr "系数库统一管理"
-
-msgid "智能匹配算法"
-msgstr "智能匹配算法"
-
-msgid "批量导入"
-msgstr "批量导入"
-
-msgid "批量导入导出"
-msgstr "批量导入导出"
-
-msgid "中英文双语支持"
-msgstr "中英文双语支持"
-
-msgid "使用流程"
-msgstr "使用流程"
-
-msgid "管理员维护碳排放系数库"
-msgstr "管理员维护碳排放系数库"
-
-msgid "用户录入或导入消耗数据"
-msgstr "用户录入或导入消耗数据"
-
-msgid "系统自动匹配系数并计算"
-msgstr "系统自动匹配系数并计算"
-
-msgid "查看数据分析和报表"
-msgstr "查看数据分析和报表"
-
-msgid "碳排放系数管理"
-msgstr "碳排放系数管理"
-
-msgid "统一管理碳排放系数库"
-msgstr "统一管理碳排放系数库"
-
-msgid "搜索"
-msgstr "搜索"
-
-msgid "新增系数"
-msgstr "新增系数"
-
-msgid "下载模板"
-msgstr "下载模板"
-
-msgid "导出数据"
-msgstr "导出数据"
-
-msgid "产品编号"
-msgstr "产品编号"
-
+#: coefficients/forms.py:49 coefficients/models.py:50 coefficients/models.py:98
+#: coefficients/views.py:223 coefficients/views.py:289 data_entry/models.py:17
+#: templates/coefficients/coefficient_list.html:56
 msgid "一级分类"
 msgstr "一级分类"
 
+#: coefficients/forms.py:59 coefficients/models.py:51
+#: coefficients/models.py:105 coefficients/views.py:223
+#: coefficients/views.py:289 data_entry/models.py:18
+#: templates/coefficients/coefficient_list.html:57
 msgid "二级分类"
 msgstr "二级分类"
 
-msgid "产品名称"
-msgstr "产品名称"
+#: coefficients/forms.py:69
+#: coefficients/migrations/0002_emissioncoefficient_department.py:26
+#: coefficients/migrations/0003_alter_emissioncoefficient_department.py:42
+#: coefficients/models.py:113 coefficients/views.py:223
+#: coefficients/views.py:289 templates/coefficients/coefficient_list.html:55
+msgid "部门名称"
+msgstr ""
 
-msgid "单位"
-msgstr "单位"
-
-msgid "碳排放系数"
-msgstr "碳排放系数"
-
-msgid "特殊备注"
-msgstr "特殊备注"
-
-msgid "最后更新"
-msgstr "最后更新"
-
-msgid "操作"
-msgstr "操作"
-
-msgid "编辑"
-msgstr "编辑"
-
-msgid "删除"
-msgstr "删除"
-
-msgid "暂无数据"
-msgstr "暂无数据"
-
-msgid "第"
-msgstr "第"
-
-msgid "页，共"
-msgstr "页，共"
-
-msgid "页"
-msgstr "页"
-
-msgid "批量导入系数"
-msgstr "批量导入系数"
-
-msgid "首页"
-msgstr "首页"
-
-msgid "导入说明"
-msgstr "导入说明"
-
-msgid "点击下方按钮下载导入模板"
-msgstr "点击下方按钮下载导入模板"
-
-msgid "在模板中填写数据，必填字段：产品编号、一级分类、二级分类、产品名称、单位、碳排放系数"
-msgstr "在模板中填写数据，必填字段：产品编号、一级分类、二级分类、产品名称、单位、碳排放系数"
-
-msgid "碳排放系数必须为数字，保留小数点后2位"
-msgstr "碳排放系数必须为数字，保留小数点后2位"
-
-msgid "上传填写好的Excel文件进行导入"
-msgstr "上传填写好的Excel文件进行导入"
-
-msgid "如果产品编号已存在，将更新该记录"
-msgstr "如果产品编号已存在，将更新该记录"
-
-msgid "下载导入模板"
-msgstr "下载导入模板"
-
-msgid "选择Excel文件"
-msgstr "选择Excel文件"
-
-msgid "支持 .xlsx 和 .xls 格式"
-msgstr "支持 .xlsx 和 .xls 格式"
-
-msgid "取消"
-msgstr "取消"
-
-msgid "开始导入"
-msgstr "开始导入"
-
-msgid "导入中..."
-msgstr "导入中..."
-
+#: coefficients/forms.py:83 templates/coefficients/coefficient_form.html:44
 msgid "例如: F101000319"
 msgstr "例如: F101000319"
 
+#: coefficients/forms.py:87 coefficients/models.py:109
+#: coefficients/views.py:223 coefficients/views.py:289 data_entry/models.py:16
+#: templates/coefficients/coefficient_confirm_delete.html:29
+#: templates/coefficients/coefficient_list.html:58
+#: templates/data_entry/consumption_form.html:78
+#: templates/data_entry/consumption_list.html:36
+msgid "产品名称"
+msgstr "产品名称"
+
+#: coefficients/forms.py:91
 msgid "Product Name (English)"
 msgstr "Product Name (English)"
 
+#: coefficients/forms.py:104
 msgid "特殊备注（可选）"
 msgstr "特殊备注（可选）"
 
+#: coefficients/forms.py:156 templates/coefficients/coefficient_list.html:23
+msgid "搜索"
+msgstr "搜索"
+
+#: coefficients/forms.py:159
 msgid "搜索产品编号、分类或产品名称..."
 msgstr "搜索产品编号、分类或产品名称..."
 
-msgid "编辑系数"
-msgstr "编辑系数"
+#: coefficients/migrations/0002_emissioncoefficient_department.py:19
+#: coefficients/migrations/0003_alter_emissioncoefficient_department.py:36
+#: coefficients/models.py:88
+msgid "生产部"
+msgstr ""
 
-msgid "新增"
-msgstr "新增"
+#: coefficients/migrations/0002_emissioncoefficient_department.py:20
+#: coefficients/migrations/0003_alter_emissioncoefficient_department.py:37
+#: coefficients/models.py:89
+msgid "研发部"
+msgstr ""
 
-msgid "可输入新分类或从列表选择"
-msgstr "可输入新分类或从列表选择"
+#: coefficients/migrations/0002_emissioncoefficient_department.py:21
+#: coefficients/migrations/0003_alter_emissioncoefficient_department.py:38
+#: coefficients/models.py:90
+msgid "行政部"
+msgstr ""
 
-msgid "保留小数点后2位"
-msgstr "保留小数点后2位"
+#: coefficients/migrations/0002_emissioncoefficient_department.py:22
+#: coefficients/migrations/0003_alter_emissioncoefficient_department.py:39
+#: coefficients/models.py:91
+msgid "后勤部"
+msgstr ""
 
-msgid "保存"
-msgstr "保存"
-
-msgid "产品名称(英文)"
-msgstr "产品名称(英文)"
-
-msgid "碳排放系数库"
-msgstr "碳排放系数库"
-
-msgid "选择文件"
-msgstr "选择文件"
-
-msgid "未选择任何文件"
-msgstr "未选择任何文件"
-
-msgid "碳排放系数导入模板"
-msgstr "碳排放系数导入模板"
-
+#: coefficients/models.py:9 data_entry/models.py:11
+#: templates/data_entry/consumption_list.html:33
 msgid "酒店名称"
 msgstr "酒店名称"
 
+#: coefficients/models.py:10
 msgid "酒店名称(英文)"
 msgstr "酒店名称(英文)"
 
+#: coefficients/models.py:11 coefficients/models.py:65
+#: coefficients/models.py:115 data_entry/models.py:41
 msgid "创建时间"
 msgstr "创建时间"
 
+#: coefficients/models.py:12 coefficients/models.py:66 data_entry/models.py:42
 msgid "更新时间"
 msgstr "更新时间"
 
+#: coefficients/models.py:13
 msgid "是否启用"
 msgstr "是否启用"
 
+#: coefficients/models.py:16 coefficients/models.py:17
+#: templates/coefficients/dashboard.html:26
+msgid "酒店"
+msgstr "酒店"
+
+#: coefficients/models.py:31 templates/coefficients/profile.html:58
 msgid "所属酒店"
 msgstr "所属酒店"
 
+#: coefficients/models.py:34 templates/coefficients/dashboard.html:30
+#: templates/coefficients/profile.html:48
+msgid "岗位"
+msgstr "岗位"
+
+#: coefficients/models.py:35 templates/coefficients/profile.html:53
 msgid "电话"
 msgstr "电话"
 
+#: coefficients/models.py:36
 msgid "是否审批通过"
 msgstr "是否审批通过"
 
+#: coefficients/models.py:37
 msgid "可管理系数"
 msgstr "可管理系数"
 
-msgid "分类名称"
-msgstr "分类名称"
-
-msgid "分类名称(英文)"
-msgstr "分类名称(英文)"
-
-msgid "分类级别"
-msgstr "分类级别"
-
-msgid "父级分类"
-msgstr "父级分类"
-
-msgid "排放分类"
-msgstr "排放分类"
-
-msgid "更新人"
-msgstr "更新人"
-
+#: coefficients/models.py:40 coefficients/models.py:41
 msgid "用户"
 msgstr "用户"
 
+#: coefficients/models.py:54
+msgid "分类名称"
+msgstr "分类名称"
+
+#: coefficients/models.py:55
+msgid "分类名称(英文)"
+msgstr "分类名称(英文)"
+
+#: coefficients/models.py:56
+msgid "分类级别"
+msgstr "分类级别"
+
+#: coefficients/models.py:62
+msgid "父级分类"
+msgstr "父级分类"
+
+#: coefficients/models.py:69 coefficients/models.py:70
+msgid "排放分类"
+msgstr "排放分类"
+
+#: coefficients/models.py:83
+msgid "KG"
+msgstr ""
+
+#: coefficients/models.py:84
+msgid "L"
+msgstr ""
+
+#: coefficients/models.py:94 coefficients/views.py:223
+#: coefficients/views.py:289 data_entry/forms.py:12
+#: templates/coefficients/coefficient_confirm_delete.html:26
+#: templates/coefficients/coefficient_list.html:54
+#: templates/data_entry/consumption_list.html:35
+msgid "产品编号"
+msgstr "产品编号"
+
+#: coefficients/models.py:110 coefficients/views.py:224
+#: coefficients/views.py:290
+msgid "产品名称(英文)"
+msgstr "产品名称(英文)"
+
+#: coefficients/models.py:111 coefficients/views.py:224
+#: coefficients/views.py:290 templates/coefficients/coefficient_list.html:59
+#: templates/data_entry/consumption_form.html:84
+msgid "单位"
+msgstr "单位"
+
+#: coefficients/models.py:112 coefficients/models.py:126
+#: coefficients/models.py:127 coefficients/views.py:224
+#: coefficients/views.py:290 data_entry/models.py:20
+#: templates/coefficients/coefficient_list.html:60
+msgid "碳排放系数"
+msgstr "碳排放系数"
+
+#: coefficients/models.py:114 coefficients/views.py:224
+#: coefficients/views.py:290 templates/coefficients/coefficient_list.html:61
+msgid "特殊备注"
+msgstr "特殊备注"
+
+#: coefficients/models.py:116 coefficients/views.py:224
+#: templates/coefficients/coefficient_list.html:62
+msgid "最后更新"
+msgstr "最后更新"
+
+#: coefficients/models.py:122
+msgid "更新人"
+msgstr "更新人"
+
+#: coefficients/views.py:31
+msgid "您的账号尚未通过审批，请联系管理员"
+msgstr "您的账号尚未通过审批，请联系管理员"
+
+#: coefficients/views.py:45
+msgid "登录成功！"
+msgstr "登录成功！"
+
+#: coefficients/views.py:48
+msgid "用户名或密码错误"
+msgstr "用户名或密码错误"
+
+#: coefficients/views.py:58
+msgid "您已成功退出登录"
+msgstr "您已成功退出登录"
+
+#: coefficients/views.py:84
+msgid "个人信息更新成功！"
+msgstr "个人信息更新成功！"
+
+#: coefficients/views.py:147
 msgid "系数添加成功！"
 msgstr "系数添加成功！"
 
+#: coefficients/views.py:176
+msgid "系数更新成功！"
+msgstr "系数更新成功！"
+
+#: coefficients/views.py:202
+msgid "系数删除成功！"
+msgstr "系数删除成功！"
+
+#: coefficients/views.py:219 coefficients/views.py:269
+msgid "碳排放系数库"
+msgstr "碳排放系数库"
+
+#: coefficients/views.py:332
+msgid "碳排放系数导入模板"
+msgstr "碳排放系数导入模板"
+
+#: coefficients/views.py:402
+#, python-format
 msgid "成功导入 %(count)s 条记录"
 msgstr "成功导入 %(count)s 条记录"
 
+#: coefficients/views.py:404
+#, python-format
 msgid "失败 %(count)s 条记录"
 msgstr "失败 %(count)s 条记录"
 
+#: coefficients/views.py:409
+#, python-format
 msgid "文件处理失败: %(error)s"
 msgstr "文件处理失败: %(error)s"
 
+#: data_entry/forms.py:15
+#, fuzzy
+#| msgid "产品编号"
+msgid "输入或选择产品编号"
+msgstr "产品编号"
+
+#: data_entry/forms.py:31
+#, fuzzy
+#| msgid "酒店名称"
+msgid "输入酒店名称"
+msgstr "酒店名称"
+
+#: data_entry/forms.py:56
+msgid "输入消耗数量"
+msgstr ""
+
+#: data_entry/forms.py:61
+#, fuzzy
+#| msgid "特殊备注（可选）"
+msgid "备注信息（可选）"
+msgstr "特殊备注（可选）"
+
+#: data_entry/forms.py:95
+msgid "产品编号不存在，请选择有效的产品编号"
+msgstr ""
+
+#: data_entry/forms.py:101
+msgid "开始日期不能晚于结束日期"
+msgstr ""
+
+#: data_entry/forms.py:107
+msgid "开始时间不能晚于结束时间"
+msgstr ""
+
+#: data_entry/models.py:12 templates/data_entry/consumption_list.html:34
+msgid "部门"
+msgstr ""
+
+#: data_entry/models.py:15
+msgid "产品代码"
+msgstr ""
+
+#: data_entry/models.py:19
+msgid "产品单位"
+msgstr ""
+
+#: data_entry/models.py:23
+msgid "消耗开始日期"
+msgstr ""
+
+#: data_entry/models.py:24
+msgid "消耗结束日期"
+msgstr ""
+
+#: data_entry/models.py:25
+msgid "消耗开始时间"
+msgstr ""
+
+#: data_entry/models.py:26
+msgid "消耗结束时间"
+msgstr ""
+
+#: data_entry/models.py:29 templates/data_entry/consumption_list.html:39
+msgid "消耗数量"
+msgstr ""
+
+#: data_entry/models.py:33 templates/data_entry/consumption_form.html:148
+msgid "碳排放量(kgCO2e)"
+msgstr ""
+
+#: data_entry/models.py:40
+#, fuzzy
+#| msgid "特殊备注"
+msgid "备注"
+msgstr "特殊备注"
+
+#: data_entry/models.py:45 data_entry/models.py:46
+#: templates/data_entry/consumption_list.html:4
+#: templates/data_entry/consumption_list.html:10
+msgid "物料消耗记录"
+msgstr ""
+
+#: data_entry/views.py:32
+#, fuzzy
+#| msgid "系数创建成功！"
+msgid "消耗记录创建成功"
+msgstr "系数创建成功！"
+
+#: data_entry/views.py:55
+#, fuzzy
+#| msgid "系数更新成功！"
+msgid "消耗记录更新成功"
+msgstr "系数更新成功！"
+
+#: data_entry/views.py:75
+#, fuzzy
+#| msgid "系数删除成功！"
+msgid "消耗记录删除成功"
+msgstr "系数删除成功！"
+
+#: data_entry/views.py:96
+msgid "产品代码不存在"
+msgstr ""
+
+#: templates/base.html:8 templates/base.html:160
+#: templates/coefficients/coefficient_confirm_delete.html:4
+#: templates/coefficients/coefficient_form.html:5
+#: templates/coefficients/coefficient_import.html:4
+#: templates/coefficients/coefficient_list.html:4
+#: templates/coefficients/dashboard.html:4 templates/coefficients/login.html:8
+#: templates/coefficients/profile.html:4
+#: templates/data_entry/consumption_form.html:5
+#: templates/data_entry/consumption_list.html:4
+msgid "碳排放管理系统"
+msgstr "碳排放管理系统"
+
+#: templates/base.html:169 templates/coefficients/dashboard.html:4
+#: templates/coefficients/dashboard.html:10
+msgid "数据看板"
+msgstr "数据看板"
+
+#: templates/base.html:174 templates/coefficients/dashboard.html:60
+msgid "数据录入"
+msgstr "数据录入"
+
+#: templates/base.html:202
+msgid "退出"
+msgstr "退出"
+
+#: templates/coefficients/coefficient_confirm_delete.html:4
+msgid "删除系数"
+msgstr ""
+
+#: templates/coefficients/coefficient_confirm_delete.html:14
+#: templates/coefficients/coefficient_confirm_delete.html:48
+msgid "确认删除"
+msgstr ""
+
+#: templates/coefficients/coefficient_confirm_delete.html:19
+msgid "您确定要删除以下系数吗？此操作不可撤销！"
+msgstr ""
+
+#: templates/coefficients/coefficient_confirm_delete.html:32
+#: templates/data_entry/consumption_form.html:81
+#, fuzzy
+#| msgid "一级分类"
+msgid "分类"
+msgstr "一级分类"
+
+#: templates/coefficients/coefficient_confirm_delete.html:35
+#: templates/data_entry/consumption_form.html:87
+#, fuzzy
+#| msgid "系数管理"
+msgid "系数"
+msgstr "系数管理"
+
+#: templates/coefficients/coefficient_confirm_delete.html:45
+#: templates/coefficients/coefficient_form.html:142
+#: templates/coefficients/coefficient_import.html:61
+#: templates/data_entry/consumption_form.html:167
+msgid "取消"
+msgstr "取消"
+
+#: templates/coefficients/coefficient_form.html:5
+#: templates/coefficients/coefficient_form.html:14
+msgid "编辑系数"
+msgstr "编辑系数"
+
+#: templates/coefficients/coefficient_form.html:5
+#: templates/coefficients/coefficient_form.html:14
+#: templates/coefficients/coefficient_list.html:30
+msgid "新增系数"
+msgstr "新增系数"
+
+#: templates/coefficients/coefficient_form.html:18
+#: templates/coefficients/coefficient_import.html:13
+msgid "首页"
+msgstr "首页"
+
+#: templates/coefficients/coefficient_form.html:21
+#: templates/coefficients/coefficient_list.html:92
+#: templates/data_entry/consumption_list.html:71
+msgid "编辑"
+msgstr "编辑"
+
+#: templates/coefficients/coefficient_form.html:21
+msgid "新增"
+msgstr "新增"
+
+#: templates/coefficients/coefficient_form.html:79
+#: templates/coefficients/coefficient_form.html:95
+msgid "可输入新分类或从列表选择"
+msgstr "可输入新分类或从列表选择"
+
+#: templates/coefficients/coefficient_form.html:126
+msgid "保留小数点后2位"
+msgstr "保留小数点后2位"
+
+#: templates/coefficients/coefficient_form.html:145
+#: templates/data_entry/consumption_form.html:170
+msgid "保存"
+msgstr "保存"
+
+#: templates/coefficients/coefficient_import.html:4
+#: templates/coefficients/coefficient_import.html:15
+#: templates/coefficients/coefficient_list.html:33
+msgid "批量导入"
+msgstr "批量导入"
+
+#: templates/coefficients/coefficient_import.html:10
+msgid "批量导入系数"
+msgstr "批量导入系数"
+
+#: templates/coefficients/coefficient_import.html:25
+msgid "导入说明"
+msgstr "导入说明"
+
+#: templates/coefficients/coefficient_import.html:27
+msgid "点击下方按钮下载导入模板"
+msgstr "点击下方按钮下载导入模板"
+
+#: templates/coefficients/coefficient_import.html:28
+msgid ""
+"在模板中填写数据，必填字段：产品编号、一级分类、二级分类、产品名称、单位、碳"
+"排放系数"
+msgstr ""
+"在模板中填写数据，必填字段：产品编号、一级分类、二级分类、产品名称、单位、碳"
+"排放系数"
+
+#: templates/coefficients/coefficient_import.html:29
+msgid "碳排放系数必须为数字，保留小数点后2位"
+msgstr "碳排放系数必须为数字，保留小数点后2位"
+
+#: templates/coefficients/coefficient_import.html:30
+msgid "上传填写好的Excel文件进行导入"
+msgstr "上传填写好的Excel文件进行导入"
+
+#: templates/coefficients/coefficient_import.html:31
+msgid "如果产品编号已存在，将更新该记录"
+msgstr "如果产品编号已存在，将更新该记录"
+
+#: templates/coefficients/coefficient_import.html:35
+msgid "下载导入模板"
+msgstr "下载导入模板"
+
+#: templates/coefficients/coefficient_import.html:47
+msgid "选择Excel文件"
+msgstr "选择Excel文件"
+
+#: templates/coefficients/coefficient_import.html:52
+msgid "选择文件"
+msgstr "选择文件"
+
+#: templates/coefficients/coefficient_import.html:54
+#: templates/coefficients/coefficient_import.html:92
+msgid "未选择任何文件"
+msgstr "未选择任何文件"
+
+#: templates/coefficients/coefficient_import.html:56
+msgid "支持 .xlsx 和 .xls 格式"
+msgstr "支持 .xlsx 和 .xls 格式"
+
+#: templates/coefficients/coefficient_import.html:64
+msgid "开始导入"
+msgstr "开始导入"
+
+#: templates/coefficients/coefficient_import.html:99
+msgid "导入中..."
+msgstr "导入中..."
+
+#: templates/coefficients/coefficient_list.html:10
+msgid "碳排放系数管理"
+msgstr "碳排放系数管理"
+
+#: templates/coefficients/coefficient_list.html:11
+msgid "统一管理碳排放系数库"
+msgstr "统一管理碳排放系数库"
+
+#: templates/coefficients/coefficient_list.html:36
+msgid "下载模板"
+msgstr "下载模板"
+
+#: templates/coefficients/coefficient_list.html:39
+msgid "导出数据"
+msgstr "导出数据"
+
+#: templates/coefficients/coefficient_list.html:63
+#: templates/data_entry/consumption_list.html:41
+msgid "操作"
+msgstr "操作"
+
+#: templates/coefficients/coefficient_list.html:95
+#: templates/data_entry/consumption_list.html:74
+msgid "删除"
+msgstr "删除"
+
+#: templates/coefficients/coefficient_list.html:104
+msgid "暂无数据"
+msgstr "暂无数据"
+
+#: templates/coefficients/coefficient_list.html:153
+#: templates/data_entry/consumption_list.html:126
+msgid "第"
+msgstr "第"
+
+#: templates/coefficients/coefficient_list.html:153
+#: templates/data_entry/consumption_list.html:126
+msgid "页，共"
+msgstr "页，共"
+
+#: templates/coefficients/coefficient_list.html:153
+#: templates/data_entry/consumption_list.html:126
+msgid "页"
+msgstr "页"
+
+#: templates/coefficients/dashboard.html:11
+msgid "欢迎使用碳排放管理系统"
+msgstr "欢迎使用碳排放管理系统"
+
+#: templates/coefficients/dashboard.html:22
+msgid "用户信息"
+msgstr "用户信息"
+
+#: templates/coefficients/dashboard.html:45
+msgid "管理碳排放系数库，支持增删改查和批量导入导出"
+msgstr "管理碳排放系数库，支持增删改查和批量导入导出"
+
+#: templates/coefficients/dashboard.html:47
+#: templates/coefficients/dashboard.html:63
+msgid "进入管理"
+msgstr "进入管理"
+
+#: templates/coefficients/dashboard.html:61
+msgid "录入和导入碳排放数据，进行自动匹配和计算"
+msgstr "录入和导入碳排放数据，进行自动匹配和计算"
+
+#: templates/coefficients/dashboard.html:75
+msgid "系统说明"
+msgstr "系统说明"
+
+#: templates/coefficients/dashboard.html:79
+msgid "功能特点"
+msgstr "功能特点"
+
+#: templates/coefficients/dashboard.html:81
+msgid "多酒店支持，数据隔离"
+msgstr "多酒店支持，数据隔离"
+
+#: templates/coefficients/dashboard.html:82
+msgid "权限管理，分级授权"
+msgstr "权限管理，分级授权"
+
+#: templates/coefficients/dashboard.html:83
+msgid "系数库统一管理"
+msgstr "系数库统一管理"
+
+#: templates/coefficients/dashboard.html:84
+msgid "智能匹配算法"
+msgstr "智能匹配算法"
+
+#: templates/coefficients/dashboard.html:85
+msgid "批量导入导出"
+msgstr "批量导入导出"
+
+#: templates/coefficients/dashboard.html:86
+msgid "中英文双语支持"
+msgstr "中英文双语支持"
+
+#: templates/coefficients/dashboard.html:90
+msgid "使用流程"
+msgstr "使用流程"
+
+#: templates/coefficients/dashboard.html:92
+msgid "管理员维护碳排放系数库"
+msgstr "管理员维护碳排放系数库"
+
+#: templates/coefficients/dashboard.html:93
+msgid "用户录入或导入消耗数据"
+msgstr "用户录入或导入消耗数据"
+
+#: templates/coefficients/dashboard.html:94
+msgid "系统自动匹配系数并计算"
+msgstr "系统自动匹配系数并计算"
+
+#: templates/coefficients/dashboard.html:95
+msgid "查看数据分析和报表"
+msgstr "查看数据分析和报表"
+
+#: templates/coefficients/login.html:8 templates/coefficients/login.html:300
+msgid "登录"
+msgstr "登录"
+
+#: templates/coefficients/login.html:239
+msgid "酒店碳排放管理平台"
+msgstr "酒店碳排放管理平台"
+
+#: templates/coefficients/login.html:240
+msgid "精准测算酒店碳排放，助力可持续经营"
+msgstr "精准测算酒店碳排放，助力可持续经营"
+
+#: templates/coefficients/login.html:332
+msgid "登录中..."
+msgstr "登录中..."
+
+#: templates/coefficients/profile.html:4 templates/coefficients/profile.html:10
 msgid "个人中心"
 msgstr "个人中心"
 
+#: templates/coefficients/profile.html:11
 msgid "查看和编辑您的个人信息"
 msgstr "查看和编辑您的个人信息"
 
+#: templates/coefficients/profile.html:19
 msgid "基本信息"
 msgstr "基本信息"
 
-msgid "电子邮件"
-msgstr "电子邮件"
-
+#: templates/coefficients/profile.html:29
 msgid "用户名不可修改"
 msgstr "用户名不可修改"
 
+#: templates/coefficients/profile.html:33
+msgid "电子邮件"
+msgstr "电子邮件"
+
+#: templates/coefficients/profile.html:38
 msgid "名"
 msgstr "名"
 
+#: templates/coefficients/profile.html:43
 msgid "姓"
 msgstr "姓"
 
+#: templates/coefficients/profile.html:63
 msgid "加入时间"
 msgstr "加入时间"
 
+#: templates/coefficients/profile.html:70
 msgid "保存修改"
 msgstr "保存修改"
 
+#: templates/coefficients/profile.html:73
 msgid "返回首页"
 msgstr "返回首页"
 
+#: templates/coefficients/profile.html:84
 msgid "账号状态"
 msgstr "账号状态"
 
+#: templates/coefficients/profile.html:88
 msgid "审批状态"
 msgstr "审批状态"
 
+#: templates/coefficients/profile.html:90
 msgid "已审批"
 msgstr "已审批"
 
+#: templates/coefficients/profile.html:92
 msgid "待审批"
 msgstr "待审批"
 
+#: templates/coefficients/profile.html:97
 msgid "系数管理权限"
 msgstr "系数管理权限"
 
+#: templates/coefficients/profile.html:99
 msgid "已开通"
 msgstr "已开通"
 
+#: templates/coefficients/profile.html:101
 msgid "未开通"
 msgstr "未开通"
 
+#: templates/coefficients/profile.html:106
 msgid "管理员权限"
 msgstr "管理员权限"
 
+#: templates/coefficients/profile.html:108
 msgid "超级管理员"
 msgstr "超级管理员"
 
+#: templates/coefficients/profile.html:110
 msgid "管理员"
 msgstr "管理员"
 
+#: templates/coefficients/profile.html:112
 msgid "普通用户"
 msgstr "普通用户"
 
+#: templates/coefficients/profile.html:117
 msgid "最后登录"
 msgstr "最后登录"
 
+#: templates/coefficients/profile.html:125
 msgid "密码修改"
 msgstr "密码修改"
 
+#: templates/coefficients/profile.html:128
 msgid "如需修改密码，请联系系统管理员"
 msgstr "如需修改密码，请联系系统管理员"
 
+#: templates/coefficients/profile.html:130
 msgid "访问管理后台"
 msgstr "访问管理后台"
 
-msgid "个人信息更新成功！"
-msgstr "个人信息更新成功！"
+#: templates/data_entry/consumption_form.html:5
+#: templates/data_entry/consumption_form.html:14
+msgid "编辑消耗记录"
+msgstr ""
+
+#: templates/data_entry/consumption_form.html:5
+#: templates/data_entry/consumption_form.html:14
+#: templates/data_entry/consumption_list.html:20
+msgid "新增消耗记录"
+msgstr ""
+
+#: templates/data_entry/consumption_form.html:69
+msgid "输入产品编号，系统将自动填充产品信息"
+msgstr ""
+
+#: templates/data_entry/consumption_form.html:75
+msgid "产品信息"
+msgstr ""
+
+#: templates/data_entry/consumption_form.html:150
+msgid "自动计算：数量 × 碳排放系数"
+msgstr ""
+
+#: templates/data_entry/consumption_list.html:11
+msgid "记录和管理物料消耗数据"
+msgstr ""
+
+#: templates/data_entry/consumption_list.html:37
+msgid "消耗日期区间"
+msgstr ""
+
+#: templates/data_entry/consumption_list.html:38
+msgid "消耗时间区间"
+msgstr ""
+
+#: templates/data_entry/consumption_list.html:40
+msgid "碳排放量"
+msgstr ""
+
+#: templates/data_entry/consumption_list.html:56
+#: templates/data_entry/consumption_list.html:60
+msgid "至"
+msgstr ""
+
+#: templates/data_entry/consumption_list.html:73
+msgid "确定要删除这条记录吗？"
+msgstr ""
+
+#: templates/data_entry/consumption_list.html:83
+msgid "暂无消耗记录"
+msgstr ""
+
+#~ msgid "绿色环保 · 智慧酒店"
+#~ msgstr "绿色环保 · 智慧酒店"
+
+#~ msgid "即将上线"
+#~ msgstr "即将上线"

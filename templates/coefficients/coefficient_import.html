@@ -48,8 +48,8 @@
                             </label>
                             <div class="custom-file-upload">
                                 <input type="file" class="form-control" id="fileInput" name="file" accept=".xlsx,.xls" required style="display: none;">
-                                <button type="button" class="btn btn-outline-secondary" id="fileButton">
-                                    <i class="bi bi-folder2-open"></i> {% trans "选择文件" %}
+                                <button type="button" class="btn btn-outline-secondary d-inline-flex align-items-center" id="fileButton">
+                                    <i class="bi bi-folder2-open me-1"></i> {% trans "选择文件" %}
                                 </button>
                                 <span id="fileName" class="ms-3 text-muted">{% trans "未选择任何文件" %}</span>
                             </div>
@@ -57,11 +57,11 @@
                         </div>
                         
                         <div class="d-flex gap-2 justify-content-end">
-                            <a href="{% url 'coefficient_list' %}" class="btn btn-secondary">
-                                <i class="bi bi-x-circle"></i> {% trans "取消" %}
-                            </a>
-                            <button type="submit" class="btn btn-primary" id="importBtn">
-                                <i class="bi bi-upload"></i> {% trans "开始导入" %}
+                            <button type="button" onclick="window.location.href='{% url 'coefficient_list' %}'" class="btn btn-secondary d-inline-flex align-items-center">
+                                <i class="bi bi-x-circle me-1"></i> {% trans "取消" %}
+                            </button>
+                            <button type="submit" class="btn btn-primary d-inline-flex align-items-center" id="importBtn">
+                                <i class="bi bi-upload me-1"></i> {% trans "开始导入" %}
                             </button>
                         </div>
                     </form>

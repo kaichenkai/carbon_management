@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'coefficients',
+    'data_entry',
 ]
 
 MIDDLEWARE = [
@@ -130,10 +131,10 @@ LOCALE_PATHS = [
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-# STATICFILES_DIRS = [
-#     BASE_DIR / 'static',
-# ]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Production: collectstatic target
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',  # Development: source static files
+]
 
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -154,3 +155,9 @@ SESSION_SAVE_EVERY_REQUEST = True
 
 # Custom user model
 AUTH_USER_MODEL = 'coefficients.CustomUser'
+
+# Security settings for development
+# Disable HTTPS redirect in development
+SECURE_SSL_REDIRECT = False
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False

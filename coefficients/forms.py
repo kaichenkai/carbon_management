@@ -65,6 +65,14 @@ class EmissionCoefficientForm(forms.ModelForm):
         })
     )
     
+    department = forms.ChoiceField(
+        label=_('部门名称'),
+        required=True,
+        widget=forms.Select(attrs={
+            'class': 'form-select'
+        })
+    )
+    
     class Meta:
         model = EmissionCoefficient
         fields = ['product_code', 'product_name', 'product_name_en', 
@@ -99,12 +107,19 @@ class EmissionCoefficientForm(forms.ModelForm):
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        
+        # Set department choices from model
+        from .models import EmissionCoefficient
+        self.fields['department'].choices = EmissionCoefficient.DEPARTMENT_CHOICES
+        
         if self.instance.pk:
             # Editing existing coefficient
             if self.instance.category_level1:
                 self.fields['category_level1_name'].initial = self.instance.category_level1.name
             if self.instance.category_level2:
                 self.fields['category_level2_name'].initial = self.instance.category_level2.name
+            if self.instance.department:
+                self.fields['department'].initial = self.instance.department
     
     def save(self, commit=True):
         instance = super().save(commit=False)
@@ -127,6 +142,7 @@ class EmissionCoefficientForm(forms.ModelForm):
         
         instance.category_level1 = level1_category
         instance.category_level2 = level2_category
+        instance.department = self.cleaned_data['department']
         
         if commit:
             instance.save()

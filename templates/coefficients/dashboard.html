@@ -55,13 +55,13 @@
             <div class="card">
                 <div class="card-body text-center p-4">
                     <div class="mb-3">
-                        <i class="bi bi-graph-up" style="font-size: 48px; color: var(--primary-color);"></i>
+                        <i class="bi bi-clipboard-data" style="font-size: 48px; color: var(--primary-color);"></i>
                     </div>
                     <h5 class="card-title">{% trans "数据录入" %}</h5>
                     <p class="card-text">{% trans "录入和导入碳排放数据，进行自动匹配和计算" %}</p>
-                    <button class="btn btn-secondary" disabled>
-                        <i class="bi bi-hourglass-split"></i> {% trans "即将上线" %}
-                    </button>
+                    <a href="{% url 'consumption_list' %}" class="btn btn-primary">
+                        <i class="bi bi-arrow-right-circle"></i> {% trans "进入管理" %}
+                    </a>
                 </div>
             </div>
         </div>

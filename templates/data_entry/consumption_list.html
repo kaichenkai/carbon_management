@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "物料消耗记录" %} - {% trans "碳排放管理系统" %}{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-clipboard-data"></i> {% trans "物料消耗记录" %}</h2>
+            <p class="text-muted">{% trans "记录和管理物料消耗数据" %}</p>
+        </div>
+    </div>
+    
+    <!-- Operation Bar -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-end">
+                <a href="{% url 'consumption_create' %}" class="btn btn-success d-inline-flex align-items-center">
+                    <i class="bi bi-plus-circle me-1"></i> {% trans "新增消耗记录" %}
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Consumption Table -->
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>{% trans "酒店名称" %}</th>
+                            <th>{% trans "部门" %}</th>
+                            <th>{% trans "产品编号" %}</th>
+                            <th>{% trans "产品名称" %}</th>
+                            <th>{% trans "消耗日期区间" %}</th>
+                            <th>{% trans "消耗时间区间" %}</th>
+                            <th>{% trans "消耗数量" %}</th>
+                            <th>{% trans "碳排放量" %}</th>
+                            <th>{% trans "操作" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for consumption in page_obj %}
+                        <tr>
+                            <td>{{ consumption.hotel_name }}</td>
+                            <td>{{ consumption.department }}</td>
+                            <td><code>{{ consumption.product_code }}</code></td>
+                            <td>
+                                {{ consumption.product_name }}
+                                <br><small class="text-muted">{{ consumption.category_level1 }} > {{ consumption.category_level2 }}</small>
+                            </td>
+                            <td>
+                                {{ consumption.consumption_date_start|date:"Y-m-d" }}
+                                <br>{% trans "至" %} {{ consumption.consumption_date_end|date:"Y-m-d" }}
+                            </td>
+                            <td>
+                                {{ consumption.consumption_time_start|time:"H:i" }}
+                                <br>{% trans "至" %} {{ consumption.consumption_time_end|time:"H:i" }}
+                            </td>
+                            <td>
+                                <strong>{{ consumption.quantity }}</strong> {{ consumption.product_unit }}
+                            </td>
+                            <td>
+                                <span class="badge bg-success">{{ consumption.carbon_emission }} kgCO2e</span>
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <a href="{% url 'consumption_edit' consumption.pk %}" class="btn btn-outline-primary d-inline-flex align-items-center">
+                                        <i class="bi bi-pencil me-1"></i> {% trans "编辑" %}
+                                    </a>
+                                    <a href="{% url 'consumption_delete' consumption.pk %}" class="btn btn-outline-danger d-inline-flex align-items-center" onclick="return confirm('{% trans "确定要删除这条记录吗？" %}')">
+                                        <i class="bi bi-trash me-1"></i> {% trans "删除" %}
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="9" class="text-center py-5">
+                                <i class="bi bi-inbox" style="font-size: 48px; color: #ccc;"></i>
+                                <p class="text-muted mt-3">{% trans "暂无消耗记录" %}</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination -->
+            {% if page_obj.has_other_pages %}
+            <nav aria-label="Page navigation" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1">
+                            <i class="bi bi-chevron-double-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+                            <i class="bi bi-chevron-left"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                    
+                    <li class="page-item active">
+                        <span class="page-link">{{ page_obj.number }}</span>
+                    </li>
+                    
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">
+                            <i class="bi bi-chevron-double-right"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+                <p class="text-center text-muted">
+                    {% trans "第" %} {{ page_obj.number }} {% trans "页，共" %} {{ page_obj.paginator.num_pages }} {% trans "页" %}
+                </p>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

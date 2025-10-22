@@ -169,6 +169,11 @@
                             <i class="bi bi-speedometer2"></i> {% trans "数据看板" %}
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'consumption_list' %}">
+                            <i class="bi bi-clipboard-data"></i> {% trans "数据录入" %}
+                        </a>
+                    </li>
                     {% if user.can_manage_coefficients or user.is_superuser %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'coefficient_list' %}">

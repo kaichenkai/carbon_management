@@ -16,27 +16,27 @@
     <div class="card mb-4">
         <div class="card-body">
             <div class="row g-3 align-items-center">
-                <div class="col-md-6">
+                <div class="col-lg-4 col-md-12">
                     <form method="get" class="d-flex gap-2">
                         {{ search_form.query }}
-                        <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-search"></i> {% trans "搜索" %}
+                        <button type="submit" class="btn btn-primary d-inline-flex align-items-center flex-shrink-0" style="display: none;">
+                            <i class="bi bi-search me-1"></i> {% trans "搜索" %}
                         </button>
                     </form>
                 </div>
-                <div class="col-md-6 text-end">
-                    <div class="btn-group">
-                        <a href="{% url 'coefficient_create' %}" class="btn btn-success">
-                            <i class="bi bi-plus-circle"></i> {% trans "新增系数" %}
+                <div class="col-lg-8 col-md-12">
+                    <div class="d-flex flex-wrap gap-2 justify-content-lg-end justify-content-start">
+                        <a href="{% url 'coefficient_create' %}" class="btn btn-success d-inline-flex align-items-center">
+                            <i class="bi bi-plus-circle me-1"></i> {% trans "新增系数" %}
                         </a>
-                        <a href="{% url 'coefficient_import' %}" class="btn btn-info">
-                            <i class="bi bi-upload"></i> {% trans "批量导入" %}
+                        <a href="{% url 'coefficient_import' %}" class="btn btn-info d-inline-flex align-items-center">
+                            <i class="bi bi-upload me-1"></i> {% trans "批量导入" %}
                         </a>
-                        <a href="{% url 'coefficient_template' %}" class="btn btn-secondary">
-                            <i class="bi bi-download"></i> {% trans "下载模板" %}
+                        <a href="{% url 'coefficient_template' %}" class="btn btn-secondary d-inline-flex align-items-center">
+                            <i class="bi bi-download me-1"></i> {% trans "下载模板" %}
                         </a>
-                        <a href="{% url 'coefficient_export' %}" class="btn btn-primary">
-                            <i class="bi bi-file-earmark-excel"></i> {% trans "导出数据" %}
+                        <a href="{% url 'coefficient_export' %}" class="btn btn-primary d-inline-flex align-items-center">
+                            <i class="bi bi-file-earmark-excel me-1"></i> {% trans "导出数据" %}
                         </a>
                     </div>
                 </div>
@@ -52,6 +52,7 @@
                     <thead>
                         <tr>
                             <th>{% trans "产品编号" %}</th>
+                            <th>{% trans "部门名称" %}</th>
                             <th>{% trans "一级分类" %}</th>
                             <th>{% trans "二级分类" %}</th>
                             <th>{% trans "产品名称" %}</th>
@@ -66,6 +67,7 @@
                         {% for coefficient in page_obj %}
                         <tr>
                             <td><code>{{ coefficient.product_code }}</code></td>
+                            <td>{{ coefficient.get_department_display }}</td>
                             <td>{{ coefficient.category_level1.name }}</td>
                             <td>{{ coefficient.category_level2.name }}</td>
                             <td>
@@ -86,18 +88,18 @@
                             <td><small>{{ coefficient.updated_at|date:"Y/m/d" }}</small></td>
                             <td>
                                 <div class="btn-group btn-group-sm">
-                                    <a href="{% url 'coefficient_edit' coefficient.pk %}" class="btn btn-outline-primary">
-                                        <i class="bi bi-pencil"></i> {% trans "编辑" %}
+                                    <a href="{% url 'coefficient_edit' coefficient.pk %}" class="btn btn-outline-primary d-inline-flex align-items-center">
+                                        <i class="bi bi-pencil me-1"></i> {% trans "编辑" %}
                                     </a>
-                                    <a href="{% url 'coefficient_delete' coefficient.pk %}" class="btn btn-outline-danger">
-                                        <i class="bi bi-trash"></i> {% trans "删除" %}
+                                    <a href="{% url 'coefficient_delete' coefficient.pk %}" class="btn btn-outline-danger d-inline-flex align-items-center">
+                                        <i class="bi bi-trash me-1"></i> {% trans "删除" %}
                                     </a>
                                 </div>
                             </td>
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="9" class="text-center py-5">
+                            <td colspan="10" class="text-center py-5">
                                 <i class="bi bi-inbox" style="font-size: 48px; color: #ccc;"></i>
                                 <p class="text-muted mt-3">{% trans "暂无数据" %}</p>
                             </td>
@@ -155,4 +157,38 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchForm = document.querySelector('form[method="get"]');
+    const searchInput = searchForm.querySelector('input[name="query"]');
+    let searchTimeout;
+    
+    // Auto-submit search after user stops typing
+    searchInput.addEventListener('input', function() {
+        // Clear previous timeout
+        clearTimeout(searchTimeout);
+        
+        // Set new timeout - submit after 500ms of no typing
+        searchTimeout = setTimeout(function() {
+            searchForm.submit();
+        }, 500);
+    });
+    
+    // Also allow manual submit with Enter key
+    searchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            clearTimeout(searchTimeout);
+            searchForm.submit();
+        }
+    });
+    
+    // Restore focus after page load (after search)
+    if (searchInput.value) {
+        searchInput.focus();
+        // Move cursor to end of text
+        searchInput.setSelectionRange(searchInput.value.length, searchInput.value.length);
+    }
+});
+</script>
 {% endblock %}

@@ -1,0 +1,241 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}
+    {% if consumption %}{% trans "编辑消耗记录" %}{% else %}{% trans "新增消耗记录" %}{% endif %} - {% trans "碳排放管理系统" %}
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2>
+                <i class="bi bi-clipboard-data"></i>
+                {% if consumption %}{% trans "编辑消耗记录" %}{% else %}{% trans "新增消耗记录" %}{% endif %}
+            </h2>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <div class="card">
+                <div class="card-body p-4">
+                    <form method="post" id="consumptionForm">
+                        {% csrf_token %}
+                        
+                        {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {{ form.non_field_errors }}
+                        </div>
+                        {% endif %}
+                        
+                        <div class="row g-3">
+                            <!-- 酒店名称 -->
+                            <div class="col-md-6">
+                                <label for="{{ form.hotel_name.id_for_label }}" class="form-label">
+                                    {{ form.hotel_name.label }}
+                                </label>
+                                {{ form.hotel_name }}
+                                {% if form.hotel_name.errors %}
+                                    <div class="text-danger small mt-1">{{ form.hotel_name.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- 部门 -->
+                            <div class="col-md-6">
+                                <label for="{{ form.department.id_for_label }}" class="form-label">
+                                    {{ form.department.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.department }}
+                                {% if form.department.errors %}
+                                    <div class="text-danger small mt-1">{{ form.department.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- 产品编号 -->
+                            <div class="col-md-12">
+                                <label for="{{ form.product_code.id_for_label }}" class="form-label">
+                                    {{ form.product_code.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.product_code }}
+                                <datalist id="product-codes">
+                                    {% for code in product_codes %}
+                                    <option value="{{ code }}">
+                                    {% endfor %}
+                                </datalist>
+                                {% if form.product_code.errors %}
+                                    <div class="text-danger small mt-1">{{ form.product_code.errors }}</div>
+                                {% endif %}
+                                <div class="form-text">{% trans "输入产品编号，系统将自动填充产品信息" %}</div>
+                            </div>
+                            
+                            <!-- Auto-filled product information (read-only display) -->
+                            <div class="col-md-12" id="productInfo" style="display: none;">
+                                <div class="alert alert-info">
+                                    <h6><i class="bi bi-info-circle"></i> {% trans "产品信息" %}</h6>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <strong>{% trans "产品名称" %}:</strong> <span id="displayProductName"></span>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <strong>{% trans "分类" %}:</strong> <span id="displayCategory"></span>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <strong>{% trans "单位" %}:</strong> <span id="displayUnit"></span>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <strong>{% trans "系数" %}:</strong> <span id="displayCoefficient"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 消耗日期区间 -->
+                            <div class="col-md-6">
+                                <label for="{{ form.consumption_date_start.id_for_label }}" class="form-label">
+                                    {{ form.consumption_date_start.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.consumption_date_start }}
+                                {% if form.consumption_date_start.errors %}
+                                    <div class="text-danger small mt-1">{{ form.consumption_date_start.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="{{ form.consumption_date_end.id_for_label }}" class="form-label">
+                                    {{ form.consumption_date_end.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.consumption_date_end }}
+                                {% if form.consumption_date_end.errors %}
+                                    <div class="text-danger small mt-1">{{ form.consumption_date_end.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- 消耗时间区间 -->
+                            <div class="col-md-6">
+                                <label for="{{ form.consumption_time_start.id_for_label }}" class="form-label">
+                                    {{ form.consumption_time_start.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.consumption_time_start }}
+                                {% if form.consumption_time_start.errors %}
+                                    <div class="text-danger small mt-1">{{ form.consumption_time_start.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="{{ form.consumption_time_end.id_for_label }}" class="form-label">
+                                    {{ form.consumption_time_end.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.consumption_time_end }}
+                                {% if form.consumption_time_end.errors %}
+                                    <div class="text-danger small mt-1">{{ form.consumption_time_end.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- 消耗数量 -->
+                            <div class="col-md-6">
+                                <label for="{{ form.quantity.id_for_label }}" class="form-label">
+                                    {{ form.quantity.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.quantity }}
+                                {% if form.quantity.errors %}
+                                    <div class="text-danger small mt-1">{{ form.quantity.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- 计算的碳排放量 (display only) -->
+                            <div class="col-md-6">
+                                <label class="form-label">{% trans "碳排放量(kgCO2e)" %}</label>
+                                <input type="text" class="form-control" id="calculatedEmission" readonly value="0.00">
+                                <div class="form-text">{% trans "自动计算：数量 × 碳排放系数" %}</div>
+                            </div>
+                            
+                            <!-- 备注 -->
+                            <div class="col-md-12">
+                                <label for="{{ form.notes.id_for_label }}" class="form-label">
+                                    {{ form.notes.label }}
+                                </label>
+                                {{ form.notes }}
+                                {% if form.notes.errors %}
+                                    <div class="text-danger small mt-1">{{ form.notes.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex gap-2 justify-content-end mt-4">
+                            <button type="button" onclick="window.location.href='{% url 'consumption_list' %}'" class="btn btn-secondary d-inline-flex align-items-center">
+                                <i class="bi bi-x-circle me-1"></i> {% trans "取消" %}
+                            </button>
+                            <button type="submit" class="btn btn-primary d-inline-flex align-items-center">
+                                <i class="bi bi-check-circle me-1"></i> {% trans "保存" %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const productCodeInput = document.querySelector('input[name="product_code"]');
+    const quantityInput = document.querySelector('input[name="quantity"]');
+    const productInfo = document.getElementById('productInfo');
+    const calculatedEmission = document.getElementById('calculatedEmission');
+    
+    let currentCoefficient = 0;
+    
+    // Fetch product info when product code changes
+    productCodeInput.addEventListener('blur', function() {
+        const code = this.value.trim();
+        if (code) {
+            fetch(`/data-entry/api/product-info/?code=${encodeURIComponent(code)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Display product information
+                        document.getElementById('displayProductName').textContent = data.product_name;
+                        document.getElementById('displayCategory').textContent = data.category_level1 + ' > ' + data.category_level2;
+                        document.getElementById('displayUnit').textContent = data.unit;
+                        document.getElementById('displayCoefficient').textContent = data.coefficient;
+                        productInfo.style.display = 'block';
+                        
+                        // Store coefficient for calculation
+                        currentCoefficient = parseFloat(data.coefficient);
+                        
+                        // Calculate emission if quantity is already entered
+                        calculateEmission();
+                    } else {
+                        productInfo.style.display = 'none';
+                        alert(data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching product info:', error);
+                });
+        }
+    });
+    
+    // Calculate emission when quantity changes
+    quantityInput.addEventListener('input', calculateEmission);
+    
+    function calculateEmission() {
+        const quantity = parseFloat(quantityInput.value) || 0;
+        const emission = quantity * currentCoefficient;
+        calculatedEmission.value = emission.toFixed(2);
+    }
+    
+    // If editing, load product info on page load
+    {% if consumption %}
+    currentCoefficient = {{ consumption.emission_coefficient }};
+    document.getElementById('displayProductName').textContent = '{{ consumption.product_name }}';
+    document.getElementById('displayCategory').textContent = '{{ consumption.category_level1 }} > {{ consumption.category_level2 }}';
+    document.getElementById('displayUnit').textContent = '{{ consumption.product_unit }}';
+    document.getElementById('displayCoefficient').textContent = '{{ consumption.emission_coefficient }}';
+    productInfo.style.display = 'block';
+    calculateEmission();
+    {% endif %}
+});
+</script>
+{% endblock %}
