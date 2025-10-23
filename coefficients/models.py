@@ -91,7 +91,7 @@ class EmissionCoefficient(models.Model):
         ('logistics', _('后勤部')),
     ]
     
-    product_code = models.CharField(_('产品编号'), max_length=50, unique=True, db_index=True)
+    product_code = models.CharField(_('产品编号'), max_length=50, db_index=True)
     category_level1 = models.ForeignKey(
         EmissionCategory,
         on_delete=models.PROTECT,

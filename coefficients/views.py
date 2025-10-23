@@ -208,10 +208,24 @@ def coefficient_delete(request, pk):
 @login_required
 @user_passes_test(can_manage_coefficients, login_url='dashboard')
 def coefficient_export(request):
-    """Export coefficients to Excel"""
-    coefficients = EmissionCoefficient.objects.select_related(
-        'category_level1', 'category_level2'
-    ).all()
+    """Export coefficients to Excel - all or selected"""
+    # Check if specific IDs are provided (POST request with selected items)
+    if request.method == 'POST':
+        ids = request.POST.getlist('ids')
+        if ids:
+            coefficients = EmissionCoefficient.objects.filter(
+                pk__in=ids
+            ).select_related('category_level1', 'category_level2')
+        else:
+            # No IDs provided, export all
+            coefficients = EmissionCoefficient.objects.select_related(
+                'category_level1', 'category_level2'
+            ).all()
+    else:
+        # GET request - export all
+        coefficients = EmissionCoefficient.objects.select_related(
+            'category_level1', 'category_level2'
+        ).all()
     
     # Create workbook
     wb = openpyxl.Workbook()
@@ -366,13 +380,13 @@ def coefficient_import(request):
                         continue
                     
                     # Get or create categories
-                    level1_category, _ = EmissionCategory.objects.get_or_create(
+                    level1_category, created = EmissionCategory.objects.get_or_create(
                         name=level1_name,
                         level=1,
                         defaults={'parent': None}
                     )
                     
-                    level2_category, _ = EmissionCategory.objects.get_or_create(
+                    level2_category, created = EmissionCategory.objects.get_or_create(
                         name=level2_name,
                         level=2,
                         parent=level1_category
@@ -399,14 +413,14 @@ def coefficient_import(request):
             
             # Show results
             if success_count > 0:
-                messages.success(request, _('成功导入 %(count)s 条记录') % {'count': success_count})
+                messages.success(request, _('成功导入 {} 条记录').format(success_count))
             if error_count > 0:
-                messages.warning(request, _('失败 %(count)s 条记录') % {'count': error_count})
+                messages.warning(request, _('失败 {} 条记录').format(error_count))
                 for error in errors[:10]:  # Show first 10 errors
                     messages.error(request, error)
             
         except Exception as e:
-            messages.error(request, _('文件处理失败: %(error)s') % {'error': str(e)})
+            messages.error(request, _('文件处理失败: {}').format(str(e)))
         
         return redirect('coefficient_list')
     

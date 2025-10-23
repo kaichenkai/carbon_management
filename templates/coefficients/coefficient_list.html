@@ -33,11 +33,12 @@
                             <i class="bi bi-upload me-1"></i> {% trans "批量导入" %}
                         </a>
                         <a href="{% url 'coefficient_template' %}" class="btn btn-secondary d-inline-flex align-items-center">
-                            <i class="bi bi-download me-1"></i> {% trans "下载模板" %}
+                            <i class="bi bi-download me-1"></i> {% trans "下载模板" %}    
                         </a>
-                        <a href="{% url 'coefficient_export' %}" class="btn btn-primary d-inline-flex align-items-center">
-                            <i class="bi bi-file-earmark-excel me-1"></i> {% trans "导出数据" %}
-                        </a>
+                        <button type="button" id="exportBtn" class="btn btn-primary d-inline-flex align-items-center">
+                            <i class="bi bi-file-earmark-excel me-1"></i> 
+                            <span id="exportBtnText">{% trans "导出数据" %}</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -51,6 +52,10 @@
                 <table class="table table-hover align-middle">
                     <thead>
                         <tr>
+                            <th>
+                                <input type="checkbox" id="selectAll" class="form-check-input">
+                            </th>
+                            <th>{% trans "序号" %}</th>
                             <th>{% trans "产品编号" %}</th>
                             <th>{% trans "部门名称" %}</th>
                             <th>{% trans "一级分类" %}</th>
@@ -66,6 +71,10 @@
                     <tbody>
                         {% for coefficient in page_obj %}
                         <tr>
+                            <td>
+                                <input type="checkbox" class="form-check-input coefficient-checkbox" value="{{ coefficient.pk }}">
+                            </td>
+                            <td>{{ forloop.counter|add:page_obj.start_index|add:"-1" }}</td>
                             <td><code>{{ coefficient.product_code }}</code></td>
                             <td>{{ coefficient.get_department_display }}</td>
                             <td>{{ coefficient.category_level1.name }}</td>
@@ -99,7 +108,7 @@
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="10" class="text-center py-5">
+                            <td colspan="12" class="text-center py-5">
                                 <i class="bi bi-inbox" style="font-size: 48px; color: #ccc;"></i>
                                 <p class="text-muted mt-3">{% trans "暂无数据" %}</p>
                             </td>
@@ -150,7 +159,7 @@
                     {% endif %}
                 </ul>
                 <p class="text-center text-muted">
-                    {% trans "第" %} {{ page_obj.number }} {% trans "页，共" %} {{ page_obj.paginator.num_pages }} {% trans "页" %}
+                    {% trans "第" %} {{ page_obj.number }} {% trans "页，共" %} {{ page_obj.paginator.num_pages }} {% trans "页" %} | {% trans "总计" %} {{ page_obj.paginator.count }} {% trans "条" %}
                 </p>
             </nav>
             {% endif %}
@@ -189,6 +198,101 @@ document.addEventListener('DOMContentLoaded', function() {
         // Move cursor to end of text
         searchInput.setSelectionRange(searchInput.value.length, searchInput.value.length);
     }
+    
+    // Multi-select functionality
+    const selectAllCheckbox = document.getElementById('selectAll');
+    const coefficientCheckboxes = document.querySelectorAll('.coefficient-checkbox');
+    const exportBtn = document.getElementById('exportBtn');
+    const exportBtnText = document.getElementById('exportBtnText');
+    
+    // Select/deselect all
+    selectAllCheckbox.addEventListener('change', function() {
+        coefficientCheckboxes.forEach(checkbox => {
+            checkbox.checked = this.checked;
+        });
+        updateExportButton();
+    });
+    
+    // Individual checkbox change
+    coefficientCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            updateSelectAllCheckbox();
+            updateExportButton();
+        });
+    });
+    
+    // Update select all checkbox state
+    function updateSelectAllCheckbox() {
+        const checkedCount = document.querySelectorAll('.coefficient-checkbox:checked').length;
+        const totalCount = coefficientCheckboxes.length;
+        selectAllCheckbox.checked = checkedCount === totalCount && totalCount > 0;
+        selectAllCheckbox.indeterminate = checkedCount > 0 && checkedCount < totalCount;
+    }
+    
+    // Update export button text based on selection
+    function updateExportButton() {
+        const checkedCheckboxes = document.querySelectorAll('.coefficient-checkbox:checked');
+        const count = checkedCheckboxes.length;
+        
+        if (count > 0) {
+            exportBtnText.textContent = '{% trans "导出选中" %} (' + count + ')';
+            exportBtn.classList.remove('btn-primary');
+            exportBtn.classList.add('btn-warning');
+        } else {
+            exportBtnText.textContent = '{% trans "导出数据" %}';
+            exportBtn.classList.remove('btn-warning');
+            exportBtn.classList.add('btn-primary');
+        }
+    }
+    
+    // Export handler - export selected or all
+    exportBtn.addEventListener('click', function() {
+        const checkedCheckboxes = document.querySelectorAll('.coefficient-checkbox:checked');
+        const ids = Array.from(checkedCheckboxes).map(cb => cb.value);
+        
+        if (ids.length === 0) {
+            // No selection, export all via GET
+            window.location.href = '{% url "coefficient_export" %}';
+            return;
+        }
+        
+        // Export selected via POST
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '{% url "coefficient_export" %}';
+        
+        // Add CSRF token
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+        if (csrfToken) {
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = 'csrfmiddlewaretoken';
+            csrfInput.value = csrfToken.value;
+            form.appendChild(csrfInput);
+        } else {
+            // Get CSRF token from cookie
+            const csrfCookie = document.cookie.split('; ').find(row => row.startsWith('csrftoken='));
+            if (csrfCookie) {
+                const csrfInput = document.createElement('input');
+                csrfInput.type = 'hidden';
+                csrfInput.name = 'csrfmiddlewaretoken';
+                csrfInput.value = csrfCookie.split('=')[1];
+                form.appendChild(csrfInput);
+            }
+        }
+        
+        // Add selected IDs
+        ids.forEach(id => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'ids';
+            input.value = id;
+            form.appendChild(input);
+        });
+        
+        document.body.appendChild(form);
+        form.submit();
+    });
 });
 </script>
 {% endblock %}

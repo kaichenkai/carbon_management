@@ -863,3 +863,36 @@ msgstr "No consumption records"
 
 #~ msgid "产品编码不存在，请选择有效的产品编码"
 #~ msgstr "Product code does not exist, please select a valid product code"
+
+msgid "序号"
+msgstr "Number"
+
+msgid "总计"
+msgstr "Total"
+
+msgid "条"
+msgstr "items"
+
+msgid "导出选中"
+msgstr "Export Selected"
+
+msgid "导出全部"
+msgstr "Export All"
+
+msgid "请选择要导出的记录"
+msgstr "Please select records to export"
+
+msgid "已选择"
+msgstr "Selected"
+
+msgid "总消耗数量"
+msgstr "Total Quantity"
+
+msgid "总碳排放量"
+msgstr "Total Carbon Emission"
+
+msgid "清除选择"
+msgstr "Clear Selection"
+
+msgid "清除"
+msgstr "Clear"

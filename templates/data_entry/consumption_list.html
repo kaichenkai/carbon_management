@@ -30,6 +30,9 @@
                 <table class="table table-hover align-middle">
                     <thead>
                         <tr>
+                            <th>
+                                <input type="checkbox" id="selectAll" class="form-check-input">
+                            </th>
                             <th>{% trans "酒店名称" %}</th>
                             <th>{% trans "部门" %}</th>
                             <th>{% trans "产品编号" %}</th>
@@ -44,6 +47,12 @@
                     <tbody>
                         {% for consumption in page_obj %}
                         <tr>
+                            <td>
+                                <input type="checkbox" class="form-check-input consumption-checkbox" 
+                                       value="{{ consumption.pk }}"
+                                       data-quantity="{{ consumption.quantity }}"
+                                       data-emission="{{ consumption.carbon_emission }}">
+                            </td>
                             <td>{{ consumption.hotel_name }}</td>
                             <td>{{ consumption.department }}</td>
                             <td><code>{{ consumption.product_code }}</code></td>
@@ -78,7 +87,7 @@
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="9" class="text-center py-5">
+                            <td colspan="10" class="text-center py-5">
                                 <i class="bi bi-inbox" style="font-size: 48px; color: #ccc;"></i>
                                 <p class="text-muted mt-3">{% trans "暂无消耗记录" %}</p>
                             </td>
@@ -130,4 +139,102 @@
         </div>
     </div>
 </div>
+
+<!-- Floating Statistics Toolbar -->
+<div id="statsToolbar" class="position-fixed bottom-0 start-50 translate-middle-x bg-primary text-white rounded-top shadow-lg" style="display: none; z-index: 1050; min-width: 650px; padding: 20px 30px;">
+    <div class="d-flex justify-content-between align-items-center">
+        <div class="d-flex gap-4 flex-grow-1">
+            <div>
+                <i class="bi bi-check-circle me-2"></i>
+                <span class="fw-bold">{% trans "已选择" %}:</span>
+                <span id="selectedCount" class="fs-5 fw-bold ms-2">0</span>
+                <span class="ms-1">{% trans "条" %}</span>
+            </div>
+            <div class="border-start border-white border-opacity-25 ps-4">
+                <i class="bi bi-calculator me-2"></i>
+                <span class="fw-bold">{% trans "总消耗数量" %}:</span>
+                <span id="totalQuantity" class="fs-5 fw-bold ms-2">0</span>
+            </div>
+            <div class="border-start border-white border-opacity-25 ps-4">
+                <i class="bi bi-cloud me-2"></i>
+                <span class="fw-bold">{% trans "总碳排放量" %}:</span>
+                <span id="totalEmission" class="fs-5 fw-bold ms-2">0</span>
+                <span class="ms-1">kgCO2e</span>
+            </div>
+        </div>
+        <button type="button" class="btn btn-outline-light btn-sm ms-4 fw-bold" onclick="clearSelection()" style="border-width: 2px;">
+            <i class="bi bi-x-circle me-1"></i> {% trans "清除" %}
+        </button>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const selectAllCheckbox = document.getElementById('selectAll');
+    const consumptionCheckboxes = document.querySelectorAll('.consumption-checkbox');
+    const statsToolbar = document.getElementById('statsToolbar');
+    const selectedCountSpan = document.getElementById('selectedCount');
+    const totalQuantitySpan = document.getElementById('totalQuantity');
+    const totalEmissionSpan = document.getElementById('totalEmission');
+    
+    // Select/deselect all
+    selectAllCheckbox.addEventListener('change', function() {
+        consumptionCheckboxes.forEach(checkbox => {
+            checkbox.checked = this.checked;
+        });
+        updateStatistics();
+    });
+    
+    // Individual checkbox change
+    consumptionCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            updateSelectAllCheckbox();
+            updateStatistics();
+        });
+    });
+    
+    // Update select all checkbox state
+    function updateSelectAllCheckbox() {
+        const checkedCount = document.querySelectorAll('.consumption-checkbox:checked').length;
+        const totalCount = consumptionCheckboxes.length;
+        selectAllCheckbox.checked = checkedCount === totalCount && totalCount > 0;
+        selectAllCheckbox.indeterminate = checkedCount > 0 && checkedCount < totalCount;
+    }
+    
+    // Update statistics and show/hide toolbar
+    function updateStatistics() {
+        const checkedCheckboxes = document.querySelectorAll('.consumption-checkbox:checked');
+        const count = checkedCheckboxes.length;
+        
+        if (count > 0) {
+            let totalQuantity = 0;
+            let totalEmission = 0;
+            
+            checkedCheckboxes.forEach(checkbox => {
+                totalQuantity += parseFloat(checkbox.dataset.quantity) || 0;
+                totalEmission += parseFloat(checkbox.dataset.emission) || 0;
+            });
+            
+            selectedCountSpan.textContent = count;
+            totalQuantitySpan.textContent = totalQuantity.toFixed(2);
+            totalEmissionSpan.textContent = totalEmission.toFixed(2);
+            
+            statsToolbar.style.display = 'block';
+        } else {
+            statsToolbar.style.display = 'none';
+        }
+    }
+    
+    // Clear selection function
+    window.clearSelection = function() {
+        consumptionCheckboxes.forEach(checkbox => {
+            checkbox.checked = false;
+        });
+        selectAllCheckbox.checked = false;
+        selectAllCheckbox.indeterminate = false;
+        updateStatistics();
+    };
+});
+</script>
+
 {% endblock %}

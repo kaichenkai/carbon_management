@@ -86,7 +86,7 @@ class MaterialConsumptionForm(forms.ModelForm):
         
         # Validate product code exists
         try:
-            coefficient = EmissionCoefficient.objects.get(product_code=product_code)
+            coefficient = EmissionCoefficient.objects.filter(product_code=product_code).first()
             
             # Auto-fill product information
             cleaned_data['product_name'] = coefficient.product_name
