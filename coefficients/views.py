@@ -413,14 +413,14 @@ def coefficient_import(request):
             
             # Show results
             if success_count > 0:
-                messages.success(request, _('成功导入 {} 条记录').format(success_count))
+                messages.success(request, _('成功导入 %(count)s 条记录') % {'count': success_count})
             if error_count > 0:
-                messages.warning(request, _('失败 {} 条记录').format(error_count))
+                messages.warning(request, _('失败 %(count)s 条记录') % {'count': error_count})
                 for error in errors[:10]:  # Show first 10 errors
                     messages.error(request, error)
             
         except Exception as e:
-            messages.error(request, _('文件处理失败: {}').format(str(e)))
+            messages.error(request, _('文件处理失败: %(error)s') % {'error': str(e)})
         
         return redirect('coefficient_list')
     

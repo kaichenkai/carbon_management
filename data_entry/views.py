@@ -5,7 +5,7 @@ from django.core.paginator import Paginator
 from django.http import JsonResponse
 from .models import MaterialConsumption
 from .forms import MaterialConsumptionForm
-from coefficients.models import EmissionCoefficient
+from coefficients.models import EmissionCoefficient, EmissionCategory
 
 
 def consumption_list(request):
@@ -86,7 +86,9 @@ def get_product_info(request):
             'success': True,
             'product_name': coefficient.product_name,
             'category_level1': coefficient.category_level1.name,
+            'category_level1_id': coefficient.category_level1.id,
             'category_level2': coefficient.category_level2.name,
+            'category_level2_id': coefficient.category_level2.id,
             'unit': coefficient.unit,
             'coefficient': str(coefficient.coefficient),
         }
@@ -97,3 +99,55 @@ def get_product_info(request):
         }
     
     return JsonResponse(data)
+
+
+def get_level2_categories(request):
+    """API endpoint to get level 2 categories by level 1 category"""
+    level1_id = request.GET.get('level1_id')
+    
+    if not level1_id:
+        return JsonResponse({'success': False, 'error': 'Missing level1_id'})
+    
+    try:
+        level1_category = EmissionCategory.objects.get(id=level1_id, level=1)
+        level2_categories = EmissionCategory.objects.filter(
+            level=2,
+            parent=level1_category
+        ).values('id', 'name')
+        
+        return JsonResponse({
+            'success': True,
+            'categories': list(level2_categories)
+        })
+    except EmissionCategory.DoesNotExist:
+        return JsonResponse({
+            'success': False,
+            'error': _('一级分类不存在')
+        })
+
+
+def get_products_by_category(request):
+    """API endpoint to get products by category"""
+    level1_id = request.GET.get('level1_id')
+    level2_id = request.GET.get('level2_id')
+    
+    try:
+        filters = {}
+        if level1_id:
+            filters['category_level1_id'] = level1_id
+        if level2_id:
+            filters['category_level2_id'] = level2_id
+        
+        products = EmissionCoefficient.objects.filter(**filters).values(
+            'id', 'product_code', 'product_name', 'unit', 'coefficient'
+        )
+        
+        return JsonResponse({
+            'success': True,
+            'products': list(products)
+        })
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        })

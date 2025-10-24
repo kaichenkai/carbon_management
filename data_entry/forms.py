@@ -1,11 +1,44 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
 from .models import MaterialConsumption
-from coefficients.models import EmissionCoefficient
+from coefficients.models import EmissionCoefficient, EmissionCategory
 
 
 class MaterialConsumptionForm(forms.ModelForm):
     """Form for material consumption entry"""
+    
+    # Category level 1 field with search
+    category_level1 = forms.ModelChoiceField(
+        label=_('一级分类'),
+        queryset=EmissionCategory.objects.filter(level=1),
+        required=True,
+        widget=forms.Select(attrs={
+            'class': 'form-select',
+            'id': 'id_category_level1'
+        })
+    )
+    
+    # Category level 2 field with search (will be populated dynamically)
+    category_level2 = forms.ModelChoiceField(
+        label=_('二级分类'),
+        queryset=EmissionCategory.objects.filter(level=2),
+        required=True,
+        widget=forms.Select(attrs={
+            'class': 'form-select',
+            'id': 'id_category_level2'
+        })
+    )
+    
+    # Product name field
+    product_name = forms.CharField(
+        label=_('产品名称'),
+        required=True,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': _('输入产品名称'),
+            'list': 'product-names'
+        })
+    )
     
     # Product code field with autocomplete
     product_code = forms.CharField(
@@ -20,7 +53,8 @@ class MaterialConsumptionForm(forms.ModelForm):
     class Meta:
         model = MaterialConsumption
         fields = [
-            'hotel_name', 'department', 'product_code',
+            'hotel_name', 'department', 'category_level1', 'category_level2',
+            'product_name', 'product_code',
             'consumption_date_start', 'consumption_date_end',
             'consumption_time_start', 'consumption_time_end',
             'quantity', 'notes'
@@ -76,27 +110,60 @@ class MaterialConsumptionForm(forms.ModelForm):
             attrs={'class': 'form-select'}
         )
         
-        # If editing existing record, populate product code
+        # If editing existing record, populate fields
         if self.instance.pk:
             self.fields['product_code'].initial = self.instance.product_code
+            self.fields['product_name'].initial = self.instance.product_name
+            
+            # Set category fields if they exist
+            try:
+                category1 = EmissionCategory.objects.get(
+                    name=self.instance.category_level1,
+                    level=1
+                )
+                self.fields['category_level1'].initial = category1
+                
+                # Filter level 2 categories by parent
+                self.fields['category_level2'].queryset = EmissionCategory.objects.filter(
+                    level=2,
+                    parent=category1
+                )
+                
+                category2 = EmissionCategory.objects.get(
+                    name=self.instance.category_level2,
+                    level=2,
+                    parent=category1
+                )
+                self.fields['category_level2'].initial = category2
+            except EmissionCategory.DoesNotExist:
+                pass
     
     def clean(self):
         cleaned_data = super().clean()
         product_code = cleaned_data.get('product_code')
+        category_level1 = cleaned_data.get('category_level1')
+        category_level2 = cleaned_data.get('category_level2')
+        product_name = cleaned_data.get('product_name')
         
-        # Validate product code exists
+        # Validate that level 2 category belongs to level 1 category
+        if category_level1 and category_level2:
+            if category_level2.parent != category_level1:
+                raise forms.ValidationError(_('二级分类必须属于所选的一级分类'))
+        
+        # Validate product code exists and matches the selected categories
         try:
-            coefficient = EmissionCoefficient.objects.filter(product_code=product_code).first()
+            coefficient = EmissionCoefficient.objects.get(
+                product_code=product_code,
+                category_level1=category_level1,
+                category_level2=category_level2
+            )
             
-            # Auto-fill product information
-            cleaned_data['product_name'] = coefficient.product_name
-            cleaned_data['category_level1'] = coefficient.category_level1.name
-            cleaned_data['category_level2'] = coefficient.category_level2.name
+            # Store product information
             cleaned_data['product_unit'] = coefficient.unit
             cleaned_data['emission_coefficient'] = coefficient.coefficient
             
         except EmissionCoefficient.DoesNotExist:
-            raise forms.ValidationError(_('产品编号不存在，请选择有效的产品编号'))
+            raise forms.ValidationError(_('产品编号不存在或与所选分类不匹配'))
         
         # Validate date range
         date_start = cleaned_data.get('consumption_date_start')
@@ -116,9 +183,8 @@ class MaterialConsumptionForm(forms.ModelForm):
         instance = super().save(commit=False)
         
         # Set product information from cleaned data
-        instance.product_name = self.cleaned_data['product_name']
-        instance.category_level1 = self.cleaned_data['category_level1']
-        instance.category_level2 = self.cleaned_data['category_level2']
+        instance.category_level1 = self.cleaned_data['category_level1'].name
+        instance.category_level2 = self.cleaned_data['category_level2'].name
         instance.product_unit = self.cleaned_data['product_unit']
         instance.emission_coefficient = self.cleaned_data['emission_coefficient']
         

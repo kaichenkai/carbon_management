@@ -52,22 +52,55 @@
                                 {% endif %}
                             </div>
                             
+                            <!-- 一级分类 -->
+                            <div class="col-md-6">
+                                <label for="{{ form.category_level1.id_for_label }}" class="form-label">
+                                    {{ form.category_level1.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.category_level1 }}
+                                {% if form.category_level1.errors %}
+                                    <div class="text-danger small mt-1">{{ form.category_level1.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- 二级分类 -->
+                            <div class="col-md-6">
+                                <label for="{{ form.category_level2.id_for_label }}" class="form-label">
+                                    {{ form.category_level2.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.category_level2 }}
+                                {% if form.category_level2.errors %}
+                                    <div class="text-danger small mt-1">{{ form.category_level2.errors }}</div>
+                                {% endif %}
+                            </div>
                             <!-- 产品编号 -->
-                            <div class="col-md-12">
+                            <div class="col-md-6">
                                 <label for="{{ form.product_code.id_for_label }}" class="form-label">
                                     {{ form.product_code.label }} <span class="text-danger">*</span>
                                 </label>
                                 {{ form.product_code }}
                                 <datalist id="product-codes">
-                                    {% for code in product_codes %}
-                                    <option value="{{ code }}">
-                                    {% endfor %}
+                                    <!-- Will be populated dynamically -->
                                 </datalist>
                                 {% if form.product_code.errors %}
                                     <div class="text-danger small mt-1">{{ form.product_code.errors }}</div>
                                 {% endif %}
-                                <div class="form-text">{% trans "输入产品编号，系统将自动填充产品信息" %}</div>
+                            </div> 
+                            <!-- 产品名称 -->
+                            <div class="col-md-6">
+                                <label for="{{ form.product_name.id_for_label }}" class="form-label">
+                                    {{ form.product_name.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.product_name }}
+                                <datalist id="product-names">
+                                    <!-- Will be populated dynamically -->
+                                </datalist>
+                                {% if form.product_name.errors %}
+                                    <div class="text-danger small mt-1">{{ form.product_name.errors }}</div>
+                                {% endif %}
                             </div>
+                            
+
                             
                             <!-- Auto-filled product information (read-only display) -->
                             <div class="col-md-12" id="productInfo" style="display: none;">
@@ -179,43 +212,160 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    const categoryLevel1Select = document.getElementById('id_category_level1');
+    const categoryLevel2Select = document.getElementById('id_category_level2');
+    const productNameInput = document.querySelector('input[name="product_name"]');
     const productCodeInput = document.querySelector('input[name="product_code"]');
     const quantityInput = document.querySelector('input[name="quantity"]');
     const productInfo = document.getElementById('productInfo');
     const calculatedEmission = document.getElementById('calculatedEmission');
     
     let currentCoefficient = 0;
+    let productsCache = [];
     
-    // Fetch product info when product code changes
-    productCodeInput.addEventListener('blur', function() {
-        const code = this.value.trim();
-        if (code) {
-            fetch(`/data-entry/api/product-info/?code=${encodeURIComponent(code)}`)
+    // When level 1 category changes, load level 2 categories
+    categoryLevel1Select.addEventListener('change', function() {
+        const level1Id = this.value;
+        
+        // Clear level 2 select
+        categoryLevel2Select.innerHTML = '<option value="">---------</option>';
+        categoryLevel2Select.disabled = !level1Id;
+        
+        // Clear product fields
+        productNameInput.value = '';
+        productCodeInput.value = '';
+        productInfo.style.display = 'none';
+        
+        if (level1Id) {
+            // Fetch level 2 categories
+            fetch(`/data-entry/api/level2-categories/?level1_id=${level1Id}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        // Display product information
-                        document.getElementById('displayProductName').textContent = data.product_name;
-                        document.getElementById('displayCategory').textContent = data.category_level1 + ' > ' + data.category_level2;
-                        document.getElementById('displayUnit').textContent = data.unit;
-                        document.getElementById('displayCoefficient').textContent = data.coefficient;
-                        productInfo.style.display = 'block';
-                        
-                        // Store coefficient for calculation
-                        currentCoefficient = parseFloat(data.coefficient);
-                        
-                        // Calculate emission if quantity is already entered
-                        calculateEmission();
-                    } else {
-                        productInfo.style.display = 'none';
-                        alert(data.error);
+                        data.categories.forEach(cat => {
+                            const option = document.createElement('option');
+                            option.value = cat.id;
+                            option.textContent = cat.name;
+                            categoryLevel2Select.appendChild(option);
+                        });
                     }
                 })
-                .catch(error => {
-                    console.error('Error fetching product info:', error);
-                });
+                .catch(error => console.error('Error fetching level 2 categories:', error));
         }
     });
+    
+    // When level 2 category changes, load products
+    categoryLevel2Select.addEventListener('change', function() {
+        const level1Id = categoryLevel1Select.value;
+        const level2Id = this.value;
+        
+        // Clear product fields
+        productNameInput.value = '';
+        productCodeInput.value = '';
+        productInfo.style.display = 'none';
+        
+        if (level1Id && level2Id) {
+            // Fetch products by category
+            fetch(`/data-entry/api/products-by-category/?level1_id=${level1Id}&level2_id=${level2Id}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        productsCache = data.products;
+                        
+                        // Update datalists
+                        const productNamesDatalist = document.getElementById('product-names');
+                        const productCodesDatalist = document.getElementById('product-codes');
+                        
+                        productNamesDatalist.innerHTML = '';
+                        productCodesDatalist.innerHTML = '';
+                        
+                        data.products.forEach(product => {
+                            const nameOption = document.createElement('option');
+                            nameOption.value = product.product_name;
+                            productNamesDatalist.appendChild(nameOption);
+                            
+                            const codeOption = document.createElement('option');
+                            codeOption.value = product.product_code;
+                            productCodesDatalist.appendChild(codeOption);
+                        });
+                    }
+                })
+                .catch(error => console.error('Error fetching products:', error));
+        }
+    });
+    
+    // When product name changes, auto-fill product code
+    productNameInput.addEventListener('blur', function() {
+        const productName = this.value.trim();
+        if (productName && productsCache.length > 0) {
+            const product = productsCache.find(p => p.product_name === productName);
+            if (product) {
+                productCodeInput.value = product.product_code;
+                updateProductInfo(product);
+            }
+        }
+    });
+    
+    // When product code changes, auto-fill product name and info
+    productCodeInput.addEventListener('blur', function() {
+        const code = this.value.trim();
+        if (code) {
+            // First try from cache
+            const product = productsCache.find(p => p.product_code === code);
+            if (product) {
+                productNameInput.value = product.product_name;
+                updateProductInfo(product);
+            } else {
+                // Fetch from API
+                fetch(`/data-entry/api/product-info/?code=${encodeURIComponent(code)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            productNameInput.value = data.product_name;
+                            
+                            // Update category selects if needed
+                            if (categoryLevel1Select.value != data.category_level1_id) {
+                                categoryLevel1Select.value = data.category_level1_id;
+                                categoryLevel1Select.dispatchEvent(new Event('change'));
+                                
+                                // Wait for level 2 to load, then set it
+                                setTimeout(() => {
+                                    categoryLevel2Select.value = data.category_level2_id;
+                                }, 500);
+                            }
+                            
+                            // Display product information
+                            document.getElementById('displayProductName').textContent = data.product_name;
+                            document.getElementById('displayCategory').textContent = data.category_level1 + ' > ' + data.category_level2;
+                            document.getElementById('displayUnit').textContent = data.unit;
+                            document.getElementById('displayCoefficient').textContent = data.coefficient;
+                            productInfo.style.display = 'block';
+                            
+                            // Store coefficient for calculation
+                            currentCoefficient = parseFloat(data.coefficient);
+                            calculateEmission();
+                        } else {
+                            productInfo.style.display = 'none';
+                            alert(data.error);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching product info:', error);
+                    });
+            }
+        }
+    });
+    
+    function updateProductInfo(product) {
+        document.getElementById('displayProductName').textContent = product.product_name;
+        document.getElementById('displayCategory').textContent = '';
+        document.getElementById('displayUnit').textContent = product.unit;
+        document.getElementById('displayCoefficient').textContent = product.coefficient;
+        productInfo.style.display = 'block';
+        
+        currentCoefficient = parseFloat(product.coefficient);
+        calculateEmission();
+    }
     
     // Calculate emission when quantity changes
     quantityInput.addEventListener('input', calculateEmission);
@@ -235,6 +385,11 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('displayCoefficient').textContent = '{{ consumption.emission_coefficient }}';
     productInfo.style.display = 'block';
     calculateEmission();
+    
+    // Trigger change event to load level 2 categories
+    if (categoryLevel1Select.value) {
+        categoryLevel1Select.dispatchEvent(new Event('change'));
+    }
     {% endif %}
 });
 </script>
