@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from coefficients.models import EmissionCoefficient
+from coefficients.models import EmissionCoefficient, EmissionCategory
 
 # Create your models here.
 
@@ -9,13 +9,25 @@ class MaterialConsumption(models.Model):
     
     # Basic information
     hotel_name = models.CharField(_('酒店名称'), max_length=200, blank=True)
-    department = models.CharField(_('部门'), max_length=50)
+    department = models.CharField(_('部门名称'), max_length=50, choices=EmissionCoefficient.DEPARTMENT_CHOICES)
     
     # Product information (from EmissionCoefficient)
     product_code = models.CharField(_('产品代码'), max_length=50, db_index=True)
     product_name = models.CharField(_('产品名称'), max_length=200)
-    category_level1 = models.CharField(_('一级分类'), max_length=100)
-    category_level2 = models.CharField(_('二级分类'), max_length=100)
+    category_level1 = models.ForeignKey(
+        EmissionCategory,
+        on_delete=models.PROTECT,
+        verbose_name=_('一级分类'),
+        related_name='consumptions_level1',
+        limit_choices_to={'level': 1}
+    )
+    category_level2 = models.ForeignKey(
+        EmissionCategory,
+        on_delete=models.PROTECT,
+        verbose_name=_('二级分类'),
+        related_name='consumptions_level2',
+        limit_choices_to={'level': 2}
+    )
     product_unit = models.CharField(_('产品单位'), max_length=20)
     emission_coefficient = models.DecimalField(_('碳排放系数'), max_digits=10, decimal_places=2)
     

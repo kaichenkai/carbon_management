@@ -33,14 +33,126 @@
                             <th>
                                 <input type="checkbox" id="selectAll" class="form-check-input">
                             </th>
-                            <th>{% trans "酒店名称" %}</th>
-                            <th>{% trans "部门" %}</th>
-                            <th>{% trans "产品编号" %}</th>
-                            <th>{% trans "产品名称" %}</th>
-                            <th>{% trans "消耗日期区间" %}</th>
+                            <th>
+                                <a href="?sort=hotel_name&order={% if current_sort == 'hotel_name' and current_order == 'asc' %}desc{% else %}asc{% endif %}" 
+                                   class="text-decoration-none text-dark d-inline-flex align-items-center">
+                                    {% trans "酒店名称" %}
+                                    <span class="ms-1">
+                                        {% if current_sort == 'hotel_name' %}
+                                            {% if current_order == 'asc' %}
+                                                <i class="bi bi-arrow-up text-primary"></i>
+                                            {% else %}
+                                                <i class="bi bi-arrow-down text-primary"></i>
+                                            {% endif %}
+                                        {% else %}
+                                            <i class="bi bi-arrow-down-up text-muted opacity-50"></i>
+                                        {% endif %}
+                                    </span>
+                                </a>
+                            </th>
+                            <th>
+                                <a href="?sort=department&order={% if current_sort == 'department' and current_order == 'asc' %}desc{% else %}asc{% endif %}" 
+                                   class="text-decoration-none text-dark d-inline-flex align-items-center">
+                                    {% trans "部门" %}
+                                    <span class="ms-1">
+                                        {% if current_sort == 'department' %}
+                                            {% if current_order == 'asc' %}
+                                                <i class="bi bi-arrow-up text-primary"></i>
+                                            {% else %}
+                                                <i class="bi bi-arrow-down text-primary"></i>
+                                            {% endif %}
+                                        {% else %}
+                                            <i class="bi bi-arrow-down-up text-muted opacity-50"></i>
+                                        {% endif %}
+                                    </span>
+                                </a>
+                            </th>
+                            <th>
+                                <a href="?sort=product_code&order={% if current_sort == 'product_code' and current_order == 'asc' %}desc{% else %}asc{% endif %}" 
+                                   class="text-decoration-none text-dark d-inline-flex align-items-center">
+                                    {% trans "产品编号" %}
+                                    <span class="ms-1">
+                                        {% if current_sort == 'product_code' %}
+                                            {% if current_order == 'asc' %}
+                                                <i class="bi bi-arrow-up text-primary"></i>
+                                            {% else %}
+                                                <i class="bi bi-arrow-down text-primary"></i>
+                                            {% endif %}
+                                        {% else %}
+                                            <i class="bi bi-arrow-down-up text-muted opacity-50"></i>
+                                        {% endif %}
+                                    </span>
+                                </a>
+                            </th>
+                            <th>
+                                <a href="?sort=product_name&order={% if current_sort == 'product_name' and current_order == 'asc' %}desc{% else %}asc{% endif %}" 
+                                   class="text-decoration-none text-dark d-inline-flex align-items-center">
+                                    {% trans "产品名称" %}
+                                    <span class="ms-1">
+                                        {% if current_sort == 'product_name' %}
+                                            {% if current_order == 'asc' %}
+                                                <i class="bi bi-arrow-up text-primary"></i>
+                                            {% else %}
+                                                <i class="bi bi-arrow-down text-primary"></i>
+                                            {% endif %}
+                                        {% else %}
+                                            <i class="bi bi-arrow-down-up text-muted opacity-50"></i>
+                                        {% endif %}
+                                    </span>
+                                </a>
+                            </th>
+                            <th>
+                                <a href="?sort=consumption_date_start&order={% if current_sort == 'consumption_date_start' and current_order == 'asc' %}desc{% else %}asc{% endif %}" 
+                                   class="text-decoration-none text-dark d-inline-flex align-items-center">
+                                    {% trans "消耗日期区间" %}
+                                    <span class="ms-1">
+                                        {% if current_sort == 'consumption_date_start' %}
+                                            {% if current_order == 'asc' %}
+                                                <i class="bi bi-arrow-up text-primary"></i>
+                                            {% else %}
+                                                <i class="bi bi-arrow-down text-primary"></i>
+                                            {% endif %}
+                                        {% else %}
+                                            <i class="bi bi-arrow-down-up text-muted opacity-50"></i>
+                                        {% endif %}
+                                    </span>
+                                </a>
+                            </th>
                             <th>{% trans "消耗时间区间" %}</th>
-                            <th>{% trans "消耗数量" %}</th>
-                            <th>{% trans "碳排放量" %}</th>
+                            <th>
+                                <a href="?sort=quantity&order={% if current_sort == 'quantity' and current_order == 'asc' %}desc{% else %}asc{% endif %}" 
+                                   class="text-decoration-none text-dark d-inline-flex align-items-center">
+                                    {% trans "消耗数量" %}
+                                    <span class="ms-1">
+                                        {% if current_sort == 'quantity' %}
+                                            {% if current_order == 'asc' %}
+                                                <i class="bi bi-arrow-up text-primary"></i>
+                                            {% else %}
+                                                <i class="bi bi-arrow-down text-primary"></i>
+                                            {% endif %}
+                                        {% else %}
+                                            <i class="bi bi-arrow-down-up text-muted opacity-50"></i>
+                                        {% endif %}
+                                    </span>
+                                </a>
+                            </th>
+                            <th>
+                                <a href="?sort=carbon_emission&order={% if current_sort == 'carbon_emission' and current_order == 'asc' %}desc{% else %}asc{% endif %}" 
+                                   class="text-decoration-none text-dark d-inline-flex align-items-center">
+                                    {% trans "碳排放量" %}
+                                    <span class="ms-1">
+                                        {% if current_sort == 'carbon_emission' %}
+                                            {% if current_order == 'asc' %}
+                                                <i class="bi bi-arrow-up text-primary"></i>
+                                            {% else %}
+                                                <i class="bi bi-arrow-down text-primary"></i>
+                                            {% endif %}
+                                        {% else %}
+                                            <i class="bi bi-arrow-down-up text-muted opacity-50"></i>
+                                        {% endif %}
+                                    </span>
+                                </a>
+                            </th>
                             <th>{% trans "操作" %}</th>
                         </tr>
                     </thead>
@@ -54,11 +166,11 @@
                                        data-emission="{{ consumption.carbon_emission }}">
                             </td>
                             <td>{{ consumption.hotel_name }}</td>
-                            <td>{{ consumption.department }}</td>
+                            <td>{{ consumption.get_department_display }}</td>
                             <td><code>{{ consumption.product_code }}</code></td>
                             <td>
                                 {{ consumption.product_name }}
-                                <br><small class="text-muted">{{ consumption.category_level1 }} > {{ consumption.category_level2 }}</small>
+                                <br><small class="text-muted">{{ consumption.category_level2 }}</small>
                             </td>
                             <td>
                                 {{ consumption.consumption_date_start|date:"Y-m-d" }}
@@ -103,14 +215,18 @@
                 <ul class="pagination justify-content-center">
                     {% if page_obj.has_previous %}
                     <li class="page-item">
-                        <a class="page-link" href="?page=1">
+                        <a class="page-link" href="?page=1&sort={{ current_sort }}&order={{ current_order }}">
                             <i class="bi bi-chevron-double-left"></i>
                         </a>
                     </li>
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}&sort={{ current_sort }}&order={{ current_order }}">
                             <i class="bi bi-chevron-left"></i>
                         </a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link"><i class="bi bi-chevron-double-left"></i></span>
                     </li>
                     {% endif %}
                     
@@ -120,12 +236,12 @@
                     
                     {% if page_obj.has_next %}
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}&sort={{ current_sort }}&order={{ current_order }}">
                             <i class="bi bi-chevron-right"></i>
                         </a>
                     </li>
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">
+                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&sort={{ current_sort }}&order={{ current_order }}">
                             <i class="bi bi-chevron-double-right"></i>
                         </a>
                     </li>

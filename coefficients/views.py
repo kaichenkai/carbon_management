@@ -116,6 +116,31 @@ def coefficient_list(request):
                 Q(coefficient__icontains=query)
             )
     
+    # Sorting
+    sort_by = request.GET.get('sort', '-updated_at')
+    order = request.GET.get('order', 'desc')
+    
+    # Valid sort fields
+    valid_sorts = {
+        'product_code': 'product_code',
+        'department': 'department',
+        'category_level1': 'category_level1__name',
+        'category_level2': 'category_level2__name',
+        'product_name': 'product_name',
+        'coefficient': 'coefficient',
+        'updated_at': 'updated_at',
+    }
+    
+    if sort_by.lstrip('-') in valid_sorts:
+        sort_field = valid_sorts[sort_by.lstrip('-')]
+        # Toggle order if clicking the same column
+        if order == 'asc':
+            coefficients = coefficients.order_by(sort_field)
+        else:
+            coefficients = coefficients.order_by(f'-{sort_field}')
+    else:
+        coefficients = coefficients.order_by('-updated_at')
+    
     # Pagination
     paginator = Paginator(coefficients, 20)
     page_number = request.GET.get('page')
@@ -130,6 +155,8 @@ def coefficient_list(request):
         'search_form': search_form,
         'level1_categories': level1_categories,
         'level2_categories': level2_categories,
+        'current_sort': sort_by.lstrip('-'),
+        'current_order': order,
     }
     return render(request, 'coefficients/coefficient_list.html', context)
 

@@ -12,6 +12,30 @@ def consumption_list(request):
     """List all material consumption records"""
     consumptions = MaterialConsumption.objects.all()
     
+    # Sorting
+    sort_by = request.GET.get('sort', '-consumption_date_start')
+    order = request.GET.get('order', 'desc')
+    
+    # Valid sort fields
+    valid_sorts = {
+        'hotel_name': 'hotel_name',
+        'department': 'department',
+        'product_code': 'product_code',
+        'product_name': 'product_name',
+        'consumption_date_start': 'consumption_date_start',
+        'quantity': 'quantity',
+        'carbon_emission': 'carbon_emission',
+    }
+    
+    if sort_by.lstrip('-') in valid_sorts:
+        # Toggle order if clicking the same column
+        if order == 'asc':
+            consumptions = consumptions.order_by(sort_by)
+        else:
+            consumptions = consumptions.order_by(f'-{sort_by.lstrip("-")}')
+    else:
+        consumptions = consumptions.order_by('-consumption_date_start', '-created_at')
+    
     # Pagination
     paginator = Paginator(consumptions, 20)
     page_number = request.GET.get('page')
@@ -19,6 +43,8 @@ def consumption_list(request):
     
     context = {
         'page_obj': page_obj,
+        'current_sort': sort_by.lstrip('-'),
+        'current_order': order,
     }
     return render(request, 'data_entry/consumption_list.html', context)
 

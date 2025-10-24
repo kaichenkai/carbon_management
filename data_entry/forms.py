@@ -115,28 +115,13 @@ class MaterialConsumptionForm(forms.ModelForm):
             self.fields['product_code'].initial = self.instance.product_code
             self.fields['product_name'].initial = self.instance.product_name
             
-            # Set category fields if they exist
-            try:
-                category1 = EmissionCategory.objects.get(
-                    name=self.instance.category_level1,
-                    level=1
-                )
-                self.fields['category_level1'].initial = category1
-                
+            # Set category fields if they exist (they are already ForeignKey objects)
+            if self.instance.category_level1:
                 # Filter level 2 categories by parent
                 self.fields['category_level2'].queryset = EmissionCategory.objects.filter(
                     level=2,
-                    parent=category1
+                    parent=self.instance.category_level1
                 )
-                
-                category2 = EmissionCategory.objects.get(
-                    name=self.instance.category_level2,
-                    level=2,
-                    parent=category1
-                )
-                self.fields['category_level2'].initial = category2
-            except EmissionCategory.DoesNotExist:
-                pass
     
     def clean(self):
         cleaned_data = super().clean()
@@ -152,11 +137,11 @@ class MaterialConsumptionForm(forms.ModelForm):
         
         # Validate product code exists and matches the selected categories
         try:
-            coefficient = EmissionCoefficient.objects.get(
+            coefficient = EmissionCoefficient.objects.filter(
                 product_code=product_code,
                 category_level1=category_level1,
                 category_level2=category_level2
-            )
+            ).first()
             
             # Store product information
             cleaned_data['product_unit'] = coefficient.unit
@@ -183,8 +168,7 @@ class MaterialConsumptionForm(forms.ModelForm):
         instance = super().save(commit=False)
         
         # Set product information from cleaned data
-        instance.category_level1 = self.cleaned_data['category_level1'].name
-        instance.category_level2 = self.cleaned_data['category_level2'].name
+        # category_level1 and category_level2 are already set as ForeignKey objects
         instance.product_unit = self.cleaned_data['product_unit']
         instance.emission_coefficient = self.cleaned_data['emission_coefficient']
         

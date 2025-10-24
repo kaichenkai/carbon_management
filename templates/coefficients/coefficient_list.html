@@ -56,15 +56,127 @@
                                 <input type="checkbox" id="selectAll" class="form-check-input">
                             </th>
                             <th>{% trans "序号" %}</th>
-                            <th>{% trans "产品编号" %}</th>
-                            <th>{% trans "部门名称" %}</th>
-                            <th>{% trans "一级分类" %}</th>
-                            <th>{% trans "二级分类" %}</th>
-                            <th>{% trans "产品名称" %}</th>
+                            <th>
+                                <a href="?sort=product_code&order={% if current_sort == 'product_code' and current_order == 'asc' %}desc{% else %}asc{% endif %}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}" 
+                                   class="text-decoration-none text-dark d-inline-flex align-items-center">
+                                    {% trans "产品编号" %}
+                                    <span class="ms-1">
+                                        {% if current_sort == 'product_code' %}
+                                            {% if current_order == 'asc' %}
+                                                <i class="bi bi-arrow-up text-primary"></i>
+                                            {% else %}
+                                                <i class="bi bi-arrow-down text-primary"></i>
+                                            {% endif %}
+                                        {% else %}
+                                            <i class="bi bi-arrow-down-up text-muted opacity-50"></i>
+                                        {% endif %}
+                                    </span>
+                                </a>
+                            </th>
+                            <th>
+                                <a href="?sort=department&order={% if current_sort == 'department' and current_order == 'asc' %}desc{% else %}asc{% endif %}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}" 
+                                   class="text-decoration-none text-dark d-inline-flex align-items-center">
+                                    {% trans "部门" %}
+                                    <span class="ms-1">
+                                        {% if current_sort == 'department' %}
+                                            {% if current_order == 'asc' %}
+                                                <i class="bi bi-arrow-up text-primary"></i>
+                                            {% else %}
+                                                <i class="bi bi-arrow-down text-primary"></i>
+                                            {% endif %}
+                                        {% else %}
+                                            <i class="bi bi-arrow-down-up text-muted opacity-50"></i>
+                                        {% endif %}
+                                    </span>
+                                </a>
+                            </th>
+                            <th>
+                                <a href="?sort=category_level1&order={% if current_sort == 'category_level1' and current_order == 'asc' %}desc{% else %}asc{% endif %}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}" 
+                                   class="text-decoration-none text-dark d-inline-flex align-items-center">
+                                    {% trans "一级分类" %}
+                                    <span class="ms-1">
+                                        {% if current_sort == 'category_level1' %}
+                                            {% if current_order == 'asc' %}
+                                                <i class="bi bi-arrow-up text-primary"></i>
+                                            {% else %}
+                                                <i class="bi bi-arrow-down text-primary"></i>
+                                            {% endif %}
+                                        {% else %}
+                                            <i class="bi bi-arrow-down-up text-muted opacity-50"></i>
+                                        {% endif %}
+                                    </span>
+                                </a>
+                            </th>
+                            <th>
+                                <a href="?sort=category_level2&order={% if current_sort == 'category_level2' and current_order == 'asc' %}desc{% else %}asc{% endif %}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}" 
+                                   class="text-decoration-none text-dark d-inline-flex align-items-center">
+                                    {% trans "二级分类" %}
+                                    <span class="ms-1">
+                                        {% if current_sort == 'category_level2' %}
+                                            {% if current_order == 'asc' %}
+                                                <i class="bi bi-arrow-up text-primary"></i>
+                                            {% else %}
+                                                <i class="bi bi-arrow-down text-primary"></i>
+                                            {% endif %}
+                                        {% else %}
+                                            <i class="bi bi-arrow-down-up text-muted opacity-50"></i>
+                                        {% endif %}
+                                    </span>
+                                </a>
+                            </th>
+                            <th>
+                                <a href="?sort=product_name&order={% if current_sort == 'product_name' and current_order == 'asc' %}desc{% else %}asc{% endif %}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}" 
+                                   class="text-decoration-none text-dark d-inline-flex align-items-center">
+                                    {% trans "产品名称" %}
+                                    <span class="ms-1">
+                                        {% if current_sort == 'product_name' %}
+                                            {% if current_order == 'asc' %}
+                                                <i class="bi bi-arrow-up text-primary"></i>
+                                            {% else %}
+                                                <i class="bi bi-arrow-down text-primary"></i>
+                                            {% endif %}
+                                        {% else %}
+                                            <i class="bi bi-arrow-down-up text-muted opacity-50"></i>
+                                        {% endif %}
+                                    </span>
+                                </a>
+                            </th>
                             <th>{% trans "单位" %}</th>
-                            <th>{% trans "碳排放系数" %}</th>
+                            <th>
+                                <a href="?sort=coefficient&order={% if current_sort == 'coefficient' and current_order == 'asc' %}desc{% else %}asc{% endif %}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}" 
+                                   class="text-decoration-none text-dark d-inline-flex align-items-center">
+                                    {% trans "碳排放系数" %}
+                                    <span class="ms-1">
+                                        {% if current_sort == 'coefficient' %}
+                                            {% if current_order == 'asc' %}
+                                                <i class="bi bi-arrow-up text-primary"></i>
+                                            {% else %}
+                                                <i class="bi bi-arrow-down text-primary"></i>
+                                            {% endif %}
+                                        {% else %}
+                                            <i class="bi bi-arrow-down-up text-muted opacity-50"></i>
+                                        {% endif %}
+                                    </span>
+                                </a>
+                            </th>
                             <th>{% trans "特殊备注" %}</th>
-                            <th>{% trans "最后更新" %}</th>
+                            <th>
+                                <a href="?sort=updated_at&order={% if current_sort == 'updated_at' and current_order == 'asc' %}desc{% else %}asc{% endif %}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}" 
+                                   class="text-decoration-none text-dark d-inline-flex align-items-center">
+                                    {% trans "最后更新" %}
+                                    <span class="ms-1">
+                                        {% if current_sort == 'updated_at' %}
+                                            {% if current_order == 'asc' %}
+                                                <i class="bi bi-arrow-up text-primary"></i>
+                                            {% else %}
+                                                <i class="bi bi-arrow-down text-primary"></i>
+                                            {% endif %}
+                                        {% else %}
+                                            <i class="bi bi-arrow-down-up text-muted opacity-50"></i>
+                                        {% endif %}
+                                    </span>
+                                </a>
+                            </th>
                             <th>{% trans "操作" %}</th>
                         </tr>
                     </thead>
@@ -124,12 +236,12 @@
                 <ul class="pagination justify-content-center">
                     {% if page_obj.has_previous %}
                     <li class="page-item">
-                        <a class="page-link" href="?page=1{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}">
+                        <a class="page-link" href="?page=1{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}&sort={{ current_sort }}&order={{ current_order }}">
                             <i class="bi bi-chevron-double-left"></i>
                         </a>
                     </li>
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}&sort={{ current_sort }}&order={{ current_order }}">
                             <i class="bi bi-chevron-left"></i>
                         </a>
                     </li>
@@ -140,19 +252,19 @@
                         <li class="page-item active"><span class="page-link">{{ num }}</span></li>
                         {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
                         <li class="page-item">
-                            <a class="page-link" href="?page={{ num }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}">{{ num }}</a>
+                            <a class="page-link" href="?page={{ num }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}&sort={{ current_sort }}&order={{ current_order }}">{{ num }}</a>
                         </li>
                         {% endif %}
                     {% endfor %}
                     
                     {% if page_obj.has_next %}
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}&sort={{ current_sort }}&order={{ current_order }}">
                             <i class="bi bi-chevron-right"></i>
                         </a>
                     </li>
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}">
+                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}&sort={{ current_sort }}&order={{ current_order }}">
                             <i class="bi bi-chevron-double-right"></i>
                         </a>
                     </li>

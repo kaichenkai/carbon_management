@@ -328,22 +328,32 @@ document.addEventListener('DOMContentLoaded', function() {
                                 categoryLevel1Select.value = data.category_level1_id;
                                 categoryLevel1Select.dispatchEvent(new Event('change'));
                                 
-                                // Wait for level 2 to load, then set it
+                                // Wait for level 2 to load, then set it and update display
                                 setTimeout(() => {
                                     categoryLevel2Select.value = data.category_level2_id;
+                                    
+                                    // Display product information
+                                    document.getElementById('displayProductName').textContent = data.product_name;
+                                    document.getElementById('displayCategory').textContent = data.category_level1 + ' > ' + data.category_level2;
+                                    document.getElementById('displayUnit').textContent = data.unit;
+                                    document.getElementById('displayCoefficient').textContent = data.coefficient;
+                                    productInfo.style.display = 'block';
+                                    
+                                    // Store coefficient for calculation
+                                    currentCoefficient = parseFloat(data.coefficient);
+                                    calculateEmission();
                                 }, 500);
+                            } else {
+                                // Categories already match, just update display
+                                document.getElementById('displayProductName').textContent = data.product_name;
+                                document.getElementById('displayCategory').textContent = data.category_level1 + ' > ' + data.category_level2;
+                                document.getElementById('displayUnit').textContent = data.unit;
+                                document.getElementById('displayCoefficient').textContent = data.coefficient;
+                                productInfo.style.display = 'block';
+                                
+                                currentCoefficient = parseFloat(data.coefficient);
+                                calculateEmission();
                             }
-                            
-                            // Display product information
-                            document.getElementById('displayProductName').textContent = data.product_name;
-                            document.getElementById('displayCategory').textContent = data.category_level1 + ' > ' + data.category_level2;
-                            document.getElementById('displayUnit').textContent = data.unit;
-                            document.getElementById('displayCoefficient').textContent = data.coefficient;
-                            productInfo.style.display = 'block';
-                            
-                            // Store coefficient for calculation
-                            currentCoefficient = parseFloat(data.coefficient);
-                            calculateEmission();
                         } else {
                             productInfo.style.display = 'none';
                             alert(data.error);
@@ -358,7 +368,17 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function updateProductInfo(product) {
         document.getElementById('displayProductName').textContent = product.product_name;
-        document.getElementById('displayCategory').textContent = '';
+        
+        // Get category names from selects
+        const cat1Text = categoryLevel1Select.options[categoryLevel1Select.selectedIndex]?.text || '';
+        const cat2Text = categoryLevel2Select.options[categoryLevel2Select.selectedIndex]?.text || '';
+        
+        if (cat1Text && cat2Text) {
+            document.getElementById('displayCategory').textContent = cat1Text + ' > ' + cat2Text;
+        } else {
+            document.getElementById('displayCategory').textContent = '';
+        }
+        
         document.getElementById('displayUnit').textContent = product.unit;
         document.getElementById('displayCoefficient').textContent = product.coefficient;
         productInfo.style.display = 'block';
