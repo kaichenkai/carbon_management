@@ -106,7 +106,7 @@ class EmissionCoefficient(models.Model):
         related_name='coefficients_level2',
         limit_choices_to={'level': 2}
     )
-    product_name = models.CharField(_('产品名称'), max_length=200)
+    product_name = models.CharField(_('产品名称'), unique=True, max_length=200)
     product_name_en = models.CharField(_('产品名称(英文)'), max_length=200, blank=True)
     unit = models.CharField(_('单位'), max_length=20, choices=UNIT_CHOICES)
     coefficient = models.DecimalField(_('碳排放系数'), max_digits=10, decimal_places=2)

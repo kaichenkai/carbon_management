@@ -241,6 +241,86 @@
                 languageForm.submit();
             });
         }
+        
+        // Shared fixed table header functionality
+        function initFixedTableHeader() {
+            const tableWrapper = document.querySelector('.card-body.p-0 > div');
+            const table = document.querySelector('.fixed-header-table');
+            const thead = table ? table.querySelector('thead') : null;
+            
+            if (!tableWrapper || !thead) return;
+            
+            tableWrapper.style.position = 'relative';
+            
+            const cloneTable = document.createElement('table');
+            cloneTable.className = table.className;
+            Object.assign(cloneTable.style, {
+                position: 'absolute',
+                top: '0',
+                left: '0',
+                visibility: 'hidden',
+                zIndex: '10',
+                margin: '0',
+                borderCollapse: 'separate',
+                borderSpacing: '0',
+                pointerEvents: 'none',
+                willChange: 'transform',
+                backfaceVisibility: 'hidden'
+            });
+            
+            const theadClone = thead.cloneNode(true);
+            cloneTable.appendChild(theadClone);
+            tableWrapper.appendChild(cloneTable);
+            
+            let columnsInitialized = false;
+            let lastScrollTop = 0;
+            
+            const initializeColumns = () => {
+                if (columnsInitialized) return;
+                
+                const originalThs = thead.querySelectorAll('th');
+                const cloneThs = theadClone.querySelectorAll('th');
+                const tableWidth = table.offsetWidth;
+                
+                originalThs.forEach((th, index) => {
+                    if (cloneThs[index]) {
+                        const width = th.offsetWidth + 'px';
+                        cloneThs[index].style.cssText = `width: ${width}; min-width: ${width}; max-width: ${width};`;
+                    }
+                });
+                
+                cloneTable.style.width = tableWidth + 'px';
+                columnsInitialized = true;
+            };
+            
+            let ticking = false;
+            const updateHeader = () => {
+                const scrollTop = tableWrapper.scrollTop;
+                
+                if (scrollTop !== lastScrollTop) {
+                    if (scrollTop > 0) {
+                        if (!columnsInitialized) {
+                            initializeColumns();
+                        }
+                        if (cloneTable.style.visibility !== 'visible') {
+                            cloneTable.style.visibility = 'visible';
+                        }
+                        cloneTable.style.transform = `translate3d(0, ${scrollTop}px, 0)`;
+                    } else if (cloneTable.style.visibility !== 'hidden') {
+                        cloneTable.style.visibility = 'hidden';
+                    }
+                    lastScrollTop = scrollTop;
+                }
+                ticking = false;
+            };
+            
+            tableWrapper.addEventListener('scroll', () => {
+                if (!ticking) {
+                    ticking = true;
+                    requestAnimationFrame(updateHeader);
+                }
+            }, { passive: true });
+        }
     </script>
     
     {% block extra_js %}{% endblock %}

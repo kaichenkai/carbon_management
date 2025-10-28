@@ -4,6 +4,26 @@
 {% block title %}{% trans "系数管理" %} - {% trans "碳排放管理系统" %}{% endblock %}
 
 {% block content %}
+<style>
+.fixed-header-table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.fixed-header-table thead th {
+    background-color: #fff;
+    border-bottom: 2px solid #dee2e6;
+}
+
+/* Fixed header clone styling */
+body > table.fixed-header-table {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+body > table.fixed-header-table thead th {
+    white-space: nowrap;
+}
+</style>
 <div class="container-fluid mt-4">
     <div class="row mb-4">
         <div class="col">
@@ -47,9 +67,9 @@
     
     <!-- Coefficient Table -->
     <div class="card">
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle">
+        <div class="card-body p-0">
+            <div style="overflow-x: auto; overflow-y: auto; max-height: 70vh;">
+                <table class="table table-hover align-middle mb-0 fixed-header-table" style="min-width: 1200px;">
                     <thead>
                         <tr>
                             <th>
@@ -281,6 +301,9 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize fixed table header
+    initFixedTableHeader();
+    
     const searchForm = document.querySelector('form[method="get"]');
     const searchInput = searchForm.querySelector('input[name="query"]');
     let searchTimeout;

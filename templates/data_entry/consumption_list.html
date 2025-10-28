@@ -4,6 +4,26 @@
 {% block title %}{% trans "物料消耗记录" %} - {% trans "碳排放管理系统" %}{% endblock %}
 
 {% block content %}
+<style>
+.fixed-header-table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.fixed-header-table thead th {
+    background-color: #fff;
+    border-bottom: 2px solid #dee2e6;
+}
+
+/* Fixed header clone styling */
+body > table.fixed-header-table {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+body > table.fixed-header-table thead th {
+    white-space: nowrap;
+}
+</style>
 <div class="container-fluid mt-4">
     <div class="row mb-4">
         <div class="col">
@@ -25,9 +45,9 @@
     
     <!-- Consumption Table -->
     <div class="card">
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle">
+        <div class="card-body p-0">
+            <div style="overflow-x: auto; overflow-y: auto; max-height: 70vh;">
+                <table class="table table-hover align-middle mb-0 fixed-header-table" style="min-width: 1200px;">
                     <thead>
                         <tr>
                             <th>
@@ -224,15 +244,17 @@
                             <i class="bi bi-chevron-left"></i>
                         </a>
                     </li>
-                    {% else %}
-                    <li class="page-item disabled">
-                        <span class="page-link"><i class="bi bi-chevron-double-left"></i></span>
-                    </li>
                     {% endif %}
                     
-                    <li class="page-item active">
-                        <span class="page-link">{{ page_obj.number }}</span>
-                    </li>
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                        <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}&sort={{ current_sort }}&order={{ current_order }}">{{ num }}</a>
+                        </li>
+                        {% endif %}
+                    {% endfor %}
                     
                     {% if page_obj.has_next %}
                     <li class="page-item">
@@ -248,7 +270,7 @@
                     {% endif %}
                 </ul>
                 <p class="text-center text-muted">
-                    {% trans "第" %} {{ page_obj.number }} {% trans "页，共" %} {{ page_obj.paginator.num_pages }} {% trans "页" %}
+                    {% trans "第" %} {{ page_obj.number }} {% trans "页，共" %} {{ page_obj.paginator.num_pages }} {% trans "页" %} | {% trans "总计" %} {{ page_obj.paginator.count }} {% trans "条" %}
                 </p>
             </nav>
             {% endif %}
@@ -286,6 +308,9 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize fixed table header
+    initFixedTableHeader();
+    
     const selectAllCheckbox = document.getElementById('selectAll');
     const consumptionCheckboxes = document.querySelectorAll('.consumption-checkbox');
     const statsToolbar = document.getElementById('statsToolbar');

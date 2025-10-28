@@ -420,17 +420,18 @@ def coefficient_import(request):
                     )
                     
                     # Create or update coefficient
-                    EmissionCoefficient.objects.create(
-                        product_code=product_code,
-                        department=department,
-                        category_level1=level1_category,
-                        category_level2=level2_category,
+                    EmissionCoefficient.objects.update_or_create(
                         product_name=product_name,
-                        product_name_en=product_name_en or '',
-                        unit=unit,
-                        coefficient=float(coefficient),
-                        special_note=special_note or '',
-                        updated_by=request.user
+                        defaults={
+                            'product_code': product_code,
+                            'department': department,
+                            'category_level1': level1_category,
+                            'category_level2': level2_category,
+                            'unit': unit,
+                            'coefficient': float(coefficient),
+                            'special_note': special_note or '',
+                            'updated_by': request.user,
+                        }
                     )
                     success_count += 1
 
