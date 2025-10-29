@@ -53,12 +53,31 @@ body > table.fixed-header-table thead th {
                             <th>
                                 <input type="checkbox" id="selectAll" class="form-check-input">
                             </th>
+                             <th>{% trans "序号" %}</th>
                             <th>
                                 <a href="?sort=hotel_name&order={% if current_sort == 'hotel_name' and current_order == 'asc' %}desc{% else %}asc{% endif %}" 
                                    class="text-decoration-none text-dark d-inline-flex align-items-center">
                                     {% trans "酒店名称" %}
                                     <span class="ms-1">
                                         {% if current_sort == 'hotel_name' %}
+                                            {% if current_order == 'asc' %}
+                                                <i class="bi bi-arrow-up text-primary"></i>
+                                            {% else %}
+                                                <i class="bi bi-arrow-down text-primary"></i>
+                                            {% endif %}
+                                        {% else %}
+                                            <i class="bi bi-arrow-down-up text-muted opacity-50"></i>
+                                        {% endif %}
+                                    </span>
+                                </a>
+                            </th>
+
+                                                        <th>
+                                <a href="?sort=product_code&order={% if current_sort == 'product_code' and current_order == 'asc' %}desc{% else %}asc{% endif %}" 
+                                   class="text-decoration-none text-dark d-inline-flex align-items-center">
+                                    {% trans "产品编号" %}
+                                    <span class="ms-1">
+                                        {% if current_sort == 'product_code' %}
                                             {% if current_order == 'asc' %}
                                                 <i class="bi bi-arrow-up text-primary"></i>
                                             {% else %}
@@ -87,12 +106,14 @@ body > table.fixed-header-table thead th {
                                     </span>
                                 </a>
                             </th>
-                            <th>
-                                <a href="?sort=product_code&order={% if current_sort == 'product_code' and current_order == 'asc' %}desc{% else %}asc{% endif %}" 
+
+
+                                <th>
+                                <a href="?sort=category_level1&order={% if current_sort == 'category_level1' and current_order == 'asc' %}desc{% else %}asc{% endif %}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}" 
                                    class="text-decoration-none text-dark d-inline-flex align-items-center">
-                                    {% trans "产品编号" %}
+                                    {% trans "一级分类" %}
                                     <span class="ms-1">
-                                        {% if current_sort == 'product_code' %}
+                                        {% if current_sort == 'category_level1' %}
                                             {% if current_order == 'asc' %}
                                                 <i class="bi bi-arrow-up text-primary"></i>
                                             {% else %}
@@ -104,6 +125,24 @@ body > table.fixed-header-table thead th {
                                     </span>
                                 </a>
                             </th>
+                            <th>
+                                <a href="?sort=category_level2&order={% if current_sort == 'category_level2' and current_order == 'asc' %}desc{% else %}asc{% endif %}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}" 
+                                   class="text-decoration-none text-dark d-inline-flex align-items-center">
+                                    {% trans "二级分类" %}
+                                    <span class="ms-1">
+                                        {% if current_sort == 'category_level2' %}
+                                            {% if current_order == 'asc' %}
+                                                <i class="bi bi-arrow-up text-primary"></i>
+                                            {% else %}
+                                                <i class="bi bi-arrow-down text-primary"></i>
+                                            {% endif %}
+                                        {% else %}
+                                            <i class="bi bi-arrow-down-up text-muted opacity-50"></i>
+                                        {% endif %}
+                                    </span>
+                                </a>
+                            </th>
+
                             <th>
                                 <a href="?sort=product_name&order={% if current_sort == 'product_name' and current_order == 'asc' %}desc{% else %}asc{% endif %}" 
                                    class="text-decoration-none text-dark d-inline-flex align-items-center">
@@ -185,12 +224,18 @@ body > table.fixed-header-table thead th {
                                        data-quantity="{{ consumption.quantity }}"
                                        data-emission="{{ consumption.carbon_emission }}">
                             </td>
+                            <td>{{ forloop.counter|add:page_obj.start_index|add:"-1" }}</td>
                             <td>{{ consumption.hotel_name }}</td>
-                            <td>{{ consumption.get_department_display }}</td>
                             <td><code>{{ consumption.product_code }}</code></td>
+                            <td>{{ consumption.get_department_display }}</td>
+                            
+                            <td>{{ consumption.category_level1.name }}</td>
+                            <td>{{ consumption.category_level2.name }}</td>
+
                             <td>
                                 {{ consumption.product_name }}
-                                <br><small class="text-muted">{{ consumption.category_level2 }}</small>
+                                {% comment %} 显示分类信息 {% endcomment %}
+                                {% comment %} <br><small class="text-muted">{{ consumption.category_level2 }}</small> {% endcomment %}
                             </td>
                             <td>
                                 {{ consumption.consumption_date_start|date:"Y-m-d" }}

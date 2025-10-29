@@ -212,6 +212,11 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Translation strings
+    const translations = {
+        pendingSelection: '{% trans "待选择" %}'
+    };
+    
     const categoryLevel1Select = document.getElementById('id_category_level1');
     const categoryLevel2Select = document.getElementById('id_category_level2');
     const productNameInput = document.querySelector('input[name="product_name"]');
@@ -254,7 +259,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // When level 2 category changes, load products
+    // When level 2 category changes, load products and coefficient
     categoryLevel2Select.addEventListener('change', function() {
         const level1Id = categoryLevel1Select.value;
         const level2Id = this.value;
@@ -288,6 +293,11 @@ document.addEventListener('DOMContentLoaded', function() {
                             codeOption.value = product.product_code;
                             productCodesDatalist.appendChild(codeOption);
                         });
+                        
+                        // 根据二级分类自动显示碳排放系数
+                        if (data.products.length > 0) {
+                            updateCoefficientByCategory(data.products[0]);
+                        }
                     }
                 })
                 .catch(error => console.error('Error fetching products:', error));
@@ -366,6 +376,29 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
+    // 根据二级分类更新碳排放系数（不需要选择具体产品）
+    function updateCoefficientByCategory(product) {
+        // Get category names from selects
+        const cat1Text = categoryLevel1Select.options[categoryLevel1Select.selectedIndex]?.text || '';
+        const cat2Text = categoryLevel2Select.options[categoryLevel2Select.selectedIndex]?.text || '';
+        
+        document.getElementById('displayProductName').textContent = translations.pendingSelection;
+        
+        if (cat1Text && cat2Text) {
+            document.getElementById('displayCategory').textContent = cat1Text + ' > ' + cat2Text;
+        } else {
+            document.getElementById('displayCategory').textContent = '';
+        }
+        
+        document.getElementById('displayUnit').textContent = product.unit;
+        document.getElementById('displayCoefficient').textContent = product.coefficient;
+        productInfo.style.display = 'block';
+        
+        currentCoefficient = parseFloat(product.coefficient);
+        calculateEmission();
+    }
+    
+    // 选择具体产品后更新产品信息
     function updateProductInfo(product) {
         document.getElementById('displayProductName').textContent = product.product_name;
         

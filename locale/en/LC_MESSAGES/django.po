@@ -919,3 +919,6 @@ msgstr "Clear"
 
 #~ msgid "清除选择"
 #~ msgstr "Clear Selection"
+
+msgid "待选择"
+msgstr "Pending Selection"

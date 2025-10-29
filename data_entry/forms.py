@@ -135,14 +135,15 @@ class MaterialConsumptionForm(forms.ModelForm):
             if category_level2.parent != category_level1:
                 raise forms.ValidationError(_('二级分类必须属于所选的一级分类'))
         
-        # Validate product code exists and matches the selected categories
+        # 根据二级分类计算碳排放系数
         try:
             coefficient = EmissionCoefficient.objects.filter(
-                product_code=product_code,
+                # product_code=product_code,
                 category_level1=category_level1,
                 category_level2=category_level2
             ).first()
-            
+            print(coefficient.coefficient)
+
             # Store product information
             cleaned_data['product_unit'] = coefficient.unit
             cleaned_data['emission_coefficient'] = coefficient.coefficient

@@ -22,17 +22,21 @@ def consumption_list(request):
         'department': 'department',
         'product_code': 'product_code',
         'product_name': 'product_name',
+        'category_level1': 'category_level1__name',
+        'category_level2': 'category_level2__name',
         'consumption_date_start': 'consumption_date_start',
         'quantity': 'quantity',
         'carbon_emission': 'carbon_emission',
     }
     
     if sort_by.lstrip('-') in valid_sorts:
+        # Get the actual field name for sorting (handles ForeignKey relations)
+        actual_sort_field = valid_sorts[sort_by.lstrip('-')]
         # Toggle order if clicking the same column
         if order == 'asc':
-            consumptions = consumptions.order_by(sort_by)
+            consumptions = consumptions.order_by(actual_sort_field)
         else:
-            consumptions = consumptions.order_by(f'-{sort_by.lstrip("-")}')
+            consumptions = consumptions.order_by(f'-{actual_sort_field}')
     else:
         consumptions = consumptions.order_by('-consumption_date_start', '-created_at')
     
