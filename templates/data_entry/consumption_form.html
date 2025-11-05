@@ -365,12 +365,14 @@ document.addEventListener('DOMContentLoaded', function() {
                                 calculateEmission();
                             }
                         } else {
-                            productInfo.style.display = 'none';
-                            alert(data.error);
+                            // Product code not found - allow user to create new product
+                            // Don't show alert, just keep the manually entered values
+                            console.log('Product code not found in database, allowing new entry');
                         }
                     })
                     .catch(error => {
                         console.error('Error fetching product info:', error);
+                        // On error, still allow user to continue with manual entry
                     });
             }
         }
