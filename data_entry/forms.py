@@ -40,24 +40,13 @@ class MaterialConsumptionForm(forms.ModelForm):
         })
     )
     
-    # Product code field with autocomplete
-    product_code = forms.CharField(
-        label=_('产品编号'),
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
-            'placeholder': _('输入或选择产品编号'),
-            'list': 'product-codes'
-        })
-    )
-    
     class Meta:
         model = MaterialConsumption
         fields = [
             'hotel_name', 'department', 'category_level1', 'category_level2',
-            'product_name', 'product_code',
-            'consumption_date_start', 'consumption_date_end',
-            'consumption_time_start', 'consumption_time_end',
-            'quantity', 'notes'
+            'product_name',
+            'consumption_datetime',
+            'quantity', 'special_note'
         ]
         widgets = {
             'hotel_name': forms.TextInput(attrs={
@@ -67,25 +56,10 @@ class MaterialConsumptionForm(forms.ModelForm):
             'department': forms.Select(attrs={
                 'class': 'form-select'
             }),
-            'consumption_date_start': forms.DateInput(attrs={
+            'consumption_datetime': forms.DateTimeInput(attrs={
                 'class': 'form-control',
-                'type': 'date',
-                'placeholder': 'YYYY-MM-DD'
-            }),
-            'consumption_date_end': forms.DateInput(attrs={
-                'class': 'form-control',
-                'type': 'date',
-                'placeholder': 'YYYY-MM-DD'
-            }),
-            'consumption_time_start': forms.TimeInput(attrs={
-                'class': 'form-control',
-                'type': 'time',
-                'placeholder': 'HH:MM'
-            }),
-            'consumption_time_end': forms.TimeInput(attrs={
-                'class': 'form-control',
-                'type': 'time',
-                'placeholder': 'HH:MM'
+                'type': 'datetime-local',
+                'placeholder': 'YYYY-MM-DD HH:MM'
             }),
             'quantity': forms.NumberInput(attrs={
                 'class': 'form-control',
@@ -93,7 +67,7 @@ class MaterialConsumptionForm(forms.ModelForm):
                 'min': '0',
                 'placeholder': _('输入消耗数量')
             }),
-            'notes': forms.Textarea(attrs={
+            'special_note': forms.Textarea(attrs={
                 'class': 'form-control',
                 'rows': 3,
                 'placeholder': _('备注信息（可选）')
@@ -112,7 +86,6 @@ class MaterialConsumptionForm(forms.ModelForm):
         
         # If editing existing record, populate fields
         if self.instance.pk:
-            self.fields['product_code'].initial = self.instance.product_code
             self.fields['product_name'].initial = self.instance.product_name
             
             # Set category fields if they exist (they are already ForeignKey objects)
@@ -125,7 +98,6 @@ class MaterialConsumptionForm(forms.ModelForm):
     
     def clean(self):
         cleaned_data = super().clean()
-        product_code = cleaned_data.get('product_code')
         category_level1 = cleaned_data.get('category_level1')
         category_level2 = cleaned_data.get('category_level2')
         product_name = cleaned_data.get('product_name')
@@ -138,7 +110,6 @@ class MaterialConsumptionForm(forms.ModelForm):
         # 根据二级分类计算碳排放系数
         try:
             coefficient = EmissionCoefficient.objects.filter(
-                # product_code=product_code,
                 category_level1=category_level1,
                 category_level2=category_level2
             ).first()
@@ -151,17 +122,12 @@ class MaterialConsumptionForm(forms.ModelForm):
         except EmissionCoefficient.DoesNotExist:
             raise forms.ValidationError(_('产品编号不存在或与所选分类不匹配'))
         
-        # Validate date range
-        date_start = cleaned_data.get('consumption_date_start')
-        date_end = cleaned_data.get('consumption_date_end')
-        if date_start and date_end and date_start > date_end:
-            raise forms.ValidationError(_('开始日期不能晚于结束日期'))
-        
-        # Validate time range
-        time_start = cleaned_data.get('consumption_time_start')
-        time_end = cleaned_data.get('consumption_time_end')
-        if time_start and time_end and time_start > time_end:
-            raise forms.ValidationError(_('开始时间不能晚于结束时间'))
+        # Validate consumption datetime is not in the future
+        consumption_datetime = cleaned_data.get('consumption_datetime')
+        if consumption_datetime:
+            from django.utils import timezone
+            if consumption_datetime > timezone.now():
+                raise forms.ValidationError(_('消耗日期时间不能是未来时间'))
         
         return cleaned_data
     

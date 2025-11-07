@@ -31,8 +31,8 @@ class EmissionCategoryAdmin(admin.ModelAdmin):
 
 @admin.register(EmissionCoefficient)
 class EmissionCoefficientAdmin(admin.ModelAdmin):
-    list_display = ['product_code', 'product_name', 'category_level1', 'category_level2', 
+    list_display = ['product_name', 'category_level1', 'category_level2', 
                     'unit', 'coefficient', 'updated_at', 'updated_by']
     list_filter = ['category_level1', 'category_level2', 'unit', 'updated_at']
-    search_fields = ['product_code', 'product_name', 'product_name_en']
+    search_fields = ['product_name', 'product_name_en']
     readonly_fields = ['created_at', 'updated_at']

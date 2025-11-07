@@ -90,8 +90,7 @@ class EmissionCoefficient(models.Model):
         ('administration', _('行政部')),
         ('logistics', _('后勤部')),
     ]
-    
-    product_code = models.CharField(_('产品编号'), max_length=50, db_index=True)
+
     category_level1 = models.ForeignKey(
         EmissionCategory,
         on_delete=models.PROTECT,
@@ -128,31 +127,4 @@ class EmissionCoefficient(models.Model):
         ordering = ['-updated_at']
 
     def __str__(self):
-        return f"{self.product_code} - {self.product_name}"
-
-    @classmethod
-    def find_coefficient(cls, product_code=None, product_name=None):
-        """
-        Find emission coefficient by product code or name
-        Returns the coefficient value or None
-        """
-        # First try: exact match by product code
-        if product_code:
-            try:
-                coef = cls.objects.get(product_code=product_code)
-                return coef.coefficient
-            except cls.DoesNotExist:
-                pass
-        
-        # Second try: keyword match by product name
-        if product_name:
-            # Try to find by product name (case-insensitive contains)
-            matches = cls.objects.filter(
-                models.Q(product_name__icontains=product_name) |
-                models.Q(product_name_en__icontains=product_name)
-            )
-            if matches.exists():
-                return matches.first().coefficient
-        
-        # No match found
-        return None
+        return f"{self.product_name}"

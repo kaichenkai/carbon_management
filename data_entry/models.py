@@ -12,7 +12,6 @@ class MaterialConsumption(models.Model):
     department = models.CharField(_('部门名称'), max_length=50, choices=EmissionCoefficient.DEPARTMENT_CHOICES)
     
     # Product information (from EmissionCoefficient)
-    product_code = models.CharField(_('产品代码'), max_length=50, db_index=True)
     product_name = models.CharField(_('产品名称'), max_length=200)
     category_level1 = models.ForeignKey(
         EmissionCategory,
@@ -31,14 +30,13 @@ class MaterialConsumption(models.Model):
     product_unit = models.CharField(_('产品单位'), max_length=20)
     emission_coefficient = models.DecimalField(_('碳排放系数'), max_digits=10, decimal_places=2)
     
-    # Consumption period
-    consumption_date_start = models.DateField(_('消耗开始日期'))
-    consumption_date_end = models.DateField(_('消耗结束日期'))
-    consumption_time_start = models.TimeField(_('消耗开始时间'))
-    consumption_time_end = models.TimeField(_('消耗结束时间'))
+    # Consumption datetime
+    consumption_datetime = models.DateTimeField(_('消耗日期时间'), null=True)
     
     # Consumption data
     quantity = models.DecimalField(_('消耗数量'), max_digits=10, decimal_places=2)
+
+    # 
     
     # Calculated emission (auto-calculated)
     carbon_emission = models.DecimalField(
@@ -48,18 +46,19 @@ class MaterialConsumption(models.Model):
         editable=False
     )
     
+    special_note = models.TextField(_('特殊备注'), blank=True)
+    
     # Additional info
-    notes = models.TextField(_('备注'), blank=True)
     created_at = models.DateTimeField(_('创建时间'), auto_now_add=True)
     updated_at = models.DateTimeField(_('更新时间'), auto_now=True)
     
     class Meta:
         verbose_name = _('物料消耗记录')
         verbose_name_plural = _('物料消耗记录')
-        ordering = ['-consumption_date_start', '-created_at']
+        ordering = ['-consumption_datetime', '-created_at']
         indexes = [
             models.Index(fields=['hotel_name', 'department']),
-            models.Index(fields=['consumption_date_start', 'consumption_date_end']),
+            models.Index(fields=['consumption_datetime']),
         ]
     
     def save(self, *args, **kwargs):
@@ -68,4 +67,4 @@ class MaterialConsumption(models.Model):
         super().save(*args, **kwargs)
     
     def __str__(self):
-        return f"{self.hotel_name} - {self.product_name} ({self.consumption_date_start})"
+        return f"{self.hotel_name} - {self.product_name} ({self.consumption_datetime.strftime('%Y-%m-%d %H:%M')})"

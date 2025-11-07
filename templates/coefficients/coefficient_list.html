@@ -77,23 +77,6 @@ body > table.fixed-header-table thead th {
                             </th>
                             <th>{% trans "序号" %}</th>
                             <th>
-                                <a href="?sort=product_code&order={% if current_sort == 'product_code' and current_order == 'asc' %}desc{% else %}asc{% endif %}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}" 
-                                   class="text-decoration-none text-dark d-inline-flex align-items-center">
-                                    {% trans "产品编号" %}
-                                    <span class="ms-1">
-                                        {% if current_sort == 'product_code' %}
-                                            {% if current_order == 'asc' %}
-                                                <i class="bi bi-arrow-up text-primary"></i>
-                                            {% else %}
-                                                <i class="bi bi-arrow-down text-primary"></i>
-                                            {% endif %}
-                                        {% else %}
-                                            <i class="bi bi-arrow-down-up text-muted opacity-50"></i>
-                                        {% endif %}
-                                    </span>
-                                </a>
-                            </th>
-                            <th>
                                 <a href="?sort=department&order={% if current_sort == 'department' and current_order == 'asc' %}desc{% else %}asc{% endif %}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}" 
                                    class="text-decoration-none text-dark d-inline-flex align-items-center">
                                     {% trans "部门" %}
@@ -179,7 +162,6 @@ body > table.fixed-header-table thead th {
                                     </span>
                                 </a>
                             </th>
-                            <th>{% trans "特殊备注" %}</th>
                             <th>
                                 <a href="?sort=updated_at&order={% if current_sort == 'updated_at' and current_order == 'asc' %}desc{% else %}asc{% endif %}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}" 
                                    class="text-decoration-none text-dark d-inline-flex align-items-center">
@@ -197,6 +179,7 @@ body > table.fixed-header-table thead th {
                                     </span>
                                 </a>
                             </th>
+                            <th>{% trans "特殊备注" %}</th>
                             <th>{% trans "操作" %}</th>
                         </tr>
                     </thead>
@@ -207,7 +190,6 @@ body > table.fixed-header-table thead th {
                                 <input type="checkbox" class="form-check-input coefficient-checkbox" value="{{ coefficient.pk }}">
                             </td>
                             <td>{{ forloop.counter|add:page_obj.start_index|add:"-1" }}</td>
-                            <td><code>{{ coefficient.product_code }}</code></td>
                             <td>{{ coefficient.get_department_display }}</td>
                             <td>{{ coefficient.category_level1.name }}</td>
                             <td>{{ coefficient.category_level2.name }}</td>
@@ -219,6 +201,9 @@ body > table.fixed-header-table thead th {
                             </td>
                             <td><span class="badge bg-secondary">{{ coefficient.unit }}</span></td>
                             <td><strong>{{ coefficient.coefficient }}</strong></td>
+
+                            <td><small>{{ coefficient.updated_at|date:"Y/m/d" }}</small></td>
+                            
                             <td>
                                 {% if coefficient.special_note %}
                                 <small>{{ coefficient.special_note|truncatewords:10 }}</small>
@@ -226,7 +211,7 @@ body > table.fixed-header-table thead th {
                                 <span class="text-muted">-</span>
                                 {% endif %}
                             </td>
-                            <td><small>{{ coefficient.updated_at|date:"Y/m/d" }}</small></td>
+                            
                             <td>
                                 <div class="btn-group btn-group-sm">
                                     <a href="{% url 'coefficient_edit' coefficient.pk %}" class="btn btn-outline-primary d-inline-flex align-items-center">

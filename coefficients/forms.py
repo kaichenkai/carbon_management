@@ -75,13 +75,9 @@ class EmissionCoefficientForm(forms.ModelForm):
     
     class Meta:
         model = EmissionCoefficient
-        fields = ['product_code', 'product_name', 'product_name_en', 
+        fields = ['product_name', 'product_name_en', 
                   'unit', 'coefficient', 'special_note']
         widgets = {
-            'product_code': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': _('例如: F101000319')
-            }),
             'product_name': forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': _('产品名称')

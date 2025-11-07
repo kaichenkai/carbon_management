@@ -13,18 +13,17 @@ def consumption_list(request):
     consumptions = MaterialConsumption.objects.all()
     
     # Sorting
-    sort_by = request.GET.get('sort', '-consumption_date_start')
+    sort_by = request.GET.get('sort', '-consumption_datetime')
     order = request.GET.get('order', 'desc')
     
     # Valid sort fields
     valid_sorts = {
         'hotel_name': 'hotel_name',
         'department': 'department',
-        'product_code': 'product_code',
         'product_name': 'product_name',
         'category_level1': 'category_level1__name',
         'category_level2': 'category_level2__name',
-        'consumption_date_start': 'consumption_date_start',
+        'consumption_datetime': 'consumption_datetime',
         'quantity': 'quantity',
         'carbon_emission': 'carbon_emission',
     }
@@ -38,7 +37,7 @@ def consumption_list(request):
         else:
             consumptions = consumptions.order_by(f'-{actual_sort_field}')
     else:
-        consumptions = consumptions.order_by('-consumption_date_start', '-created_at')
+        consumptions = consumptions.order_by('-consumption_datetime', '-created_at')
     
     # Pagination
     paginator = Paginator(consumptions, 20)
@@ -65,11 +64,11 @@ def consumption_create(request):
         form = MaterialConsumptionForm()
     
     # Get all product codes for datalist
-    product_codes = EmissionCoefficient.objects.values_list('product_code', flat=True)
+    product_names = EmissionCoefficient.objects.values_list('product_name', flat=True)
     
     context = {
         'form': form,
-        'product_codes': product_codes,
+        'product_names': product_names,
     }
     return render(request, 'data_entry/consumption_form.html', context)
 
@@ -87,12 +86,12 @@ def consumption_edit(request, pk):
     else:
         form = MaterialConsumptionForm(instance=consumption)
     
-    # Get all product codes for datalist
-    product_codes = EmissionCoefficient.objects.values_list('product_code', flat=True)
+    # Get all product_names for datalist
+    product_names = EmissionCoefficient.objects.values_list('product_name', flat=True)
     
     context = {
         'form': form,
-        'product_codes': product_codes,
+        'product_names': product_names,
         'consumption': consumption,
     }
     return render(request, 'data_entry/consumption_form.html', context)
@@ -104,31 +103,6 @@ def consumption_delete(request, pk):
     consumption.delete()
     messages.success(request, _('消耗记录删除成功'))
     return redirect('consumption_list')
-
-
-def get_product_info(request):
-    """API endpoint to get product information by product code"""
-    product_code = request.GET.get('code')
-    
-    try:
-        coefficient = EmissionCoefficient.objects.get(product_code=product_code)
-        data = {
-            'success': True,
-            'product_name': coefficient.product_name,
-            'category_level1': coefficient.category_level1.name,
-            'category_level1_id': coefficient.category_level1.id,
-            'category_level2': coefficient.category_level2.name,
-            'category_level2_id': coefficient.category_level2.id,
-            'unit': coefficient.unit,
-            'coefficient': str(coefficient.coefficient),
-        }
-    except EmissionCoefficient.DoesNotExist:
-        data = {
-            'success': False,
-            'error': _('产品代码不存在')
-        }
-    
-    return JsonResponse(data)
 
 
 def get_level2_categories(request):
@@ -169,7 +143,7 @@ def get_products_by_category(request):
             filters['category_level2_id'] = level2_id
         
         products = EmissionCoefficient.objects.filter(**filters).values(
-            'id', 'product_code', 'product_name', 'unit', 'coefficient'
+            'id', 'product_name', 'unit', 'coefficient'
         )
         
         return JsonResponse({

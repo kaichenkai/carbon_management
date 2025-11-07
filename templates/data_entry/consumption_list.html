@@ -72,23 +72,6 @@ body > table.fixed-header-table thead th {
                                 </a>
                             </th>
 
-                                                        <th>
-                                <a href="?sort=product_code&order={% if current_sort == 'product_code' and current_order == 'asc' %}desc{% else %}asc{% endif %}" 
-                                   class="text-decoration-none text-dark d-inline-flex align-items-center">
-                                    {% trans "产品编号" %}
-                                    <span class="ms-1">
-                                        {% if current_sort == 'product_code' %}
-                                            {% if current_order == 'asc' %}
-                                                <i class="bi bi-arrow-up text-primary"></i>
-                                            {% else %}
-                                                <i class="bi bi-arrow-down text-primary"></i>
-                                            {% endif %}
-                                        {% else %}
-                                            <i class="bi bi-arrow-down-up text-muted opacity-50"></i>
-                                        {% endif %}
-                                    </span>
-                                </a>
-                            </th>
                             <th>
                                 <a href="?sort=department&order={% if current_sort == 'department' and current_order == 'asc' %}desc{% else %}asc{% endif %}" 
                                    class="text-decoration-none text-dark d-inline-flex align-items-center">
@@ -161,11 +144,11 @@ body > table.fixed-header-table thead th {
                                 </a>
                             </th>
                             <th>
-                                <a href="?sort=consumption_date_start&order={% if current_sort == 'consumption_date_start' and current_order == 'asc' %}desc{% else %}asc{% endif %}" 
+                                <a href="?sort=consumption_datetime&order={% if current_sort == 'consumption_datetime' and current_order == 'asc' %}desc{% else %}asc{% endif %}" 
                                    class="text-decoration-none text-dark d-inline-flex align-items-center">
-                                    {% trans "消耗日期区间" %}
+                                    {% trans "消耗日期时间" %}
                                     <span class="ms-1">
-                                        {% if current_sort == 'consumption_date_start' %}
+                                        {% if current_sort == 'consumption_datetime' %}
                                             {% if current_order == 'asc' %}
                                                 <i class="bi bi-arrow-up text-primary"></i>
                                             {% else %}
@@ -177,7 +160,6 @@ body > table.fixed-header-table thead th {
                                     </span>
                                 </a>
                             </th>
-                            <th>{% trans "消耗时间区间" %}</th>
                             <th>
                                 <a href="?sort=quantity&order={% if current_sort == 'quantity' and current_order == 'asc' %}desc{% else %}asc{% endif %}" 
                                    class="text-decoration-none text-dark d-inline-flex align-items-center">
@@ -195,6 +177,9 @@ body > table.fixed-header-table thead th {
                                     </span>
                                 </a>
                             </th>
+
+                            <th>{% trans "碳排放系数" %}</th>
+
                             <th>
                                 <a href="?sort=carbon_emission&order={% if current_sort == 'carbon_emission' and current_order == 'asc' %}desc{% else %}asc{% endif %}" 
                                    class="text-decoration-none text-dark d-inline-flex align-items-center">
@@ -212,6 +197,7 @@ body > table.fixed-header-table thead th {
                                     </span>
                                 </a>
                             </th>
+                            <th>{% trans "特殊备注" %}</th>
                             <th>{% trans "操作" %}</th>
                         </tr>
                     </thead>
@@ -226,7 +212,6 @@ body > table.fixed-header-table thead th {
                             </td>
                             <td>{{ forloop.counter|add:page_obj.start_index|add:"-1" }}</td>
                             <td>{{ consumption.hotel_name }}</td>
-                            <td><code>{{ consumption.product_code }}</code></td>
                             <td>{{ consumption.get_department_display }}</td>
                             
                             <td>{{ consumption.category_level1.name }}</td>
@@ -238,19 +223,18 @@ body > table.fixed-header-table thead th {
                                 {% comment %} <br><small class="text-muted">{{ consumption.category_level2 }}</small> {% endcomment %}
                             </td>
                             <td>
-                                {{ consumption.consumption_date_start|date:"Y-m-d" }}
-                                <br>{% trans "至" %} {{ consumption.consumption_date_end|date:"Y-m-d" }}
-                            </td>
-                            <td>
-                                {{ consumption.consumption_time_start|time:"H:i" }}
-                                <br>{% trans "至" %} {{ consumption.consumption_time_end|time:"H:i" }}
+                                {{ consumption.consumption_datetime|date:"Y-m-d H:i" }}
                             </td>
                             <td>
                                 <strong>{{ consumption.quantity }}</strong> {{ consumption.product_unit }}
                             </td>
                             <td>
+                                {{ consumption.emission_coefficient }}
+                            </td>
+                            <td>
                                 <span class="badge bg-success">{{ consumption.carbon_emission }} kgCO2e</span>
                             </td>
+                            <td>{{ consumption.special_note }}</td>
                             <td>
                                 <div class="btn-group btn-group-sm">
                                     <a href="{% url 'consumption_edit' consumption.pk %}" class="btn btn-outline-primary d-inline-flex align-items-center">

@@ -108,7 +108,6 @@ def coefficient_list(request):
         query = search_form.cleaned_data.get('query')
         if query:
             coefficients = coefficients.filter(
-                Q(product_code__icontains=query) |
                 Q(product_name__icontains=query) |
                 Q(product_name_en__icontains=query) |
                 Q(category_level1__name__icontains=query) |
@@ -122,7 +121,6 @@ def coefficient_list(request):
     
     # Valid sort fields
     valid_sorts = {
-        'product_code': 'product_code',
         'department': 'department',
         'category_level1': 'category_level1__name',
         'category_level2': 'category_level2__name',
@@ -278,7 +276,6 @@ def coefficient_export(request):
     
     # Write data
     for row_num, coef in enumerate(coefficients, 2):
-        ws.cell(row=row_num, column=1).value = coef.product_code
         ws.cell(row=row_num, column=2).value = coef.department
         ws.cell(row=row_num, column=3).value = coef.category_level1.name
         ws.cell(row=row_num, column=4).value = coef.category_level2.name
@@ -398,10 +395,10 @@ def coefficient_import(request):
             # Skip header row
             for row_num, row in enumerate(ws.iter_rows(min_row=2, values_only=True), start=2):
                 try:
-                    product_code, department, level1_name, level2_name, product_name, product_name_en, unit, coefficient, special_note = row[:9]
+                    department, level1_name, level2_name, product_name, product_name_en, unit, coefficient, special_note = row[:9]
                     
                     # Validation
-                    if not all([product_code, department, level1_name, level2_name, product_name, unit, coefficient]):
+                    if not all([department, level1_name, level2_name, product_name, unit, coefficient]):
                         errors.append(f"第{row_num}行: 必填字段缺失")
                         error_count += 1
                         continue
@@ -423,7 +420,6 @@ def coefficient_import(request):
                     EmissionCoefficient.objects.update_or_create(
                         product_name=product_name,
                         defaults={
-                            'product_code': product_code,
                             'department': department,
                             'category_level1': level1_category,
                             'category_level2': level2_category,

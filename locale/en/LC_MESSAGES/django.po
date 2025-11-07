@@ -922,3 +922,6 @@ msgstr "Clear"
 
 msgid "待选择"
 msgstr "Pending Selection"
+
+msgid "消耗日期时间"
+msgstr "Consumption Date Time"

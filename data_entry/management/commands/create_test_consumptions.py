@@ -59,7 +59,6 @@ class Command(BaseCommand):
                 consumption = MaterialConsumption.objects.create(
                     hotel_name=hotels[i],
                     department=coeff.department,
-                    product_code=coeff.product_code,
                     product_name=coeff.product_name,
                     category_level1=coeff.category_level1,
                     category_level2=coeff.category_level2,

@@ -33,17 +33,7 @@
                         {% csrf_token %}
                         
                         <div class="row g-3">
-                            <div class="col-md-6">
-                                <label for="{{ form.product_code.id_for_label }}" class="form-label">
-                                    {{ form.product_code.label }} <span class="text-danger">*</span>
-                                </label>
-                                {{ form.product_code }}
-                                {% if form.product_code.errors %}
-                                    <div class="text-danger small mt-1">{{ form.product_code.errors }}</div>
-                                {% endif %}
-                                <div class="form-text">{% trans "例如: F101000319" %}</div>
-                            </div>
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <label for="{{ form.department.id_for_label }}" class="form-label">
                                     {{ form.department.label }} <span class="text-danger">*</span>
                                 </label>
