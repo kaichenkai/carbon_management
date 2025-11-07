@@ -28,14 +28,14 @@ class MaterialConsumption(models.Model):
         limit_choices_to={'level': 2}
     )
     product_unit = models.CharField(_('产品单位'), max_length=20)
-    emission_coefficient = models.DecimalField(_('碳排放系数'), max_digits=10, decimal_places=2)
+    emission_coefficient = models.DecimalField(_('碳排放系数'), max_digits=10, decimal_places=6)
     
     # Consumption date and time
     consumption_date = models.DateField(_('消耗日期'), null=True)
     consumption_time = models.TimeField(_('消耗时间'), null=True)
     
     # Consumption data
-    quantity = models.DecimalField(_('消耗数量'), max_digits=10, decimal_places=2)
+    quantity = models.DecimalField(_('消耗数量'), max_digits=10, decimal_places=6)
 
     # 
     
@@ -43,7 +43,7 @@ class MaterialConsumption(models.Model):
     carbon_emission = models.DecimalField(
         _('碳排放量(kgCO2e)'),
         max_digits=12,
-        decimal_places=2,
+        decimal_places=6,
         editable=False
     )
     
