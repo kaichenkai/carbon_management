@@ -1,3 +1,4 @@
+from hashlib import blake2b
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
@@ -105,8 +106,8 @@ class EmissionCoefficient(models.Model):
         related_name='coefficients_level2',
         limit_choices_to={'level': 2}
     )
-    product_name = models.CharField(_('产品名称'), unique=True, max_length=200)
-    product_name_en = models.CharField(_('产品名称(英文)'), max_length=200, blank=True)
+    product_name = models.CharField(_('产品名称'), unique=True, max_length=200, blank=True, null=True)
+    product_name_en = models.CharField(_('产品名称(英文)'), max_length=200, blank=True, null=True)
     unit = models.CharField(_('单位'), max_length=20, choices=UNIT_CHOICES)
     coefficient = models.DecimalField(_('碳排放系数'), max_digits=10, decimal_places=2)
     department = models.CharField(_('部门名称'), max_length=50, choices=DEPARTMENT_CHOICES)

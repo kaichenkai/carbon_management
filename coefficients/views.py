@@ -116,8 +116,8 @@ def coefficient_list(request):
             )
     
     # Sorting
-    sort_by = request.GET.get('sort', '-updated_at')
-    order = request.GET.get('order', 'desc')
+    sort_by = request.GET.get('sort', 'created_at')
+    order = request.GET.get('order', 'asc')
     
     # Valid sort fields
     valid_sorts = {
@@ -137,7 +137,7 @@ def coefficient_list(request):
         else:
             coefficients = coefficients.order_by(f'-{sort_field}')
     else:
-        coefficients = coefficients.order_by('-updated_at')
+        coefficients = coefficients.order_by('created_at')
     
     # Pagination
     paginator = Paginator(coefficients, 20)
@@ -276,14 +276,14 @@ def coefficient_export(request):
     
     # Write data
     for row_num, coef in enumerate(coefficients, 2):
-        ws.cell(row=row_num, column=2).value = coef.department
-        ws.cell(row=row_num, column=3).value = coef.category_level1.name
-        ws.cell(row=row_num, column=4).value = coef.category_level2.name
-        ws.cell(row=row_num, column=5).value = coef.product_name
-        ws.cell(row=row_num, column=7).value = coef.unit
-        ws.cell(row=row_num, column=8).value = float(coef.coefficient)
-        ws.cell(row=row_num, column=10).value = coef.updated_at.strftime('%Y/%m/%d')
-        ws.cell(row=row_num, column=9).value = coef.special_note
+        ws.cell(row=row_num, column=1).value = coef.department
+        ws.cell(row=row_num, column=2).value = coef.category_level1.name
+        ws.cell(row=row_num, column=3).value = coef.category_level2.name
+        ws.cell(row=row_num, column=4).value = coef.product_name
+        ws.cell(row=row_num, column=5).value = coef.unit
+        ws.cell(row=row_num, column=6).value = float(coef.coefficient)
+        ws.cell(row=row_num, column=7).value = coef.updated_at.strftime('%Y/%m/%d')
+        ws.cell(row=row_num, column=8).value = coef.special_note
     
     # Adjust column widths
     for col in ws.columns:
@@ -323,7 +323,7 @@ def coefficient_template(request):
     
     # Define headers
     headers = [
-        _('部门名称'), _('一级分类'), _('二级分类'), _('产品名称'), 
+        _('部门名称'), _('一级分类'), _('二级分类'), _('产品名称'), _('产品名称(英文)'),
         _('单位'), _('碳排放系数'), _('特殊备注')
     ]
     
@@ -340,8 +340,8 @@ def coefficient_template(request):
     
     # Add example data
     example_data = [
-        ['Production', 'Seafood', 'Molluscs, other', 'Chiton（石鳖）', 'KG', '7.30', ''],
-        ['R&D', 'Meat', 'Bovine meat', 'Ground Beef（牛肉末）', 'KG', '42.80', ''],
+        ['Production', 'Seafood', 'Molluscs, other', 'Chiton（石鳖）', 'Chiton', 'KG', '7.30', ''],
+        ['R&D', 'Meat', 'Bovine meat', 'Ground Beef（牛肉末）', 'Ground Beef', 'KG', '42.80', ''],
     ]
     
     for row_num, data in enumerate(example_data, 2):
@@ -397,7 +397,11 @@ def coefficient_import(request):
                     department, level1_name, level2_name, product_name, product_name_en, unit, coefficient, special_note = row[:9]
                     
                     # Validation
-                    if not all([department, level1_name, level2_name, product_name, unit, coefficient]):
+                    if coefficient is None:
+                        errors.append(f"第{row_num}行: 碳排放系数不能为空")
+                        error_count += 1
+                        continue
+                    elif not all([department, level1_name, level2_name, unit]):
                         errors.append(f"第{row_num}行: 必填字段缺失")
                         error_count += 1
                         continue
