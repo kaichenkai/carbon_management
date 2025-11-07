@@ -234,7 +234,15 @@ body > table.fixed-header-table thead th {
                             <td>
                                 <span class="badge bg-success">{{ consumption.carbon_emission }} kgCO2e</span>
                             </td>
-                            <td>{{ consumption.special_note }}</td>
+
+                                                        <td>
+                                {% if coefficient.special_note %}
+                                <small>{{ coefficient.special_note|truncatewords:10 }}</small>
+                                {% else %}
+                                <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                            
                             <td>
                                 <div class="btn-group btn-group-sm">
                                     <a href="{% url 'consumption_edit' consumption.pk %}" class="btn btn-outline-primary d-inline-flex align-items-center">
