@@ -259,8 +259,8 @@ def coefficient_export(request):
     
     # Define headers
     headers = [
-        _('产品编号'), _('部门名称'), _('一级分类'), _('二级分类'), _('产品名称'), 
-        _('产品名称(英文)'), _('单位'), _('碳排放系数'), _('特殊备注'), _('最后更新')
+        _('部门名称'), _('一级分类'), _('二级分类'), _('产品名称'), 
+        _('单位'), _('碳排放系数'), _('最后更新'), _('特殊备注'),
     ]
     
     # Style headers
@@ -280,11 +280,10 @@ def coefficient_export(request):
         ws.cell(row=row_num, column=3).value = coef.category_level1.name
         ws.cell(row=row_num, column=4).value = coef.category_level2.name
         ws.cell(row=row_num, column=5).value = coef.product_name
-        ws.cell(row=row_num, column=6).value = coef.product_name_en
         ws.cell(row=row_num, column=7).value = coef.unit
         ws.cell(row=row_num, column=8).value = float(coef.coefficient)
-        ws.cell(row=row_num, column=9).value = coef.special_note
         ws.cell(row=row_num, column=10).value = coef.updated_at.strftime('%Y/%m/%d')
+        ws.cell(row=row_num, column=9).value = coef.special_note
     
     # Adjust column widths
     for col in ws.columns:
@@ -324,8 +323,8 @@ def coefficient_template(request):
     
     # Define headers
     headers = [
-        _('产品编号'),  _('部门名称'), _('一级分类'), _('二级分类'), _('产品名称'), 
-        _('产品名称(英文)'), _('单位'), _('碳排放系数'), _('特殊备注')
+        _('部门名称'), _('一级分类'), _('二级分类'), _('产品名称'), 
+        _('单位'), _('碳排放系数'), _('特殊备注')
     ]
     
     # Style headers
@@ -341,8 +340,8 @@ def coefficient_template(request):
     
     # Add example data
     example_data = [
-        ['F101000965', 'Production', 'Seafood', 'Molluscs, other', 'Chiton（石鳖）', 'Chiton', 'KG', '7.30', ''],
-        ['F101005265', 'R&D', 'Meat', 'Bovine meat', 'Ground Beef（牛肉末）', 'Ground Beef', 'KG', '42.80', ''],
+        ['Production', 'Seafood', 'Molluscs, other', 'Chiton（石鳖）', 'KG', '7.30', ''],
+        ['R&D', 'Meat', 'Bovine meat', 'Ground Beef（牛肉末）', 'KG', '42.80', ''],
     ]
     
     for row_num, data in enumerate(example_data, 2):
