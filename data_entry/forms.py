@@ -45,7 +45,7 @@ class MaterialConsumptionForm(forms.ModelForm):
         fields = [
             'hotel_name', 'department', 'category_level1', 'category_level2',
             'product_name',
-            'consumption_datetime',
+            'consumption_date', 'consumption_time',
             'quantity', 'special_note'
         ]
         widgets = {
@@ -56,10 +56,13 @@ class MaterialConsumptionForm(forms.ModelForm):
             'department': forms.Select(attrs={
                 'class': 'form-select'
             }),
-            'consumption_datetime': forms.DateTimeInput(attrs={
+            'consumption_date': forms.DateInput(attrs={
                 'class': 'form-control',
-                'type': 'datetime-local',
-                'placeholder': 'YYYY-MM-DD HH:MM'
+                'type': 'date'
+            }),
+            'consumption_time': forms.TimeInput(attrs={
+                'class': 'form-control',
+                'type': 'time'
             }),
             'quantity': forms.NumberInput(attrs={
                 'class': 'form-control',
@@ -122,12 +125,12 @@ class MaterialConsumptionForm(forms.ModelForm):
         except EmissionCoefficient.DoesNotExist:
             raise forms.ValidationError(_('产品编号不存在或与所选分类不匹配'))
         
-        # Validate consumption datetime is not in the future
-        consumption_datetime = cleaned_data.get('consumption_datetime')
-        if consumption_datetime:
-            from django.utils import timezone
-            if consumption_datetime > timezone.now():
-                raise forms.ValidationError(_('消耗日期时间不能是未来时间'))
+        # Validate consumption date is not in the future
+        consumption_date = cleaned_data.get('consumption_date')
+        if consumption_date:
+            from datetime import date
+            if consumption_date > date.today():
+                raise forms.ValidationError(_('消耗日期不能是未来日期'))
         
         return cleaned_data
     

@@ -116,7 +116,7 @@ def coefficient_list(request):
             )
     
     # Sorting
-    sort_by = request.GET.get('sort', 'created_at')
+    sort_by = request.GET.get('sort', 'updated_at')
     order = request.GET.get('order', 'asc')
     
     # Valid sort fields
@@ -137,7 +137,7 @@ def coefficient_list(request):
         else:
             coefficients = coefficients.order_by(f'-{sort_field}')
     else:
-        coefficients = coefficients.order_by('created_at')
+        coefficients = coefficients.order_by('updated_at')
     
     # Pagination
     paginator = Paginator(coefficients, 20)
@@ -421,11 +421,11 @@ def coefficient_import(request):
                     
                     # Create or update coefficient
                     EmissionCoefficient.objects.update_or_create(
+                        department=department,
+                        category_level1=level1_category,
+                        category_level2=level2_category,
                         product_name=product_name,
                         defaults={
-                            'department': department,
-                            'category_level1': level1_category,
-                            'category_level2': level2_category,
                             'unit': unit,
                             'coefficient': float(coefficient),
                             'special_note': special_note or '',

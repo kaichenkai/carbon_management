@@ -30,8 +30,9 @@ class MaterialConsumption(models.Model):
     product_unit = models.CharField(_('产品单位'), max_length=20)
     emission_coefficient = models.DecimalField(_('碳排放系数'), max_digits=10, decimal_places=2)
     
-    # Consumption datetime
-    consumption_datetime = models.DateTimeField(_('消耗日期时间'), null=True)
+    # Consumption date and time
+    consumption_date = models.DateField(_('消耗日期'), null=True)
+    consumption_time = models.TimeField(_('消耗时间'), null=True)
     
     # Consumption data
     quantity = models.DecimalField(_('消耗数量'), max_digits=10, decimal_places=2)
@@ -55,10 +56,10 @@ class MaterialConsumption(models.Model):
     class Meta:
         verbose_name = _('物料消耗记录')
         verbose_name_plural = _('物料消耗记录')
-        ordering = ['-consumption_datetime', '-created_at']
+        ordering = ['-consumption_date', '-consumption_time', '-created_at']
         indexes = [
             models.Index(fields=['hotel_name', 'department']),
-            models.Index(fields=['consumption_datetime']),
+            models.Index(fields=['consumption_date', 'consumption_time']),
         ]
     
     def save(self, *args, **kwargs):
@@ -67,4 +68,4 @@ class MaterialConsumption(models.Model):
         super().save(*args, **kwargs)
     
     def __str__(self):
-        return f"{self.hotel_name} - {self.product_name} ({self.consumption_datetime.strftime('%Y-%m-%d %H:%M')})"
+        return f"{self.hotel_name} - {self.product_name} ({self.consumption_date} {self.consumption_time.strftime('%H:%M')})"

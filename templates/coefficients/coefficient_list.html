@@ -194,7 +194,11 @@ body > table.fixed-header-table thead th {
                             <td>{{ coefficient.category_level1.name }}</td>
                             <td>{{ coefficient.category_level2.name }}</td>
                             <td>
-                                {{ coefficient.product_name }}
+                                {% if coefficient.product_name %}
+                                <small>{{ coefficient.product_name|truncatewords:10 }}</small>
+                                {% else %}
+                                <span class="text-muted">-</span>
+                                {% endif %}
                                 {% if coefficient.product_name_en %}
                                 <br><small class="text-muted">{{ coefficient.product_name_en }}</small>
                                 {% endif %}
@@ -211,7 +215,7 @@ body > table.fixed-header-table thead th {
                                 <span class="text-muted">-</span>
                                 {% endif %}
                             </td>
-                            
+
                             <td>
                                 <div class="btn-group btn-group-sm">
                                     <a href="{% url 'coefficient_edit' coefficient.pk %}" class="btn btn-outline-primary d-inline-flex align-items-center">

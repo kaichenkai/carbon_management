@@ -925,3 +925,12 @@ msgstr "Pending Selection"
 
 msgid "消耗日期时间"
 msgstr "Consumption Date Time"
+
+msgid "消耗日期"
+msgstr "Consumption Date"
+
+msgid "消耗时间"
+msgstr "Consumption Time"
+
+msgid "消耗日期不能是未来日期"
+msgstr "Consumption date cannot be in the future"

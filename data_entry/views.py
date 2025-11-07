@@ -13,7 +13,7 @@ def consumption_list(request):
     consumptions = MaterialConsumption.objects.all()
     
     # Sorting
-    sort_by = request.GET.get('sort', '-consumption_datetime')
+    sort_by = request.GET.get('sort', '-consumption_date')
     order = request.GET.get('order', 'desc')
     
     # Valid sort fields
@@ -23,7 +23,7 @@ def consumption_list(request):
         'product_name': 'product_name',
         'category_level1': 'category_level1__name',
         'category_level2': 'category_level2__name',
-        'consumption_datetime': 'consumption_datetime',
+        'consumption_date': 'consumption_date',
         'quantity': 'quantity',
         'carbon_emission': 'carbon_emission',
     }
@@ -37,7 +37,7 @@ def consumption_list(request):
         else:
             consumptions = consumptions.order_by(f'-{actual_sort_field}')
     else:
-        consumptions = consumptions.order_by('-consumption_datetime', '-created_at')
+        consumptions = consumptions.order_by('-consumption_date', '-consumption_time', '-created_at')
     
     # Pagination
     paginator = Paginator(consumptions, 20)

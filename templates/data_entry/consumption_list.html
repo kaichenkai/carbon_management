@@ -144,11 +144,11 @@ body > table.fixed-header-table thead th {
                                 </a>
                             </th>
                             <th>
-                                <a href="?sort=consumption_datetime&order={% if current_sort == 'consumption_datetime' and current_order == 'asc' %}desc{% else %}asc{% endif %}" 
+                                <a href="?sort=consumption_date&order={% if current_sort == 'consumption_date' and current_order == 'asc' %}desc{% else %}asc{% endif %}" 
                                    class="text-decoration-none text-dark d-inline-flex align-items-center">
-                                    {% trans "消耗日期时间" %}
+                                    {% trans "消耗日期" %}
                                     <span class="ms-1">
-                                        {% if current_sort == 'consumption_datetime' %}
+                                        {% if current_sort == 'consumption_date' %}
                                             {% if current_order == 'asc' %}
                                                 <i class="bi bi-arrow-up text-primary"></i>
                                             {% else %}
@@ -160,6 +160,7 @@ body > table.fixed-header-table thead th {
                                     </span>
                                 </a>
                             </th>
+                            <th>{% trans "消耗时间" %}</th>
                             <th>
                                 <a href="?sort=quantity&order={% if current_sort == 'quantity' and current_order == 'asc' %}desc{% else %}asc{% endif %}" 
                                    class="text-decoration-none text-dark d-inline-flex align-items-center">
@@ -218,12 +219,19 @@ body > table.fixed-header-table thead th {
                             <td>{{ consumption.category_level2.name }}</td>
 
                             <td>
-                                {{ consumption.product_name }}
+                                {% if consumption.product_name %}
+                                <small>{{ consumption.product_name|truncatewords:10 }}</small>
+                                {% else %}
+                                <span class="text-muted">-</span>
+                                {% endif %}
                                 {% comment %} 显示分类信息 {% endcomment %}
                                 {% comment %} <br><small class="text-muted">{{ consumption.category_level2 }}</small> {% endcomment %}
                             </td>
                             <td>
-                                {{ consumption.consumption_datetime|date:"Y-m-d H:i" }}
+                                {{ consumption.consumption_date|date:"Y-m-d" }}
+                            </td>
+                            <td>
+                                {{ consumption.consumption_time|time:"H:i" }}
                             </td>
                             <td>
                                 <strong>{{ consumption.quantity }}</strong> {{ consumption.product_unit }}
@@ -235,9 +243,9 @@ body > table.fixed-header-table thead th {
                                 <span class="badge bg-success">{{ consumption.carbon_emission }} kgCO2e</span>
                             </td>
 
-                                                        <td>
-                                {% if coefficient.special_note %}
-                                <small>{{ coefficient.special_note|truncatewords:10 }}</small>
+                            <td>
+                                {% if consumption.special_note %}
+                                <small>{{ consumption.special_note|truncatewords:10 }}</small>
                                 {% else %}
                                 <span class="text-muted">-</span>
                                 {% endif %}

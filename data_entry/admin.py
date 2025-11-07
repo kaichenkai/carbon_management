@@ -16,7 +16,8 @@ class MaterialConsumptionAdmin(admin.ModelAdmin):
         'product_unit',
         'emission_coefficient',
         'carbon_emission_display',
-        'consumption_datetime',
+        'consumption_date',
+        'consumption_time',
         'created_at',
     ]
     
@@ -26,7 +27,7 @@ class MaterialConsumptionAdmin(admin.ModelAdmin):
         'hotel_name',
         'category_level1',
         'category_level2',
-        'consumption_datetime',
+        'consumption_date',
         'created_at',
     ]
     
@@ -59,7 +60,7 @@ class MaterialConsumptionAdmin(admin.ModelAdmin):
             )
         }),
         ('消耗时间', {
-            'fields': ('consumption_datetime',)
+            'fields': (('consumption_date', 'consumption_time'),)
         }),
         ('消耗数据', {
             'fields': ('quantity', 'carbon_emission')
@@ -71,10 +72,10 @@ class MaterialConsumptionAdmin(admin.ModelAdmin):
     )
     
     # Ordering
-    ordering = ['-consumption_datetime', '-created_at']
+    ordering = ['-consumption_date', '-consumption_time', '-created_at']
     
     # Date hierarchy
-    date_hierarchy = 'consumption_datetime'
+    date_hierarchy = 'consumption_date'
     
     # Items per page
     list_per_page = 25

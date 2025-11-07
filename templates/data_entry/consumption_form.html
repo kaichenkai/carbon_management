@@ -110,14 +110,25 @@
                                 </div>
                             </div>
                             
-                            <!-- 消耗日期时间 -->
+                            <!-- 消耗日期 -->
                             <div class="col-md-6">
-                                <label for="{{ form.consumption_datetime.id_for_label }}" class="form-label">
-                                    {{ form.consumption_datetime.label }} <span class="text-danger">*</span>
+                                <label for="{{ form.consumption_date.id_for_label }}" class="form-label">
+                                    {{ form.consumption_date.label }} <span class="text-danger">*</span>
                                 </label>
-                                {{ form.consumption_datetime }}
-                                {% if form.consumption_datetime.errors %}
-                                    <div class="text-danger small mt-1">{{ form.consumption_datetime.errors }}</div>
+                                {{ form.consumption_date }}
+                                {% if form.consumption_date.errors %}
+                                    <div class="text-danger small mt-1">{{ form.consumption_date.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- 消耗时间 -->
+                            <div class="col-md-6">
+                                <label for="{{ form.consumption_time.id_for_label }}" class="form-label">
+                                    {{ form.consumption_time.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.consumption_time }}
+                                {% if form.consumption_time.errors %}
+                                    <div class="text-danger small mt-1">{{ form.consumption_time.errors }}</div>
                                 {% endif %}
                             </div>
                             
