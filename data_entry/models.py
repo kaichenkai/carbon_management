@@ -12,7 +12,6 @@ class MaterialConsumption(models.Model):
     department = models.CharField(_('部门名称'), max_length=50, choices=EmissionCoefficient.DEPARTMENT_CHOICES)
     
     # Product information (from EmissionCoefficient)
-    product_name = models.CharField(_('产品名称'), max_length=200)
     category_level1 = models.ForeignKey(
         EmissionCategory,
         on_delete=models.PROTECT,
@@ -27,6 +26,7 @@ class MaterialConsumption(models.Model):
         related_name='consumptions_level2',
         limit_choices_to={'level': 2}
     )
+    product_name = models.CharField(_('产品名称'), max_length=200)
     product_unit = models.CharField(_('产品单位'), max_length=20)
     emission_coefficient = models.DecimalField(_('碳排放系数'), max_digits=10, decimal_places=6)
     

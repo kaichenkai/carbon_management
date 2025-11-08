@@ -263,15 +263,9 @@ def coefficient_export(request):
         _('单位'), _('碳排放系数'), _('最后更新'), _('特殊备注'),
     ]
     
-    # Style headers
-    header_fill = PatternFill(start_color="4472C4", end_color="4472C4", fill_type="solid")
-    header_font = Font(bold=True, color="FFFFFF")
-    
     for col_num, header in enumerate(headers, 1):
         cell = ws.cell(row=1, column=col_num)
         cell.value = header
-        cell.fill = header_fill
-        cell.font = header_font
         cell.alignment = Alignment(horizontal='center', vertical='center')
     
     # Write data
@@ -327,15 +321,15 @@ def coefficient_template(request):
         _('单位'), _('碳排放系数'), _('特殊备注')
     ]
     
-    # Style headers
-    header_fill = PatternFill(start_color="4472C4", end_color="4472C4", fill_type="solid")
-    header_font = Font(bold=True, color="FFFFFF")
+    # # Style headers
+    # header_fill = PatternFill(start_color="4472C4", end_color="4472C4", fill_type="solid")
+    # header_font = Font(bold=True, color="FFFFFF")
     
     for col_num, header in enumerate(headers, 1):
         cell = ws.cell(row=1, column=col_num)
         cell.value = header
-        cell.fill = header_fill
-        cell.font = header_font
+        # cell.fill = header_fill
+        # cell.font = header_font
         cell.alignment = Alignment(horizontal='center', vertical='center')
     
     # Add example data

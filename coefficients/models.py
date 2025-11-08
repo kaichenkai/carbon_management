@@ -90,6 +90,7 @@ class EmissionCoefficient(models.Model):
         ('rd', _('研发部')),
         ('administration', _('行政部')),
         ('logistics', _('后勤部')),
+        ('F&B', _('F&B')),
     ]
 
     category_level1 = models.ForeignKey(

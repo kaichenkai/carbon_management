@@ -23,6 +23,12 @@ body > table.fixed-header-table {
 body > table.fixed-header-table thead th {
     white-space: nowrap;
 }
+
+/* Operation bar button styles */
+.operation-bar .btn {
+    padding: 10px 12px;
+    font-weight: 500;
+}
 </style>
 <div class="container-fluid mt-4">
     <div class="row mb-4">
@@ -33,12 +39,28 @@ body > table.fixed-header-table thead th {
     </div>
     
     <!-- Operation Bar -->
-    <div class="card mb-4">
+    <div class="card mb-4 operation-bar">
         <div class="card-body">
-            <div class="d-flex justify-content-end">
-                <a href="{% url 'consumption_create' %}" class="btn btn-success d-inline-flex align-items-center">
-                    <i class="bi bi-plus-circle me-1"></i> {% trans "新增消耗记录" %}
-                </a>
+            <div class="row g-3 align-items-center">
+                <div class="col-lg-4 col-md-12">
+                </div>
+                <div class="col-lg-8 col-md-12">
+                    <div class="d-flex flex-wrap gap-2 justify-content-lg-end justify-content-start">
+                        <a href="{% url 'consumption_create' %}" class="btn btn-success d-inline-flex align-items-center">
+                            <i class="bi bi-plus-circle me-1"></i> {% trans "新增消耗记录" %}
+                        </a>
+                        <a href="{% url 'data_import' %}" class="btn btn-info d-inline-flex align-items-center">
+                            <i class="bi bi-upload me-1"></i> {% trans "批量导入" %}
+                        </a>
+                        <a href="{% url 'download_import_template' %}" class="btn btn-secondary d-inline-flex align-items-center">
+                            <i class="bi bi-download me-1"></i> {% trans "下载模板" %}
+                        </a>
+                        <button type="button" id="exportBtn" class="btn btn-primary d-inline-flex align-items-center">
+                            <i class="bi bi-file-earmark-excel me-1"></i> 
+                            <span id="exportBtnText">{% trans "导出数据" %}</span>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -406,8 +428,18 @@ document.addEventListener('DOMContentLoaded', function() {
             totalEmissionSpan.textContent = totalEmission.toFixed(2);
             
             statsToolbar.style.display = 'block';
+            
+            // Update export button
+            exportBtnText.textContent = '{% trans "导出选中" %} (' + count + ')';
+            exportBtn.classList.remove('btn-primary');
+            exportBtn.classList.add('btn-warning');
         } else {
             statsToolbar.style.display = 'none';
+            
+            // Reset export button
+            exportBtnText.textContent = '{% trans "导出数据" %}';
+            exportBtn.classList.remove('btn-warning');
+            exportBtn.classList.add('btn-primary');
         }
     }
     
@@ -420,6 +452,44 @@ document.addEventListener('DOMContentLoaded', function() {
         selectAllCheckbox.indeterminate = false;
         updateStatistics();
     };
+    
+    // Export functionality
+    const exportBtn = document.getElementById('exportBtn');
+    const exportBtnText = document.getElementById('exportBtnText');
+    
+    exportBtn.addEventListener('click', function() {
+        const checkedCheckboxes = document.querySelectorAll('.consumption-checkbox:checked');
+        const selectedIds = Array.from(checkedCheckboxes).map(cb => cb.value);
+        
+        // Show loading state
+        const originalText = exportBtnText.textContent;
+        exportBtnText.textContent = '{% trans "导出中..." %}';
+        exportBtn.disabled = true;
+        
+        // Determine export type
+        let url;
+        if (selectedIds.length > 0) {
+            // Export selected records
+            url = '{% url "consumption_export" %}?ids=' + selectedIds.join(',');
+        } else {
+            // Export all records
+            url = '{% url "consumption_export" %}?all=true';
+        }
+        
+        // Create a temporary link and trigger download
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'consumption_records.xlsx';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Reset button state after a delay
+        setTimeout(() => {
+            exportBtnText.textContent = originalText;
+            exportBtn.disabled = false;
+        }, 1000);
+    });
 });
 </script>
 
