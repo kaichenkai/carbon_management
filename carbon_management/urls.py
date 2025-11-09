@@ -23,6 +23,7 @@ from django.conf.urls.i18n import i18n_patterns
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('i18n/', include('django.conf.urls.i18n')),
+    path('dashboard/', include('dashboard.urls')),
     path('data-entry/', include('data_entry.urls')),
     path('', include('coefficients.urls')),
 ]

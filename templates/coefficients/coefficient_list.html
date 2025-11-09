@@ -36,15 +36,15 @@ body > table.fixed-header-table thead th {
     <div class="card mb-4">
         <div class="card-body">
             <div class="row g-3 align-items-center">
-                <div class="col-lg-4 col-md-12">
+                <div class="col-lg-4 col-md-6">
                     <form method="get" class="d-flex gap-2">
                         {{ search_form.query }}
-                        <button type="submit" class="btn btn-primary d-inline-flex align-items-center flex-shrink-0" style="display: none;">
+                        {% comment %} <button type="submit" class="btn btn-primary d-inline-flex align-items-center flex-shrink-0" style="display: none;">
                             <i class="bi bi-search me-1"></i> {% trans "搜索" %}
-                        </button>
+                        </button> {% endcomment %}
                     </form>
                 </div>
-                <div class="col-lg-8 col-md-12">
+                <div class="col-lg-8 col-md-18">
                     <div class="d-flex flex-wrap gap-2 justify-content-lg-end justify-content-start">
                         <a href="{% url 'coefficient_create' %}" class="btn btn-success d-inline-flex align-items-center">
                             <i class="bi bi-plus-circle me-1"></i> {% trans "新增系数" %}

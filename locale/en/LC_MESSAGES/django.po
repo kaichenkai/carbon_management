@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-08 15:52+0800\n"
+"POT-Creation-Date: 2025-11-08 16:33+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -372,6 +372,7 @@ msgid "消耗时间"
 msgstr "Consumption Time"
 
 #: data_entry/models.py:38 data_entry/views.py:468
+#: templates/dashboard/dashboard.html:258
 #: templates/data_entry/consumption_list.html:189
 #: templates/data_entry/import_form.html:34
 msgid "消耗数量"
@@ -485,7 +486,7 @@ msgstr "Consumption Records"
 #: templates/coefficients/coefficient_import.html:4
 #: templates/coefficients/coefficient_list.html:4
 #: templates/coefficients/dashboard.html:4 templates/coefficients/login.html:8
-#: templates/coefficients/profile.html:4
+#: templates/coefficients/profile.html:4 templates/dashboard/dashboard.html:5
 #: templates/data_entry/consumption_form.html:5
 #: templates/data_entry/consumption_list.html:4
 #: templates/data_entry/import_form.html:4
@@ -495,6 +496,7 @@ msgstr "Carbon Emission Management System"
 
 #: templates/base.html:169 templates/coefficients/dashboard.html:4
 #: templates/coefficients/dashboard.html:10
+#: templates/dashboard/dashboard.html:5 templates/dashboard/dashboard.html:11
 msgid "数据看板"
 msgstr "Dashboard"
 
@@ -903,6 +905,73 @@ msgstr "Please contact the system administrator to change your password"
 msgid "访问管理后台"
 msgstr "Visit Admin Panel"
 
+#: templates/dashboard/dashboard.html:12
+msgid "消耗记录数据可视化分析"
+msgstr "Consumption Data Visualization and Analysis"
+
+#: templates/dashboard/dashboard.html:21
+msgid "开始日期"
+msgstr "Start Date"
+
+#: templates/dashboard/dashboard.html:26
+msgid "结束日期"
+msgstr "End Date"
+
+#: templates/dashboard/dashboard.html:32
+msgid "查询"
+msgstr "Query"
+
+#: templates/dashboard/dashboard.html:35
+msgid "最近7天"
+msgstr "Last 7 Days"
+
+#: templates/dashboard/dashboard.html:38
+msgid "最近30天"
+msgstr "Last 30 Days"
+
+#: templates/dashboard/dashboard.html:41
+msgid "最近90天"
+msgstr "Last 90 Days"
+
+#: templates/dashboard/dashboard.html:55
+msgid "总记录数"
+msgstr "Total Records"
+
+#: templates/dashboard/dashboard.html:70
+#: templates/data_entry/consumption_list.html:362
+msgid "总消耗数量"
+msgstr "Total Quantity"
+
+#: templates/dashboard/dashboard.html:85
+#: templates/data_entry/consumption_list.html:367
+msgid "总碳排放量"
+msgstr "Total Carbon Emission"
+
+#: templates/dashboard/dashboard.html:103
+msgid "每日碳排放量趋势"
+msgstr "Daily Carbon Emission Trend"
+
+#: templates/dashboard/dashboard.html:113
+msgid "部门碳排放分布"
+msgstr "Department Emission Distribution"
+
+#: templates/dashboard/dashboard.html:127
+msgid "每日消耗数量趋势"
+msgstr "Daily Consumption Quantity Trend"
+
+#: templates/dashboard/dashboard.html:141
+msgid "每日记录数量"
+msgstr "Daily Record Count"
+
+#: templates/dashboard/dashboard.html:172
+#: templates/data_entry/consumption_list.html:209
+msgid "碳排放量"
+msgstr "Carbon Emission"
+
+#: templates/dashboard/dashboard.html:291
+msgid "记录数量"
+msgstr "Record Count"
+
 #: templates/data_entry/consumption_form.html:5
 #: templates/data_entry/consumption_form.html:14
 msgid "编辑消耗记录"
@@ -928,11 +997,27 @@ msgstr "Pending Selection"
 
 #: templates/data_entry/consumption_list.html:37
 msgid "记录和管理物料消耗数据"
-msgstr "Record and manage material consumption data"
+msgstr "Record and Manage Material Consumption Data"
 
-#: templates/data_entry/consumption_list.html:209
-msgid "碳排放量"
-msgstr "Carbon Emission"
+#: data_entry/forms.py:190
+msgid "搜索部门、分类或产品名称..."
+msgstr "Search department, category or product name..."
+
+#: templates/data_entry/consumption_list.html:51
+msgid "选择开始日期"
+msgstr "Select start date"
+
+#: templates/data_entry/consumption_list.html:57
+msgid "选择结束日期"
+msgstr "Select end date"
+
+#: templates/data_entry/consumption_form.html:148
+msgid "碳排放系数(kgCO2e/单位)"
+msgstr "Emission Coefficient (kgCO2e/unit)"
+
+#: templates/data_entry/consumption_form.html:150
+msgid "根据选择的产品自动获取"
+msgstr "Auto-filled based on selected product"
 
 #: templates/data_entry/consumption_list.html:283
 msgid "确定要删除这条记录吗？"
@@ -945,14 +1030,6 @@ msgstr "No consumption records"
 #: templates/data_entry/consumption_list.html:356
 msgid "已选择"
 msgstr "Selected"
-
-#: templates/data_entry/consumption_list.html:362
-msgid "总消耗数量"
-msgstr "Total Quantity"
-
-#: templates/data_entry/consumption_list.html:367
-msgid "总碳排放量"
-msgstr "Total Carbon Emission"
 
 #: templates/data_entry/consumption_list.html:373
 msgid "清除"
@@ -1141,12 +1218,6 @@ msgstr "View Record List"
 #~| msgid "输入或选择产品代码"
 #~ msgid "产品代码"
 #~ msgstr "Enter or select product code"
-
-#~ msgid "消耗开始日期"
-#~ msgstr "Consumption Start Date"
-
-#~ msgid "消耗结束日期"
-#~ msgstr "Consumption End Date"
 
 #~ msgid "消耗开始时间"
 #~ msgstr "Consumption Start Time"

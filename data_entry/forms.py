@@ -178,3 +178,15 @@ class DataImportForm(forms.Form):
             raise forms.ValidationError(_('文件大小不能超过 10MB'))
         
         return file
+
+
+class ConsumptionSearchForm(forms.Form):
+    """Search form for consumption records"""
+    query = forms.CharField(
+        required=False,
+        label=_('搜索'),
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': _('搜索部门、分类或产品名称...')
+        })
+    )

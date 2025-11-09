@@ -23,12 +23,6 @@ body > table.fixed-header-table {
 body > table.fixed-header-table thead th {
     white-space: nowrap;
 }
-
-/* Operation bar button styles */
-.operation-bar .btn {
-    padding: 10px 12px;
-    font-weight: 500;
-}
 </style>
 <div class="container-fluid mt-4">
     <div class="row mb-4">
@@ -38,13 +32,36 @@ body > table.fixed-header-table thead th {
         </div>
     </div>
     
-    <!-- Operation Bar -->
+    <!-- Operation Bar with Search and Filters -->
     <div class="card mb-4 operation-bar">
         <div class="card-body">
-            <div class="row g-3 align-items-center">
-                <div class="col-lg-4 col-md-12">
+            <div class="row g-3 align-items-end">
+                <!-- Search and Filter Form -->
+                <div class="col-lg-5 col-md-12">
+                    <form method="get" id="filterForm" class="row g-2">
+                        <!-- Search Box -->
+                        <div class="col-md-6">
+                            {{ search_form.query }}
+                        </div>
+                        
+                        <!-- Date Filters -->
+                        <div class="col-md-3">
+                            <input type="date" class="form-control form-control-sm" id="start_date" name="start_date" 
+                                   value="{{ request.GET.start_date }}" 
+                                   title="{% trans '选择开始日期' %}"
+                                   aria-label="{% trans '开始日期' %}">
+                        </div>
+                        <div class="col-md-3">
+                            <input type="date" class="form-control form-control-sm" id="end_date" name="end_date" 
+                                   value="{{ request.GET.end_date }}" 
+                                   title="{% trans '选择结束日期' %}"
+                                   aria-label="{% trans '结束日期' %}">
+                        </div>
+                    </form>
                 </div>
-                <div class="col-lg-8 col-md-12">
+                
+                <!-- Action Buttons -->
+                <div class="col-lg-7 col-md-12">
                     <div class="d-flex flex-wrap gap-2 justify-content-lg-end justify-content-start">
                         <a href="{% url 'consumption_create' %}" class="btn btn-success d-inline-flex align-items-center">
                             <i class="bi bi-plus-circle me-1"></i> {% trans "新增消耗记录" %}
@@ -68,8 +85,8 @@ body > table.fixed-header-table thead th {
     <!-- Consumption Table -->
     <div class="card">
         <div class="card-body p-0">
-            <div style="overflow-x: auto; overflow-y: auto; max-height: 70vh;">
-                <table class="table table-hover align-middle mb-0 fixed-header-table" style="min-width: 1200px;">
+            <div style="overflow-y: auto; max-height: 70vh;">
+                <table class="table table-hover align-middle mb-0 fixed-header-table table-sm">
                     <thead>
                         <tr>
                             <th>
@@ -377,6 +394,45 @@ body > table.fixed-header-table thead th {
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize fixed table header
     initFixedTableHeader();
+    
+    // Auto-search functionality
+    const filterForm = document.getElementById('filterForm');
+    const searchInput = filterForm.querySelector('input[name="query"]');
+    const dateInputs = filterForm.querySelectorAll('input[type="date"], input[type="time"]');
+    let searchTimeout;
+    
+    // Auto-submit search after user stops typing in search box
+    searchInput.addEventListener('input', function() {
+        // Clear previous timeout
+        clearTimeout(searchTimeout);
+        
+        // Set new timeout - submit after 500ms of no typing
+        searchTimeout = setTimeout(function() {
+            filterForm.submit();
+        }, 500);
+    });
+    
+    // Auto-submit when date/time filters change
+    dateInputs.forEach(function(input) {
+        input.addEventListener('change', function() {
+            filterForm.submit();
+        });
+    });
+    
+    // Also allow manual submit with Enter key
+    searchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            clearTimeout(searchTimeout);
+            filterForm.submit();
+        }
+    });
+    
+    // Restore focus after page load (after search)
+    if (searchInput.value) {
+        searchInput.focus();
+        // Move cursor to end of text
+        searchInput.setSelectionRange(searchInput.value.length, searchInput.value.length);
+    }
     
     const selectAllCheckbox = document.getElementById('selectAll');
     const consumptionCheckboxes = document.querySelectorAll('.consumption-checkbox');

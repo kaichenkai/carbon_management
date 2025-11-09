@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'coefficients',
     'data_entry',
+    'dashboard',
 ]
 
 MIDDLEWARE = [

@@ -5,8 +5,9 @@ from django.utils.translation import gettext
 from django.core.paginator import Paginator
 from django.http import JsonResponse, HttpResponse
 from django.db import transaction
+from django.db.models import Q
 from .models import MaterialConsumption
-from .forms import MaterialConsumptionForm, DataImportForm
+from .forms import MaterialConsumptionForm, DataImportForm, ConsumptionSearchForm
 from coefficients.models import EmissionCoefficient, EmissionCategory
 import pandas as pd
 from datetime import datetime, date, time
@@ -17,6 +18,35 @@ from decimal import Decimal
 def consumption_list(request):
     """List all material consumption records"""
     consumptions = MaterialConsumption.objects.all()
+    
+    # Search form
+    search_form = ConsumptionSearchForm(request.GET)
+    query = request.GET.get('query', '').strip()
+    
+    # Apply search filter
+    if query:
+        consumptions = consumptions.filter(
+            Q(department__icontains=query) |
+            Q(category_level1__name__icontains=query) |
+            Q(category_level2__name__icontains=query) |
+            Q(product_name__icontains=query) |
+            Q(hotel_name__icontains=query)
+        )
+    
+    # Date and time filters
+    start_date = request.GET.get('start_date', '').strip()
+    end_date = request.GET.get('end_date', '').strip()
+    start_time = request.GET.get('start_time', '').strip()
+    end_time = request.GET.get('end_time', '').strip()
+    
+    if start_date:
+        consumptions = consumptions.filter(consumption_date__gte=start_date)
+    if end_date:
+        consumptions = consumptions.filter(consumption_date__lte=end_date)
+    if start_time:
+        consumptions = consumptions.filter(consumption_time__gte=start_time)
+    if end_time:
+        consumptions = consumptions.filter(consumption_time__lte=end_time)
     
     # Sorting
     sort_by = request.GET.get('sort', '-consumption_date')
@@ -54,6 +84,7 @@ def consumption_list(request):
         'page_obj': page_obj,
         'current_sort': sort_by.lstrip('-'),
         'current_order': order,
+        'search_form': search_form,
     }
     return render(request, 'data_entry/consumption_list.html', context)
 
@@ -366,18 +397,20 @@ def process_import_data(df):
 
                 emission_coefficient
                 
-                # Create record
-                MaterialConsumption.objects.create(
+                # update or record
+                MaterialConsumption.objects.update_or_create(
                     hotel_name=hotel_name,
                     department=department,
                     category_level1=category_level1,
                     category_level2=category_level2,
                     product_name=product_name,
-                    product_unit=product_unit,
-                    emission_coefficient=emission_coefficient,
                     consumption_date=consumption_date,
                     consumption_time=consumption_time,
-                    quantity=Decimal(str(quantity))
+                    quantity=Decimal(str(quantity)),
+                    defaults={
+                        'product_unit': product_unit,
+                        'emission_coefficient': emission_coefficient,
+                    }
                 )
                 
                 success_count += 1

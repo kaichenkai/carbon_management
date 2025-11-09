@@ -73,8 +73,7 @@ class EmissionCategory(models.Model):
         unique_together = ['name', 'parent']
 
     def __str__(self):
-        if self.parent:
-            return f"{self.parent.name} > {self.name}"
+        # Only return the category name, not the full path
         return self.name
 
 

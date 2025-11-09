@@ -57,7 +57,12 @@
                                 <label for="{{ form.category_level1.id_for_label }}" class="form-label">
                                     {{ form.category_level1.label }} <span class="text-danger">*</span>
                                 </label>
-                                {{ form.category_level1 }}
+                                {% if consumption %}
+                                    <input type="text" class="form-control" value="{{ consumption.category_level1 }}" readonly>
+                                    <input type="hidden" name="category_level1" value="{{ consumption.category_level1.id }}">
+                                {% else %}
+                                    {{ form.category_level1 }}
+                                {% endif %}
                                 {% if form.category_level1.errors %}
                                     <div class="text-danger small mt-1">{{ form.category_level1.errors }}</div>
                                 {% endif %}
@@ -68,7 +73,12 @@
                                 <label for="{{ form.category_level2.id_for_label }}" class="form-label">
                                     {{ form.category_level2.label }} <span class="text-danger">*</span>
                                 </label>
-                                {{ form.category_level2 }}
+                                {% if consumption %}
+                                    <input type="text" class="form-control" value="{{ consumption.category_level2 }}" readonly>
+                                    <input type="hidden" name="category_level2" value="{{ consumption.category_level2.id }}">
+                                {% else %}
+                                    {{ form.category_level2 }}
+                                {% endif %}
                                 {% if form.category_level2.errors %}
                                     <div class="text-danger small mt-1">{{ form.category_level2.errors }}</div>
                                 {% endif %}
@@ -143,10 +153,17 @@
                                 {% endif %}
                             </div>
                             
+                            <!-- 碳排放系数 (display only) -->
+                            <div class="col-md-6">
+                                <label class="form-label">{% trans "碳排放系数(kgCO2e/单位)" %}</label>
+                                <input type="text" class="form-control" id="coefficientDisplay" readonly value="{% if consumption %}{{ consumption.emission_coefficient }}{% else %}0.00{% endif %}">
+                                <div class="form-text">{% trans "根据选择的产品自动获取" %}</div>
+                            </div>
+
                             <!-- 计算的碳排放量 (display only) -->
                             <div class="col-md-6">
                                 <label class="form-label">{% trans "碳排放量(kgCO2e)" %}</label>
-                                <input type="text" class="form-control" id="calculatedEmission" readonly value="0.00">
+                                <input type="text" class="form-control" id="calculatedEmission" readonly value="{% if consumption %}{{ consumption.carbon_emission }}{% else %}0.00{% endif %}">
                                 <div class="form-text">{% trans "自动计算：数量 × 碳排放系数" %}</div>
                             </div>
                             
@@ -193,6 +210,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     let currentCoefficient = 0;
     let productsCache = [];
+    
+    {% if not consumption %}
+    // Only add event listeners in create mode, not in edit mode
     
     // When level 1 category changes, load level 2 categories
     categoryLevel1Select.addEventListener('change', function() {
@@ -266,14 +286,13 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 根据二级分类更新碳排放系数（不需要选择具体产品）
     function updateCoefficientByCategory(product) {
-        // Get category names from selects
-        const cat1Text = categoryLevel1Select.options[categoryLevel1Select.selectedIndex]?.text || '';
+        // Get category name from level 2 select only
         const cat2Text = categoryLevel2Select.options[categoryLevel2Select.selectedIndex]?.text || '';
         
         document.getElementById('displayProductName').textContent = translations.pendingSelection;
         
-        if (cat1Text && cat2Text) {
-            document.getElementById('displayCategory').textContent = cat1Text + ' > ' + cat2Text;
+        if (cat2Text) {
+            document.getElementById('displayCategory').textContent = cat2Text;
         } else {
             document.getElementById('displayCategory').textContent = '';
         }
@@ -281,6 +300,12 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('displayUnit').textContent = product.unit;
         document.getElementById('displayCoefficient').textContent = product.coefficient;
         productInfo.style.display = 'block';
+        
+        // Update the standalone coefficient input field
+        const coefficientInput = document.getElementById('coefficientDisplay');
+        if (coefficientInput) {
+            coefficientInput.value = product.coefficient;
+        }
         
         currentCoefficient = parseFloat(product.coefficient);
         calculateEmission();
@@ -290,12 +315,11 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateProductInfo(product) {
         document.getElementById('displayProductName').textContent = product.product_name;
         
-        // Get category names from selects
-        const cat1Text = categoryLevel1Select.options[categoryLevel1Select.selectedIndex]?.text || '';
+        // Get category name from level 2 select only
         const cat2Text = categoryLevel2Select.options[categoryLevel2Select.selectedIndex]?.text || '';
         
-        if (cat1Text && cat2Text) {
-            document.getElementById('displayCategory').textContent = cat1Text + ' > ' + cat2Text;
+        if (cat2Text) {
+            document.getElementById('displayCategory').textContent = cat2Text;
         } else {
             document.getElementById('displayCategory').textContent = '';
         }
@@ -304,11 +328,18 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('displayCoefficient').textContent = product.coefficient;
         productInfo.style.display = 'block';
         
+        // Update the standalone coefficient input field
+        const coefficientInput = document.getElementById('coefficientDisplay');
+        if (coefficientInput) {
+            coefficientInput.value = product.coefficient;
+        }
+        
         currentCoefficient = parseFloat(product.coefficient);
         calculateEmission();
     }
+    {% endif %}
     
-    // Calculate emission when quantity changes
+    // Calculate emission when quantity changes (works in both create and edit mode)
     quantityInput.addEventListener('input', calculateEmission);
     
     function calculateEmission() {
@@ -321,16 +352,15 @@ document.addEventListener('DOMContentLoaded', function() {
     {% if consumption %}
     currentCoefficient = {{ consumption.emission_coefficient }};
     document.getElementById('displayProductName').textContent = '{{ consumption.product_name }}';
-    document.getElementById('displayCategory').textContent = '{{ consumption.category_level1 }} > {{ consumption.category_level2 }}';
+    document.getElementById('displayCategory').textContent = '{{ consumption.category_level2 }}';
     document.getElementById('displayUnit').textContent = '{{ consumption.product_unit }}';
     document.getElementById('displayCoefficient').textContent = '{{ consumption.emission_coefficient }}';
     productInfo.style.display = 'block';
-    calculateEmission();
     
-    // Trigger change event to load level 2 categories
-    if (categoryLevel1Select.value) {
-        categoryLevel1Select.dispatchEvent(new Event('change'));
-    }
+    // Coefficient input field already has the correct value from template
+    // No need to update it via JavaScript
+    
+    calculateEmission();
     {% endif %}
 });
 </script>
