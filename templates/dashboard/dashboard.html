@@ -27,19 +27,32 @@
                     <input type="date" class="form-control" id="end_date" name="end_date" 
                            value="{{ end_date|date:'Y-m-d' }}">
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-2">
+                    <label for="category_level1" class="form-label">{% trans "一级分类" %}</label>
+                    <select class="form-select" id="category_level1" name="category_level1">
+                        <option value="">{% trans "全部" %}</option>
+                        {% for category in categories_level1 %}
+                        <option value="{{ category.id }}" {% if selected_category_level1 == category.id|stringformat:"s" %}selected{% endif %}>
+                            {{ category.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="category_level2" class="form-label">{% trans "二级分类" %}</label>
+                    <select class="form-select" id="category_level2" name="category_level2">
+                        <option value="">{% trans "全部" %}</option>
+                        {% for category in categories_level2 %}
+                        <option value="{{ category.id }}" {% if selected_category_level2 == category.id|stringformat:"s" %}selected{% endif %}>
+                            {{ category.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
                     <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-search me-1"></i> {% trans "查询" %}
+                        <i class="bi bi-search me-1"></i> {% trans "搜索" %}
                     </button>
-                    <a href="?start_date={{ today|date:'Y-m-d' }}&end_date={{ today|date:'Y-m-d' }}" class="btn btn-secondary quick-range-link" data-days="7">
-                        {% trans "最近7天" %}
-                    </a>
-                    <a href="?start_date={{ today|date:'Y-m-d' }}&end_date={{ today|date:'Y-m-d' }}" class="btn btn-secondary quick-range-link" data-days="30">
-                        {% trans "最近30天" %}
-                    </a>
-                    <a href="?start_date={{ today|date:'Y-m-d' }}&end_date={{ today|date:'Y-m-d' }}" class="btn btn-secondary quick-range-link" data-days="90">
-                        {% trans "最近90天" %}
-                    </a>
                 </div>
             </form>
         </div>
@@ -48,12 +61,13 @@
     <!-- Summary Cards -->
     <div class="row mb-4">
         <div class="col-md-4">
-            <div class="card text-white bg-primary">
+            <div class="card text-white" style="background-color: #2ecc71;">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <h6 class="card-title mb-0">{% trans "总记录数" %}</h6>
                             <h2 class="mt-2 mb-0">{{ total_records }}</h2>
+                            <small>&nbsp;</small>
                         </div>
                         <div>
                             <i class="bi bi-file-text" style="font-size: 3rem; opacity: 0.5;"></i>
@@ -63,12 +77,13 @@
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card text-white bg-success">
+            <div class="card text-white" style="background-color: #2ecc71;">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <h6 class="card-title mb-0">{% trans "总消耗数量" %}</h6>
                             <h2 class="mt-2 mb-0">{{ total_quantity|floatformat:2 }}</h2>
+                            <small>&nbsp;</small>
                         </div>
                         <div>
                             <i class="bi bi-box" style="font-size: 3rem; opacity: 0.5;"></i>
@@ -78,7 +93,7 @@
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card text-white bg-danger">
+            <div class="card text-white" style="background-color: #2ecc71;">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
@@ -122,17 +137,28 @@
     <!-- Charts Row 2 -->
     <div class="row mb-4">
         <div class="col-lg-12">
-            <div class="card">
+            <div class="card h-100">
                 <div class="card-header">
-                    <h5 class="mb-0"><i class="bi bi-graph-up"></i> {% trans "每日消耗数量趋势" %}</h5>
+                    <h5 class="mb-0"><i class="bi bi-bar-chart-fill"></i> {% trans "一级分类碳排放量" %}</h5>
                 </div>
                 <div class="card-body">
-                    <canvas id="quantityChart" height="60"></canvas>
+                    <canvas id="categoryLevel1Chart" height="80"></canvas>
                 </div>
             </div>
         </div>
     </div>
-
+<div class="row mb-4">
+            <div class="col-lg-12">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-graph-up"></i> {% trans "每日消耗数量趋势" %}</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="quantityChart" height="80"></canvas>
+                </div>
+            </div>
+        </div>
+</div>
     <!-- Charts Row 3 -->
     {% comment %} <div class="row mb-4">
         <div class="col-lg-12">
@@ -157,6 +183,8 @@ const emissions = {{ emissions_json|safe }};
 const recordCounts = {{ record_counts_json|safe }};
 const departmentLabels = {{ department_labels_json|safe }};
 const departmentEmissions = {{ department_emissions_json|safe }};
+const categoryLevel1Labels = {{ category_level1_labels_json|safe }};
+const categoryLevel1Emissions = {{ category_level1_emissions_json|safe }};
 
 // Chart.js default settings
 Chart.defaults.font.family = "'Segoe UI', 'Helvetica Neue', Arial, sans-serif";
@@ -171,8 +199,8 @@ const emissionChart = new Chart(emissionCtx, {
         datasets: [{
             label: '{% trans "碳排放量" %} (kgCO2e)',
             data: emissions,
-            backgroundColor: 'rgba(220, 53, 69, 0.7)',
-            borderColor: 'rgba(220, 53, 69, 1)',
+            // backgroundColor: 'rgba(220, 53, 69, 0.7)',
+            // borderColor: 'rgba(220, 53, 69, 1)',
             borderWidth: 1
         }]
     },
@@ -214,7 +242,7 @@ const departmentChart = new Chart(departmentCtx, {
         datasets: [{
             data: departmentEmissions,
             backgroundColor: [
-                'rgba(255, 99, 132, 0.7)',
+                // 'rgba(255, 99, 132, 0.7)',
                 'rgba(54, 162, 235, 0.7)',
                 'rgba(255, 206, 86, 0.7)',
                 'rgba(75, 192, 192, 0.7)',
@@ -247,6 +275,49 @@ const departmentChart = new Chart(departmentCtx, {
                         const total = context.dataset.data.reduce((a, b) => a + b, 0);
                         const percentage = ((context.parsed / total) * 100).toFixed(1);
                         return label + ': ' + value + ' kgCO2e (' + percentage + '%)';
+                    }
+                }
+            }
+        }
+    }
+});
+
+// Category Level 1 Bar Chart
+const categoryLevel1Ctx = document.getElementById('categoryLevel1Chart').getContext('2d');
+const categoryLevel1Chart = new Chart(categoryLevel1Ctx, {
+    type: 'bar',
+    data: {
+        labels: categoryLevel1Labels,
+        datasets: [{
+            label: '{% trans "碳排放量" %} (kgCO2e)',
+            data: categoryLevel1Emissions,
+            backgroundColor: 'rgba(54, 162, 235, 0.7)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+            legend: {
+                display: true,
+                position: 'top'
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        return context.dataset.label + ': ' + context.parsed.y.toFixed(2);
+                    }
+                }
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    callback: function(value) {
+                        return value.toFixed(2);
                     }
                 }
             }
@@ -323,28 +394,54 @@ const recordCountChart = new Chart(recordCountCtx, {
 });
 */
 
-// Quick range selector - update link hrefs on page load
-document.addEventListener('DOMContentLoaded', function() {
-    const quickRangeLinks = document.querySelectorAll('.quick-range-link');
+// Category cascade functionality
+const categoryHierarchy = {{ category_hierarchy_json|safe }};
+const categoryLevel1Select = document.getElementById('category_level1');
+const categoryLevel2Select = document.getElementById('category_level2');
+const selectedLevel1 = '{{ selected_category_level1 }}';
+const selectedLevel2 = '{{ selected_category_level2 }}';
+
+// Function to update level 2 options based on level 1 selection
+function updateLevel2Options(parentId) {
+    // Clear current options except the first "全部" option
+    categoryLevel2Select.innerHTML = '<option value="">{% trans "全部" %}</option>';
     
-    quickRangeLinks.forEach(function(link) {
-        const days = parseInt(link.getAttribute('data-days'));
-        
-        // Use today as end date
-        const endDate = new Date();
-        
-        // Calculate start date
-        const startDate = new Date(endDate);
-        startDate.setDate(startDate.getDate() - days + 1); // +1 to include the end date
-        
-        const startDateStr = startDate.toISOString().split('T')[0];
-        const endDateStr = endDate.toISOString().split('T')[0];
-        
-        // Update href
-        link.href = `?start_date=${startDateStr}&end_date=${endDateStr}`;
-        
-        console.log(`Quick range link for ${days} days: ${link.href}`);
-    });
+    if (!parentId) {
+        // If no parent selected, show all level 2 categories
+        {% for category in categories_level2 %}
+        const option{{ forloop.counter }} = document.createElement('option');
+        option{{ forloop.counter }}.value = '{{ category.id }}';
+        option{{ forloop.counter }}.textContent = '{{ category.name }}';
+        if (selectedLevel2 === '{{ category.id }}') {
+            option{{ forloop.counter }}.selected = true;
+        }
+        categoryLevel2Select.appendChild(option{{ forloop.counter }});
+        {% endfor %}
+    } else {
+        // Show only children of selected parent
+        const children = categoryHierarchy[parentId] || [];
+        children.forEach(function(child) {
+            const option = document.createElement('option');
+            option.value = child.id;
+            option.textContent = child.name;
+            if (selectedLevel2 === child.id.toString()) {
+                option.selected = true;
+            }
+            categoryLevel2Select.appendChild(option);
+        });
+    }
+}
+
+// Initialize on page load
+if (selectedLevel1) {
+    updateLevel2Options(selectedLevel1);
+}
+
+// Add event listener for level 1 change
+categoryLevel1Select.addEventListener('change', function() {
+    const selectedValue = this.value;
+    updateLevel2Options(selectedValue);
 });
+
 </script>
 {% endblock %}

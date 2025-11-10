@@ -860,6 +860,12 @@ msgstr ""
 msgid "暂无消耗记录"
 msgstr ""
 
+msgid "一级分类碳排放量"
+msgstr "一级分类碳排放量"
+
+msgid "全部"
+msgstr "全部"
+
 #~ msgid "绿色环保 · 智慧酒店"
 #~ msgstr "绿色环保 · 智慧酒店"
 

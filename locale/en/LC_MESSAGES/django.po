@@ -1269,3 +1269,9 @@ msgstr "View Record List"
 
 #~ msgid "消耗日期时间"
 #~ msgstr "Consumption Date Time"
+
+msgid "全部"
+msgstr "All"
+
+msgid "一级分类碳排放量"
+msgstr "Primary Category Emissions"
