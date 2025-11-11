@@ -67,7 +67,7 @@
                         <div>
                             <h6 class="card-title mb-0">{% trans "总记录数" %}</h6>
                             <h2 class="mt-2 mb-0">{{ total_records }}</h2>
-                            <small>&nbsp;</small>
+                            <small>{% trans "条" %}</small>
                         </div>
                         <div>
                             <i class="bi bi-file-text" style="font-size: 3rem; opacity: 0.5;"></i>
@@ -83,7 +83,7 @@
                         <div>
                             <h6 class="card-title mb-0">{% trans "总消耗数量" %}</h6>
                             <h2 class="mt-2 mb-0">{{ total_quantity|floatformat:2 }}</h2>
-                            <small>&nbsp;</small>
+                            <small>{% trans "单位" %}</small>
                         </div>
                         <div>
                             <i class="bi bi-box" style="font-size: 3rem; opacity: 0.5;"></i>
@@ -99,7 +99,7 @@
                         <div>
                             <h6 class="card-title mb-0">{% trans "总碳排放量" %}</h6>
                             <h2 class="mt-2 mb-0">{{ total_emission|floatformat:2 }}</h2>
-                            <small>kgCO2e</small>
+                            <small>{% trans "千克二氧化碳当量" %}</small>
                         </div>
                         <div>
                             <i class="bi bi-cloud-fog2" style="font-size: 3rem; opacity: 0.5;"></i>
@@ -114,8 +114,12 @@
     <div class="row mb-4">
         <div class="col-lg-8">
             <div class="card h-100">
-                <div class="card-header">
-                    <h5 class="mb-0"><i class="bi bi-bar-chart"></i> {% trans "每日碳排放量趋势" %}</h5>
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-bar-chart"></i> {% trans "碳排放量趋势" %}</h5>
+                    <div class="d-flex" style="gap: 0.5rem;">
+                        <button type="button" class="btn btn-sm period-btn rounded px-3" data-period="day" id="dayBtn">{% trans "按日" %}</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary period-btn rounded px-4" data-period="month" id="monthBtn">{% trans "按月" %}</button>
+                    </div>
                 </div>
                 <div class="card-body">
                     <canvas id="emissionChart" height="80"></canvas>
@@ -147,7 +151,9 @@
             </div>
         </div>
     </div>
-<div class="row mb-4">
+
+
+{% comment %} <div class="row mb-4">
             <div class="col-lg-12">
             <div class="card h-100">
                 <div class="card-header">
@@ -158,7 +164,7 @@
                 </div>
             </div>
         </div>
-</div>
+</div> {% endcomment %}
     <!-- Charts Row 3 -->
     {% comment %} <div class="row mb-4">
         <div class="col-lg-12">
@@ -177,9 +183,30 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
 // Parse data from Django
-const dates = {{ dates_json|safe }};
+const dailyData = {
+    dates: {{ dates_json|safe }},
+    emissions: {{ emissions_json|safe }}
+};
+
+// Initialize with daily data by default
+let currentData = {
+    dates: dailyData.dates,
+    emissions: dailyData.emissions
+};
+
+// Parse monthly data if available
+let monthlyData = {
+    dates: {{ monthly_dates_json|default:'[]'|safe }},
+    emissions: {{ monthly_emissions_json|default:'[]'|safe }}
+};
+
+// If monthly data is empty, try to aggregate from daily data
+if (monthlyData.dates.length === 0 && dailyData.dates.length > 0) {
+    monthlyData = aggregateToMonthly(dailyData);
+}
+
+// Other data
 const quantities = {{ quantities_json|safe }};
-const emissions = {{ emissions_json|safe }};
 const recordCounts = {{ record_counts_json|safe }};
 const departmentLabels = {{ department_labels_json|safe }};
 const departmentEmissions = {{ department_emissions_json|safe }};
@@ -190,15 +217,78 @@ const categoryLevel1Emissions = {{ category_level1_emissions_json|safe }};
 Chart.defaults.font.family = "'Segoe UI', 'Helvetica Neue', Arial, sans-serif";
 Chart.defaults.color = '#666';
 
+// Function to aggregate daily data to monthly
+function aggregateToMonthly(dailyData) {
+    const monthlyMap = new Map();
+    
+    dailyData.dates.forEach((dateStr, index) => {
+        const date = new Date(dateStr);
+        const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+        
+        if (!monthlyMap.has(monthKey)) {
+            monthlyMap.set(monthKey, {
+                date: monthKey,
+                total: 0,
+                count: 0
+            });
+        }
+        
+        const monthData = monthlyMap.get(monthKey);
+        monthData.total += dailyData.emissions[index] || 0;
+        monthData.count++;
+    });
+    
+    const sortedMonths = Array.from(monthlyMap.values()).sort((a, b) => a.date.localeCompare(b.date));
+    
+    return {
+        dates: sortedMonths.map(m => m.date),
+        emissions: sortedMonths.map(m => m.total)
+    };
+}
+
+// Function to update chart data based on period
+function updateChart(period) {
+    if (period === 'month') {
+        currentData = monthlyData;
+        document.getElementById('dayBtn').classList.remove('btn-primary');
+        document.getElementById('dayBtn').classList.add('btn-outline-secondary');
+        document.getElementById('monthBtn').classList.remove('btn-outline-secondary');
+        document.getElementById('monthBtn').classList.add('btn-primary');
+    } else {
+        currentData = dailyData;
+        document.getElementById('dayBtn').classList.remove('btn-outline-secondary');
+        document.getElementById('dayBtn').classList.add('btn-primary');
+        document.getElementById('monthBtn').classList.remove('btn-primary');
+        document.getElementById('monthBtn').classList.add('btn-outline-secondary');
+    }
+    
+    emissionChart.data.labels = currentData.dates;
+    emissionChart.data.datasets[0].data = currentData.emissions;
+    emissionChart.update();
+}
+
+// Auto-detect period based on date range
+function autoDetectPeriod() {
+    const startDate = new Date(dailyData.dates[0]);
+    const endDate = new Date(dailyData.dates[dailyData.dates.length - 1]);
+    const diffTime = Math.abs(endDate - startDate);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    return diffDays > 30 ? 'month' : 'day';
+}
+
+// Initialize with auto-detected period
+const initialPeriod = autoDetectPeriod();
+
 // Emission Trend Chart (Bar Chart)
 const emissionCtx = document.getElementById('emissionChart').getContext('2d');
 const emissionChart = new Chart(emissionCtx, {
     type: 'bar',
     data: {
-        labels: dates,
+        labels: currentData.dates,
         datasets: [{
-            label: '{% trans "碳排放量" %} (kgCO2e)',
-            data: emissions,
+            label: '{% trans "碳排放量 (kg CO₂e)" %}',
+            data: currentData.emissions,
             // backgroundColor: 'rgba(220, 53, 69, 0.7)',
             // borderColor: 'rgba(220, 53, 69, 1)',
             borderWidth: 1
@@ -232,6 +322,16 @@ const emissionChart = new Chart(emissionCtx, {
         }
     }
 });
+
+// Add event listeners for period buttons
+document.querySelectorAll('.period-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        updateChart(this.dataset.period);
+    });
+});
+
+// Initialize with auto-detected period
+updateChart(initialPeriod);
 
 // Department Pie Chart
 const departmentCtx = document.getElementById('departmentChart').getContext('2d');

@@ -1275,3 +1275,12 @@ msgstr "All"
 
 msgid "一级分类碳排放量"
 msgstr "Primary Category Emissions"
+
+msgid "千克二氧化碳当量"
+msgstr "kgCO2e"
+
+msgid "按日"
+msgstr "By Day"
+
+msgid "按月"
+msgstr "By Month"
