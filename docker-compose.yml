@@ -15,7 +15,7 @@ services:
       - .env.docker
     environment:
       DJANGO_DEBUG: "false"
-      DJANGO_ALLOWED_HOSTS: "yagao.online,localhost,127.0.0.1"
+      DJANGO_ALLOWED_HOSTS: "carbon.yagao.online,yagao.online,localhost,127.0.0.1"
 
   # 注释掉 Docker Nginx，使用宿主机 Nginx
   # nginx:
