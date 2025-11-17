@@ -8,38 +8,37 @@ services:
     volumes:
       - ./db.sqlite3:/app/db.sqlite3
       - ./media:/app/media
-      - static_volume:/app/staticfiles
+      - ./staticfiles:/app/staticfiles
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8000:8000"  # 只监听本地，通过宿主机 Nginx 访问
     env_file:
       - .env.docker
     environment:
       DJANGO_DEBUG: "false"
-      DJANGO_ALLOWED_HOSTS: "localhost,127.0.0.1"
-    networks:
-      - carbon_network
+      DJANGO_ALLOWED_HOSTS: "yagao.online,localhost,127.0.0.1"
 
-  nginx:
-    image: nginx:alpine
-    container_name: carbon_management_nginx
-    restart: always
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/conf.d:/etc/nginx/conf.d:ro
-      - static_volume:/app/staticfiles:ro
-      - ./media:/app/media:ro
-      - ./nginx/ssl:/etc/nginx/ssl:ro
-    depends_on:
-      - web
-    networks:
-      - carbon_network
+  # 注释掉 Docker Nginx，使用宿主机 Nginx
+  # nginx:
+  #   image: nginx:alpine
+  #   container_name: carbon_management_nginx
+  #   restart: always
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+  #     - ./nginx/conf.d:/etc/nginx/conf.d:ro
+  #     - static_volume:/app/staticfiles:ro
+  #     - ./media:/app/media:ro
+  #     - ./nginx/ssl:/etc/nginx/ssl:ro
+  #   depends_on:
+  #     - web
+  #   networks:
+  #     - carbon_network
 
-volumes:
-  static_volume:
+# volumes:
+#   static_volume:
 
-networks:
-  carbon_network:
-    driver: bridge
+# networks:
+#   carbon_network:
+#     driver: bridge
