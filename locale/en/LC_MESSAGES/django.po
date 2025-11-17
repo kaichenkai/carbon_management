@@ -1284,3 +1284,6 @@ msgstr "By Day"
 
 msgid "按月"
 msgstr "By Month"
+
+msgid "碳排放量趋势"
+msgstr "Carbon Emissions Trend"
