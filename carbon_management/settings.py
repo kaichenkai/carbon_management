@@ -157,8 +157,23 @@ SESSION_SAVE_EVERY_REQUEST = True
 # Custom user model
 AUTH_USER_MODEL = 'coefficients.CustomUser'
 
-# Security settings for development
-# Disable HTTPS redirect in development
-SECURE_SSL_REDIRECT = False
-SESSION_COOKIE_SECURE = False
-CSRF_COOKIE_SECURE = False
+# Security settings for production with reverse proxy
+# 信任来自反向代理的 HTTPS 头
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# CSRF 设置 - 允许来自 Cloudflare 的请求
+CSRF_TRUSTED_ORIGINS = [
+    'https://carbon.yagao.online',
+    'https://yagao.online',
+]
+
+# 生产环境安全设置
+if not DEBUG:
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_SSL_REDIRECT = False  # Nginx 已处理 HTTPS 重定向
+else:
+    # 开发环境设置
+    SECURE_SSL_REDIRECT = False
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
