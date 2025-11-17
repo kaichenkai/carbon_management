@@ -20,12 +20,16 @@
                 <div class="col-md-3">
                     <label for="start_date" class="form-label">{% trans "开始日期" %}</label>
                     <input type="date" class="form-control" id="start_date" name="start_date" 
-                           value="{{ start_date|date:'Y-m-d' }}">
+                           value="{{ start_date|date:'Y-m-d' }}"
+                           placeholder="{% trans '开始日期' %}"
+                           lang="{{ LANGUAGE_CODE }}">
                 </div>
                 <div class="col-md-3">
                     <label for="end_date" class="form-label">{% trans "结束日期" %}</label>
                     <input type="date" class="form-control" id="end_date" name="end_date" 
-                           value="{{ end_date|date:'Y-m-d' }}">
+                           value="{{ end_date|date:'Y-m-d' }}"
+                           placeholder="{% trans '结束日期' %}"
+                           lang="{{ LANGUAGE_CODE }}">
                 </div>
                 <div class="col-md-2">
                     <label for="category_level1" class="form-label">{% trans "一级分类" %}</label>

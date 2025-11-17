@@ -48,14 +48,18 @@ body > table.fixed-header-table thead th {
                         <div class="col-md-3">
                             <input type="date" class="form-control form-control-sm" id="start_date" name="start_date" 
                                    value="{{ request.GET.start_date }}" 
+                                   placeholder="{% trans '开始日期' %}"
                                    title="{% trans '选择开始日期' %}"
-                                   aria-label="{% trans '开始日期' %}">
+                                   aria-label="{% trans '开始日期' %}"
+                                   lang="{{ LANGUAGE_CODE }}">
                         </div>
                         <div class="col-md-3">
                             <input type="date" class="form-control form-control-sm" id="end_date" name="end_date" 
                                    value="{{ request.GET.end_date }}" 
+                                   placeholder="{% trans '结束日期' %}"
                                    title="{% trans '选择结束日期' %}"
-                                   aria-label="{% trans '结束日期' %}">
+                                   aria-label="{% trans '结束日期' %}"
+                                   lang="{{ LANGUAGE_CODE }}">
                         </div>
                     </form>
                 </div>
