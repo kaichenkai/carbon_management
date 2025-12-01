@@ -165,6 +165,8 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 CSRF_TRUSTED_ORIGINS = [
     'https://carbon.yagao.online',
     'https://yagao.online',
+    'http://127.0.0.1:8000',
+    'http://localhost:8000',
 ]
 
 # 生产环境安全设置
@@ -177,3 +179,5 @@ else:
     SECURE_SSL_REDIRECT = False
     SESSION_COOKIE_SECURE = False
     CSRF_COOKIE_SECURE = False
+    CSRF_COOKIE_SAMESITE = 'Lax'
+    SESSION_COOKIE_SAMESITE = 'Lax'

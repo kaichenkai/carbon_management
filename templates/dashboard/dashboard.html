@@ -142,46 +142,27 @@
         </div>
     </div>
 
-    <!-- Charts Row 2 -->
+    <!-- Charts Row 2 - Category Charts with Tabs -->
     <div class="row mb-4">
         <div class="col-lg-12">
             <div class="card h-100">
                 <div class="card-header">
-                    <h5 class="mb-0"><i class="bi bi-bar-chart-fill"></i> {% trans "一级分类碳排放量" %}</h5>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="bi bi-bar-chart-fill"></i> 
+                            <span id="chart-title">{% trans "一级分类碳排放量" %}</span>
+                        </h5>
+                        <button class="btn btn-sm btn-outline-secondary" id="back-to-level1" style="display: none;">
+                            <i class="bi bi-arrow-left"></i> {% trans "返回" %}
+                        </button>
+                    </div>
                 </div>
                 <div class="card-body">
-                    <canvas id="categoryLevel1Chart" height="80"></canvas>
+                    <canvas id="categoryChart" height="80"></canvas>
                 </div>
             </div>
         </div>
     </div>
-
-
-{% comment %} <div class="row mb-4">
-            <div class="col-lg-12">
-            <div class="card h-100">
-                <div class="card-header">
-                    <h5 class="mb-0"><i class="bi bi-graph-up"></i> {% trans "每日消耗数量趋势" %}</h5>
-                </div>
-                <div class="card-body">
-                    <canvas id="quantityChart" height="80"></canvas>
-                </div>
-            </div>
-        </div>
-</div> {% endcomment %}
-    <!-- Charts Row 3 -->
-    {% comment %} <div class="row mb-4">
-        <div class="col-lg-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0"><i class="bi bi-bar-chart-line"></i> {% trans "每日记录数量" %}</h5>
-                </div>
-                <div class="card-body">
-                    <canvas id="recordCountChart" height="60"></canvas>
-                </div>
-            </div>
-        </div>
-    </div> {% endcomment %}
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -216,6 +197,7 @@ const departmentLabels = {{ department_labels_json|safe }};
 const departmentEmissions = {{ department_emissions_json|safe }};
 const categoryLevel1Labels = {{ category_level1_labels_json|safe }};
 const categoryLevel1Emissions = {{ category_level1_emissions_json|safe }};
+const categoryLevel2Data = {{ category_level2_data_json|safe }};
 
 // Chart.js default settings
 Chart.defaults.font.family = "'Segoe UI', 'Helvetica Neue', Arial, sans-serif";
@@ -386,9 +368,12 @@ const departmentChart = new Chart(departmentCtx, {
     }
 });
 
-// Category Level 1 Bar Chart
-const categoryLevel1Ctx = document.getElementById('categoryLevel1Chart').getContext('2d');
-const categoryLevel1Chart = new Chart(categoryLevel1Ctx, {
+// Category Chart with Drill-down functionality
+let currentLevel = 1;
+let selectedCategory = null;
+
+const categoryChartCtx = document.getElementById('categoryChart').getContext('2d');
+const categoryChart = new Chart(categoryChartCtx, {
     type: 'bar',
     data: {
         labels: categoryLevel1Labels,
@@ -403,6 +388,13 @@ const categoryLevel1Chart = new Chart(categoryLevel1Ctx, {
     options: {
         responsive: true,
         maintainAspectRatio: true,
+        onClick: function(event, elements) {
+            if (elements.length > 0 && currentLevel === 1) {
+                const index = elements[0].index;
+                const categoryName = categoryLevel1Labels[index];
+                showLevel2Chart(categoryName);
+            }
+        },
         plugins: {
             legend: {
                 display: true,
@@ -424,79 +416,59 @@ const categoryLevel1Chart = new Chart(categoryLevel1Ctx, {
                         return value.toFixed(2);
                     }
                 }
-            }
-        }
-    }
-});
-
-// Quantity Trend Chart (Line Chart)
-const quantityCtx = document.getElementById('quantityChart').getContext('2d');
-const quantityChart = new Chart(quantityCtx, {
-    type: 'line',
-    data: {
-        labels: dates,
-        datasets: [{
-            label: '{% trans "消耗数量" %}',
-            data: quantities,
-            backgroundColor: 'rgba(40, 167, 69, 0.2)',
-            borderColor: 'rgba(40, 167, 69, 1)',
-            borderWidth: 2,
-            fill: true,
-            tension: 0.4
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: true,
-        plugins: {
-            legend: {
-                display: true,
-                position: 'top'
-            }
-        },
-        scales: {
-            y: {
-                beginAtZero: true
-            }
-        }
-    }
-});
-
-// Record Count Chart (Bar Chart) - Commented out as the HTML is also commented
-/*
-const recordCountCtx = document.getElementById('recordCountChart').getContext('2d');
-const recordCountChart = new Chart(recordCountCtx, {
-    type: 'bar',
-    data: {
-        labels: dates,
-        datasets: [{
-            label: '{% trans "记录数量" %}',
-            data: recordCounts,
-            backgroundColor: 'rgba(0, 123, 255, 0.7)',
-            borderColor: 'rgba(0, 123, 255, 1)',
-            borderWidth: 1
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: true,
-        plugins: {
-            legend: {
-                display: true,
-                position: 'top'
-            }
-        },
-        scales: {
-            y: {
-                beginAtZero: true,
+            },
+            x: {
                 ticks: {
-                    stepSize: 1
+                    maxRotation: 45,
+                    minRotation: 45
                 }
             }
         }
     }
 });
-*/
+
+// Function to show level 2 chart for selected level 1 category
+function showLevel2Chart(categoryName) {
+    selectedCategory = categoryName;
+    currentLevel = 2;
+    
+    const level2Data = categoryLevel2Data[categoryName];
+    if (!level2Data || level2Data.labels.length === 0) {
+        alert('{% trans "该分类下没有二级分类数据" %}');
+        return;
+    }
+    
+    // Update chart data
+    categoryChart.data.labels = level2Data.labels;
+    categoryChart.data.datasets[0].data = level2Data.emissions;
+    categoryChart.data.datasets[0].backgroundColor = 'rgba(75, 192, 192, 0.7)';
+    categoryChart.data.datasets[0].borderColor = 'rgba(75, 192, 192, 1)';
+    categoryChart.update();
+    
+    // Update UI
+    document.getElementById('chart-title').textContent = categoryName + ' - {% trans "二级分类碳排放量" %}';
+    document.getElementById('back-to-level1').style.display = 'inline-block';
+}
+
+// Function to show level 1 chart
+function showLevel1Chart() {
+    currentLevel = 1;
+    selectedCategory = null;
+    
+    // Update chart data
+    categoryChart.data.labels = categoryLevel1Labels;
+    categoryChart.data.datasets[0].data = categoryLevel1Emissions;
+    categoryChart.data.datasets[0].backgroundColor = 'rgba(54, 162, 235, 0.7)';
+    categoryChart.data.datasets[0].borderColor = 'rgba(54, 162, 235, 1)';
+    categoryChart.update();
+    
+    // Update UI
+    document.getElementById('chart-title').textContent = '{% trans "一级分类碳排放量" %}';
+    document.getElementById('back-to-level1').style.display = 'none';
+}
+
+// Back button event listener
+document.getElementById('back-to-level1').addEventListener('click', showLevel1Chart);
 
 // Category cascade functionality
 const categoryHierarchy = {{ category_hierarchy_json|safe }};
@@ -505,22 +477,29 @@ const categoryLevel2Select = document.getElementById('category_level2');
 const selectedLevel1 = '{{ selected_category_level1 }}';
 const selectedLevel2 = '{{ selected_category_level2 }}';
 
+// Store all level 2 categories for reference
+const allLevel2Categories = [
+    {% for category in categories_level2 %}
+    { id: '{{ category.id }}', name: '{{ category.name }}', parent_id: '{{ category.parent_id }}' }{% if not forloop.last %},{% endif %}
+    {% endfor %}
+];
+
 // Function to update level 2 options based on level 1 selection
 function updateLevel2Options(parentId) {
     // Clear current options except the first "全部" option
     categoryLevel2Select.innerHTML = '<option value="">{% trans "全部" %}</option>';
     
-    if (!parentId) {
+    if (!parentId || parentId === '') {
         // If no parent selected, show all level 2 categories
-        {% for category in categories_level2 %}
-        const option{{ forloop.counter }} = document.createElement('option');
-        option{{ forloop.counter }}.value = '{{ category.id }}';
-        option{{ forloop.counter }}.textContent = '{{ category.name }}';
-        if (selectedLevel2 === '{{ category.id }}') {
-            option{{ forloop.counter }}.selected = true;
-        }
-        categoryLevel2Select.appendChild(option{{ forloop.counter }});
-        {% endfor %}
+        allLevel2Categories.forEach(function(category) {
+            const option = document.createElement('option');
+            option.value = category.id;
+            option.textContent = category.name;
+            if (selectedLevel2 === category.id) {
+                option.selected = true;
+            }
+            categoryLevel2Select.appendChild(option);
+        });
     } else {
         // Show only children of selected parent
         const children = categoryHierarchy[parentId] || [];
@@ -537,14 +516,15 @@ function updateLevel2Options(parentId) {
 }
 
 // Initialize on page load
-if (selectedLevel1) {
-    updateLevel2Options(selectedLevel1);
-}
+document.addEventListener('DOMContentLoaded', function() {
+    if (selectedLevel1 && selectedLevel1 !== '') {
+        updateLevel2Options(selectedLevel1);
+    }
+});
 
 // Add event listener for level 1 change
 categoryLevel1Select.addEventListener('change', function() {
-    const selectedValue = this.value;
-    updateLevel2Options(selectedValue);
+    updateLevel2Options(this.value);
 });
 
 </script>

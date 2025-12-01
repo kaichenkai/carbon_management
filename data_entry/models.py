@@ -60,6 +60,11 @@ class MaterialConsumption(models.Model):
         indexes = [
             models.Index(fields=['hotel_name', 'department']),
             models.Index(fields=['consumption_date', 'consumption_time']),
+            # Dashboard query optimization indexes
+            models.Index(fields=['consumption_date', 'category_level1']),
+            models.Index(fields=['consumption_date', 'category_level2']),
+            models.Index(fields=['consumption_date', 'department']),
+            models.Index(fields=['category_level1', 'category_level2']),
         ]
     
     def save(self, *args, **kwargs):

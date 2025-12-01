@@ -1287,3 +1287,12 @@ msgstr "By Month"
 
 msgid "碳排放量趋势"
 msgstr "Carbon Emissions Trend"
+
+msgid "二级分类碳排放量"
+msgstr "Secondary Category Emissions"
+
+msgid "返回"
+msgstr "Back"
+
+msgid "重复记录：该酒店、部门、产品在此日期时间已有消耗记录 (ID: %(id)s)"
+msgstr "Duplicate record: A consumption record already exists for this hotel, department, and product at this date and time (ID: %(id)s)"

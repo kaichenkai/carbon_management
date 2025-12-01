@@ -395,10 +395,27 @@ def process_import_data(df):
                     })
                     continue
 
-                emission_coefficient
+                # Check if record already exists
+                existing_record = MaterialConsumption.objects.filter(
+                    hotel_name=hotel_name,
+                    department=department,
+                    category_level1=category_level1,
+                    category_level2=category_level2,
+                    product_name=product_name,
+                    consumption_date=consumption_date,
+                    consumption_time=consumption_time,
+                ).first()
                 
-                # update or record
-                MaterialConsumption.objects.update_or_create(
+                if existing_record:
+                    # Record already exists - treat as error
+                    errors.append({
+                        'row': row_num,
+                        'error': gettext('重复记录：该酒店、部门、产品在此日期时间已有消耗记录 (ID: %(id)s)') % {'id': existing_record.id}
+                    })
+                    continue
+                
+                # Create new record
+                MaterialConsumption.objects.create(
                     hotel_name=hotel_name,
                     department=department,
                     category_level1=category_level1,
@@ -407,10 +424,8 @@ def process_import_data(df):
                     consumption_date=consumption_date,
                     consumption_time=consumption_time,
                     quantity=Decimal(str(quantity)),
-                    defaults={
-                        'product_unit': product_unit,
-                        'emission_coefficient': emission_coefficient,
-                    }
+                    product_unit=product_unit,
+                    emission_coefficient=emission_coefficient,
                 )
                 
                 success_count += 1
