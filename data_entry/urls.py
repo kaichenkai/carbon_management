@@ -11,4 +11,11 @@ urlpatterns = [
     path('export/', views.consumption_export, name='consumption_export'),
     path('api/level2-categories/', views.get_level2_categories, name='get_level2_categories'),
     path('api/products-by-category/', views.get_products_by_category, name='get_products_by_category'),
+    
+    # Consumer data URLs
+    path('consumer/', views.consumer_list, name='consumer_list'),
+    path('consumer/create/', views.consumer_create, name='consumer_create'),
+    path('consumer/<int:pk>/edit/', views.consumer_edit, name='consumer_edit'),
+    path('consumer/<int:pk>/delete/', views.consumer_delete, name='consumer_delete'),
+    path('consumer/refresh-emissions/', views.consumer_refresh_emissions, name='consumer_refresh_emissions'),
 ]

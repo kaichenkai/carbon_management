@@ -23,12 +23,40 @@ body > table.fixed-header-table {
 body > table.fixed-header-table thead th {
     white-space: nowrap;
 }
+
+/* Force consistent button height */
+.btn.d-inline-flex.align-items-center {
+    min-height: 38px;
+}
 </style>
 <div class="container-fluid mt-4">
+    <!-- Tab Navigation Cards -->
     <div class="row mb-4">
-        <div class="col">
-            <h2><i class="bi bi-clipboard-data"></i> {% trans "物料消耗记录" %}</h2>
-            <p class="text-muted">{% trans "记录和管理物料消耗数据" %}</p>
+        <div class="col-md-3 mb-3">
+            <a href="{% url 'consumption_list' %}" class="text-decoration-none">
+                <div class="card h-100 border-primary shadow" style="border-width: 3px; background-color: #f8f9fa;">
+                    <div class="card-body">
+                        <h4 class="card-title mb-2">
+                            <i class="bi bi-clipboard-data" style="font-size: 1.5rem;"></i>
+                            {% trans "物料消耗记录" %}
+                        </h4>
+                        <p class="card-text text-muted mb-0">{% trans "记录和管理物料消耗数据" %}</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3 mb-3">
+            <a href="{% url 'consumer_list' %}" class="text-decoration-none">
+                <div class="card h-100 border-info shadow-sm" style="border-width: 2px; background-color: #f8f9fa; opacity: 0.6;">
+                    <div class="card-body">
+                        <h4 class="card-title mb-2">
+                            <i class="bi bi-people" style="font-size: 1.5rem;"></i>
+                            {% trans "消费者数据" %}
+                        </h4>
+                        <p class="card-text text-muted mb-0">{% trans "记录酒店当日消费者数量" %}</p>
+                    </div>
+                </div>
+            </a>
         </div>
     </div>
     
@@ -67,16 +95,19 @@ body > table.fixed-header-table thead th {
                 <!-- Action Buttons -->
                 <div class="col-lg-7 col-md-12">
                     <div class="d-flex flex-wrap gap-2 justify-content-lg-end justify-content-start">
-                        <a href="{% url 'consumption_create' %}" class="btn btn-success d-inline-flex align-items-center">
-                            <i class="bi bi-plus-circle me-1"></i> {% trans "新增消耗记录" %}
+                        <a href="{% url 'consumption_create' %}" class="btn btn-success d-inline-flex align-items-center text-nowrap">
+                            <i class="bi bi-plus-circle me-1"></i> 
+                            <span>{% trans "新增消耗记录" %}</span>
                         </a>
-                        <a href="{% url 'data_import' %}" class="btn btn-info d-inline-flex align-items-center">
-                            <i class="bi bi-upload me-1"></i> {% trans "批量导入" %}
+                        <a href="{% url 'data_import' %}" class="btn btn-info d-inline-flex align-items-center text-nowrap">
+                            <i class="bi bi-upload me-1"></i> 
+                            <span>{% trans "批量导入" %}</span>
                         </a>
-                        <a href="{% url 'download_import_template' %}" class="btn btn-secondary d-inline-flex align-items-center">
-                            <i class="bi bi-download me-1"></i> {% trans "下载模板" %}
+                        <a href="{% url 'download_import_template' %}" class="btn btn-secondary d-inline-flex align-items-center text-nowrap">
+                            <i class="bi bi-download me-1"></i> 
+                            <span>{% trans "下载模板" %}</span>
                         </a>
-                        <button type="button" id="exportBtn" class="btn btn-primary d-inline-flex align-items-center">
+                        <button type="button" id="exportBtn" class="btn btn-primary d-inline-flex align-items-center text-nowrap">
                             <i class="bi bi-file-earmark-excel me-1"></i> 
                             <span id="exportBtnText">{% trans "导出数据" %}</span>
                         </button>

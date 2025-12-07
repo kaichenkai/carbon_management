@@ -1,6 +1,6 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
-from .models import MaterialConsumption
+from .models import MaterialConsumption, ConsumerData
 from coefficients.models import EmissionCoefficient, EmissionCategory
 import pandas as pd
 from datetime import datetime
@@ -188,5 +188,88 @@ class ConsumptionSearchForm(forms.Form):
         widget=forms.TextInput(attrs={
             'class': 'form-control',
             'placeholder': _('搜索部门、分类或产品名称...')
+        })
+    )
+
+
+class ConsumerDataForm(forms.ModelForm):
+    """Form for consumer data entry"""
+    
+    class Meta:
+        model = ConsumerData
+        fields = [
+            'hotel_name', 'department', 'consumption_date',
+            'consumer_count', 'notes'
+        ]
+        widgets = {
+            'hotel_name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': _('输入酒店名称')
+            }),
+            'department': forms.Select(attrs={
+                'class': 'form-select'
+            }),
+            'consumption_date': forms.DateInput(attrs={
+                'class': 'form-control',
+                'type': 'date'
+            }),
+            'consumer_count': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'min': '0',
+                'placeholder': _('输入消费者人数')
+            }),
+            'notes': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 3,
+                'placeholder': _('备注信息（可选）')
+            }),
+        }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        # Get unique hotel names from MaterialConsumption
+        from .models import MaterialConsumption
+        hotel_names = MaterialConsumption.objects.values_list('hotel_name', flat=True).distinct().order_by('hotel_name')
+        hotel_choices = [('', _('请选择酒店'))] + [(name, name) for name in hotel_names if name]
+        
+        # Change hotel_name to Select widget
+        self.fields['hotel_name'].widget = forms.Select(
+            choices=hotel_choices,
+            attrs={'class': 'form-select'}
+        )
+        
+        # Set department choices from EmissionCoefficient
+        self.fields['department'].widget = forms.Select(
+            choices=EmissionCoefficient.DEPARTMENT_CHOICES,
+            attrs={'class': 'form-select'}
+        )
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        
+        # Validate consumption date is not in the future
+        consumption_date = cleaned_data.get('consumption_date')
+        if consumption_date:
+            from datetime import date
+            if consumption_date > date.today():
+                raise forms.ValidationError(_('消耗日期不能是未来日期'))
+        
+        # Validate consumer count is positive
+        consumer_count = cleaned_data.get('consumer_count')
+        if consumer_count is not None and consumer_count < 0:
+            raise forms.ValidationError(_('消费者人数不能为负数'))
+        
+        return cleaned_data
+
+
+class ConsumerSearchForm(forms.Form):
+    """Search form for consumer data records"""
+    query = forms.CharField(
+        required=False,
+        label=_('搜索'),
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': _('搜索酒店名称或部门...')
         })
     )

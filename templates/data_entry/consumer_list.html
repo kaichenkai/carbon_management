@@ -1,0 +1,345 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "消费者数据" %} - {% trans "碳排放管理系统" %}{% endblock %}
+
+{% block content %}
+<style>
+.fixed-header-table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.fixed-header-table thead th {
+    background-color: #fff;
+    border-bottom: 2px solid #dee2e6;
+}
+
+/* Fixed header clone styling */
+body > table.fixed-header-table {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+body > table.fixed-header-table thead th {
+    white-space: nowrap;
+}
+
+/* Force consistent button height */
+.btn.d-inline-flex.align-items-center {
+    min-height: 38px;
+}
+</style>
+<div class="container-fluid mt-4">
+    <!-- Tab Navigation Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <a href="{% url 'consumption_list' %}" class="text-decoration-none">
+                <div class="card h-100 border-primary shadow-sm" style="border-width: 2px; background-color: #f8f9fa; opacity: 0.6;">
+                    <div class="card-body">
+                        <h4 class="card-title mb-2">
+                            <i class="bi bi-clipboard-data" style="font-size: 1.5rem;"></i>
+                            {% trans "物料消耗记录" %}
+                        </h4>
+                        <p class="card-text text-muted mb-0">{% trans "记录和管理物料消耗数据" %}</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3 mb-3">
+            <a href="{% url 'consumer_list' %}" class="text-decoration-none">
+                <div class="card h-100 border-info shadow" style="border-width: 3px; background-color: #f8f9fa;">
+                    <div class="card-body">
+                        <h4 class="card-title mb-2">
+                            <i class="bi bi-people" style="font-size: 1.5rem;"></i>
+                            {% trans "消费者数据" %}
+                        </h4>
+                        <p class="card-text text-muted mb-0">{% trans "记录酒店当日消费者数量" %}</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+    
+    <!-- Operation Bar with Search and Filters -->
+    <div class="card mb-4 operation-bar">
+        <div class="card-body">
+            <div class="row g-3 align-items-end">
+                <!-- Search and Filter Form -->
+                <div class="col-lg-5 col-md-12">
+                    <form method="get" id="filterForm" class="row g-2">
+                        <!-- Search Box -->
+                        <div class="col-md-6">
+                            {{ search_form.query }}
+                        </div>
+                        
+                        <!-- Date Filters -->
+                        <div class="col-md-3">
+                            <input type="date" class="form-control form-control-sm" id="start_date" name="start_date" 
+                                   value="{{ request.GET.start_date }}" 
+                                   placeholder="{% trans '开始日期' %}"
+                                   title="{% trans '选择开始日期' %}"
+                                   aria-label="{% trans '开始日期' %}"
+                                   lang="{{ LANGUAGE_CODE }}">
+                        </div>
+                        <div class="col-md-3">
+                            <input type="date" class="form-control form-control-sm" id="end_date" name="end_date" 
+                                   value="{{ request.GET.end_date }}" 
+                                   placeholder="{% trans '结束日期' %}"
+                                   title="{% trans '选择结束日期' %}"
+                                   aria-label="{% trans '结束日期' %}"
+                                   lang="{{ LANGUAGE_CODE }}">
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="col-lg-7 col-md-12">
+                    <div class="d-flex flex-wrap gap-2 justify-content-lg-end justify-content-start">
+                        <a href="{% url 'consumer_create' %}" class="btn btn-success d-inline-flex align-items-center text-nowrap">
+                            <i class="bi bi-plus-circle me-1"></i> 
+                            <span>{% trans "新增消费者数据" %}</span>
+                        </a>
+                        <a href="{% url 'consumer_refresh_emissions' %}" class="btn btn-info d-inline-flex align-items-center text-nowrap" 
+                           onclick="return confirm('{% trans "确定要刷新所有记录的碳排放数据吗？" %}')">
+                            <i class="bi bi-arrow-clockwise me-1"></i> 
+                            <span>{% trans "刷新碳排放" %}</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Consumer Data Table -->
+    <div class="card">
+        <div class="card-body p-0">
+            <div style="overflow-y: auto; max-height: 70vh;">
+                <table class="table table-hover align-middle mb-0 fixed-header-table table-sm">
+                    <thead>
+                        <tr>
+                            <th>{% trans "序号" %}</th>
+                            <th>
+                                <a href="?sort=hotel_name&order={% if current_sort == 'hotel_name' and current_order == 'asc' %}desc{% else %}asc{% endif %}" 
+                                   class="text-decoration-none text-dark d-inline-flex align-items-center">
+                                    {% trans "酒店名称" %}
+                                    <span class="ms-1">
+                                        {% if current_sort == 'hotel_name' %}
+                                            {% if current_order == 'asc' %}
+                                                <i class="bi bi-arrow-up text-primary"></i>
+                                            {% else %}
+                                                <i class="bi bi-arrow-down text-primary"></i>
+                                            {% endif %}
+                                        {% else %}
+                                            <i class="bi bi-arrow-down-up text-muted opacity-50"></i>
+                                        {% endif %}
+                                    </span>
+                                </a>
+                            </th>
+                            <th>
+                                <a href="?sort=department&order={% if current_sort == 'department' and current_order == 'asc' %}desc{% else %}asc{% endif %}" 
+                                   class="text-decoration-none text-dark d-inline-flex align-items-center">
+                                    {% trans "部门" %}
+                                    <span class="ms-1">
+                                        {% if current_sort == 'department' %}
+                                            {% if current_order == 'asc' %}
+                                                <i class="bi bi-arrow-up text-primary"></i>
+                                            {% else %}
+                                                <i class="bi bi-arrow-down text-primary"></i>
+                                            {% endif %}
+                                        {% else %}
+                                            <i class="bi bi-arrow-down-up text-muted opacity-50"></i>
+                                        {% endif %}
+                                    </span>
+                                </a>
+                            </th>
+                            <th>
+                                <a href="?sort=consumption_date&order={% if current_sort == 'consumption_date' and current_order == 'asc' %}desc{% else %}asc{% endif %}" 
+                                   class="text-decoration-none text-dark d-inline-flex align-items-center">
+                                    {% trans "消耗日期" %}
+                                    <span class="ms-1">
+                                        {% if current_sort == 'consumption_date' %}
+                                            {% if current_order == 'asc' %}
+                                                <i class="bi bi-arrow-up text-primary"></i>
+                                            {% else %}
+                                                <i class="bi bi-arrow-down text-primary"></i>
+                                            {% endif %}
+                                        {% else %}
+                                            <i class="bi bi-arrow-down-up text-muted opacity-50"></i>
+                                        {% endif %}
+                                    </span>
+                                </a>
+                            </th>
+                            <th>
+                                <a href="?sort=consumer_count&order={% if current_sort == 'consumer_count' and current_order == 'asc' %}desc{% else %}asc{% endif %}" 
+                                   class="text-decoration-none text-dark d-inline-flex align-items-center">
+                                    {% trans "消费者人数" %}
+                                    <span class="ms-1">
+                                        {% if current_sort == 'consumer_count' %}
+                                            {% if current_order == 'asc' %}
+                                                <i class="bi bi-arrow-up text-primary"></i>
+                                            {% else %}
+                                                <i class="bi bi-arrow-down text-primary"></i>
+                                            {% endif %}
+                                        {% else %}
+                                            <i class="bi bi-arrow-down-up text-muted opacity-50"></i>
+                                        {% endif %}
+                                    </span>
+                                </a>
+                            </th>
+                            <th>
+                                <a href="?sort=daily_carbon_emission&order={% if current_sort == 'daily_carbon_emission' and current_order == 'asc' %}desc{% else %}asc{% endif %}" 
+                                   class="text-decoration-none text-dark d-inline-flex align-items-center">
+                                    {% trans "当日碳排总量" %}
+                                    <span class="ms-1">
+                                        {% if current_sort == 'daily_carbon_emission' %}
+                                            {% if current_order == 'asc' %}
+                                                <i class="bi bi-arrow-up text-primary"></i>
+                                            {% else %}
+                                                <i class="bi bi-arrow-down text-primary"></i>
+                                            {% endif %}
+                                        {% else %}
+                                            <i class="bi bi-arrow-down-up text-muted opacity-50"></i>
+                                        {% endif %}
+                                    </span>
+                                </a>
+                            </th>
+                            <th>{% trans "更新时间" %}</th>
+                            <th>{% trans "特殊备注" %}</th>
+                            <th>{% trans "操作" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for consumer in page_obj %}
+                        <tr>
+                            <td>{{ forloop.counter|add:page_obj.start_index|add:"-1" }}</td>
+                            <td>{{ consumer.hotel_name }}</td>
+                            <td>{{ consumer.get_department_display }}</td>
+                            <td>{{ consumer.consumption_date|date:"Y-m-d" }}</td>
+                            <td>
+                                <strong>{{ consumer.consumer_count }}</strong> {% trans "人" %}
+                            </td>
+                            <td>
+                                <span class="badge bg-success">{{ consumer.daily_carbon_emission }} kgCO2e</span>
+                            </td>
+                            <td>
+                                {{ consumer.updated_at|date:"Y-m-d H:i" }}
+                            </td>
+                            <td>
+                                {% if consumer.notes %}
+                                <small>{{ consumer.notes|truncatewords:10 }}</small>
+                                {% else %}
+                                <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <a href="{% url 'consumer_edit' consumer.pk %}" class="btn btn-outline-primary d-inline-flex align-items-center">
+                                        <i class="bi bi-pencil me-1"></i> {% trans "编辑" %}
+                                    </a>
+                                    <a href="{% url 'consumer_delete' consumer.pk %}" class="btn btn-outline-danger d-inline-flex align-items-center" onclick="return confirm('{% trans "确定要删除这条记录吗？" %}')">
+                                        <i class="bi bi-trash me-1"></i> {% trans "删除" %}
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="9" class="text-center py-5">
+                                <i class="bi bi-inbox" style="font-size: 48px; color: #ccc;"></i>
+                                <p class="text-muted mt-3">{% trans "暂无消费者数据" %}</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination -->
+            {% if page_obj.has_other_pages %}
+            <nav aria-label="Page navigation" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1&sort={{ current_sort }}&order={{ current_order }}">
+                            <i class="bi bi-chevron-double-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}&sort={{ current_sort }}&order={{ current_order }}">
+                            <i class="bi bi-chevron-left"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                    
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                        <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}&sort={{ current_sort }}&order={{ current_order }}">{{ num }}</a>
+                        </li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}&sort={{ current_sort }}&order={{ current_order }}">
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&sort={{ current_sort }}&order={{ current_order }}">
+                            <i class="bi bi-chevron-double-right"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+                <p class="text-center text-muted">
+                    {% trans "第" %} {{ page_obj.number }} {% trans "页，共" %} {{ page_obj.paginator.num_pages }} {% trans "页" %} | {% trans "总计" %} {{ page_obj.paginator.count }} {% trans "条" %}
+                </p>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-search functionality
+    const filterForm = document.getElementById('filterForm');
+    const searchInput = filterForm.querySelector('input[name="query"]');
+    const dateInputs = filterForm.querySelectorAll('input[type="date"]');
+    let searchTimeout;
+    
+    // Auto-submit search after user stops typing in search box
+    searchInput.addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(function() {
+            filterForm.submit();
+        }, 500);
+    });
+    
+    // Auto-submit when date filters change
+    dateInputs.forEach(function(input) {
+        input.addEventListener('change', function() {
+            filterForm.submit();
+        });
+    });
+    
+    // Also allow manual submit with Enter key
+    searchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            clearTimeout(searchTimeout);
+            filterForm.submit();
+        }
+    });
+    
+    // Restore focus after page load (after search)
+    if (searchInput.value) {
+        searchInput.focus();
+        searchInput.setSelectionRange(searchInput.value.length, searchInput.value.length);
+    }
+});
+</script>
+
+{% endblock %}

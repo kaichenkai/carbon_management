@@ -6,8 +6,8 @@ from django.core.paginator import Paginator
 from django.http import JsonResponse, HttpResponse
 from django.db import transaction
 from django.db.models import Q
-from .models import MaterialConsumption
-from .forms import MaterialConsumptionForm, DataImportForm, ConsumptionSearchForm
+from .models import MaterialConsumption, ConsumerData
+from .forms import MaterialConsumptionForm, DataImportForm, ConsumptionSearchForm, ConsumerDataForm, ConsumerSearchForm
 from coefficients.models import EmissionCoefficient, EmissionCategory
 import pandas as pd
 from datetime import datetime, date, time
@@ -552,3 +552,136 @@ def consumption_export(request):
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
     
     return response
+
+
+# Consumer Data Views
+
+def consumer_list(request):
+    """List all consumer data records"""
+    consumers = ConsumerData.objects.all()
+    
+    # Search form
+    search_form = ConsumerSearchForm(request.GET)
+    query = request.GET.get('query', '').strip()
+    
+    # Apply search filter
+    if query:
+        consumers = consumers.filter(
+            Q(hotel_name__icontains=query) |
+            Q(department__icontains=query)
+        )
+    
+    # Date filters
+    start_date = request.GET.get('start_date', '').strip()
+    end_date = request.GET.get('end_date', '').strip()
+    
+    if start_date:
+        consumers = consumers.filter(consumption_date__gte=start_date)
+    if end_date:
+        consumers = consumers.filter(consumption_date__lte=end_date)
+    
+    # Sorting
+    sort_by = request.GET.get('sort', '-consumption_date')
+    order = request.GET.get('order', 'desc')
+    
+    # Valid sort fields
+    valid_sorts = {
+        'hotel_name': 'hotel_name',
+        'department': 'department',
+        'consumption_date': 'consumption_date',
+        'consumer_count': 'consumer_count',
+        'daily_carbon_emission': 'daily_carbon_emission',
+    }
+    
+    if sort_by.lstrip('-') in valid_sorts:
+        actual_sort_field = valid_sorts[sort_by.lstrip('-')]
+        if order == 'asc':
+            consumers = consumers.order_by(actual_sort_field)
+        else:
+            consumers = consumers.order_by(f'-{actual_sort_field}')
+    else:
+        consumers = consumers.order_by('-consumption_date', '-created_at')
+    
+    # Pagination
+    paginator = Paginator(consumers, 20)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    context = {
+        'page_obj': page_obj,
+        'current_sort': sort_by.lstrip('-'),
+        'current_order': order,
+        'search_form': search_form,
+    }
+    return render(request, 'data_entry/consumer_list.html', context)
+
+
+def consumer_create(request):
+    """Create new consumer data record"""
+    if request.method == 'POST':
+        form = ConsumerDataForm(request.POST)
+        if form.is_valid():
+            try:
+                form.save()
+                messages.success(request, _('消费者数据创建成功'))
+                return redirect('consumer_list')
+            except Exception as e:
+                messages.error(request, _('创建失败：%(error)s') % {'error': str(e)})
+    else:
+        form = ConsumerDataForm()
+    
+    context = {
+        'form': form,
+    }
+    return render(request, 'data_entry/consumer_form.html', context)
+
+
+def consumer_edit(request, pk):
+    """Edit existing consumer data record"""
+    consumer = get_object_or_404(ConsumerData, pk=pk)
+    
+    if request.method == 'POST':
+        form = ConsumerDataForm(request.POST, instance=consumer)
+        if form.is_valid():
+            try:
+                form.save()
+                messages.success(request, _('消费者数据更新成功'))
+                return redirect('consumer_list')
+            except Exception as e:
+                messages.error(request, _('更新失败：%(error)s') % {'error': str(e)})
+    else:
+        form = ConsumerDataForm(instance=consumer)
+    
+    context = {
+        'form': form,
+        'consumer': consumer,
+    }
+    return render(request, 'data_entry/consumer_form.html', context)
+
+
+def consumer_delete(request, pk):
+    """Delete consumer data record"""
+    consumer = get_object_or_404(ConsumerData, pk=pk)
+    consumer.delete()
+    messages.success(request, _('消费者数据删除成功'))
+    return redirect('consumer_list')
+
+
+def consumer_refresh_emissions(request):
+    """Refresh all daily carbon emissions for consumer data"""
+    try:
+        consumers = ConsumerData.objects.all()
+        updated_count = 0
+        
+        for consumer in consumers:
+            old_emission = consumer.daily_carbon_emission
+            consumer.daily_carbon_emission = consumer.calculate_daily_emission()
+            if old_emission != consumer.daily_carbon_emission:
+                consumer.save(update_fields=['daily_carbon_emission', 'updated_at'])
+                updated_count += 1
+        
+        messages.success(request, _('成功刷新 %(count)s 条记录的碳排放数据') % {'count': updated_count})
+    except Exception as e:
+        messages.error(request, _('刷新失败：%(error)s') % {'error': str(e)})
+    
+    return redirect('consumer_list')
