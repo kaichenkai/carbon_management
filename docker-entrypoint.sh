@@ -2,17 +2,18 @@
 
 set -e
 
-echo "Waiting for database..."
-# Wait for database to be ready
-until python manage.py migrate --check 2>/dev/null; do
-    echo "Database is unavailable - sleeping"
-    sleep 2
-done
+echo "Checking database..."
 
-echo "Database is ready!"
+# For SQLite, just ensure the directory exists
+mkdir -p /app
 
+# Try to run migrations directly (SQLite doesn't need connection check)
 echo "Running database migrations..."
-python manage.py migrate --noinput
+python manage.py migrate --noinput || {
+    echo "Migration failed, retrying in 5 seconds..."
+    sleep 5
+    python manage.py migrate --noinput
+}
 
 echo "Collecting static files..."
 python manage.py collectstatic --noinput
