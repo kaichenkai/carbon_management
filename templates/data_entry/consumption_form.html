@@ -5,6 +5,15 @@
     {% if consumption %}{% trans "编辑消耗记录" %}{% else %}{% trans "新增消耗记录" %}{% endif %} - {% trans "碳排放管理系统" %}
 {% endblock %}
 
+{% block extra_css %}
+<style>
+/* Ensure form buttons have consistent border radius */
+.btn-secondary {
+    border-radius: 12px;
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container-fluid mt-4">
     <div class="row mb-4">
@@ -181,10 +190,12 @@
                         
                         <div class="d-flex gap-2 justify-content-end mt-4">
                             <button type="button" onclick="window.location.href='{% url 'consumption_list' %}'" class="btn btn-secondary d-inline-flex align-items-center">
-                                <i class="bi bi-x-circle me-1"></i> {% trans "取消" %}
+                                <i class="bi bi-x-circle me-1"></i>
+                                <span>{% trans "取消" %}</span>
                             </button>
                             <button type="submit" class="btn btn-primary d-inline-flex align-items-center">
-                                <i class="bi bi-check-circle me-1"></i> {% trans "保存" %}
+                                <i class="bi bi-check-circle me-1"></i>
+                                <span>{% trans "保存" %}</span>
                             </button>
                         </div>
                     </form>

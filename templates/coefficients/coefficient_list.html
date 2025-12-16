@@ -23,6 +23,27 @@ body > table.fixed-header-table {
 body > table.fixed-header-table thead th {
     white-space: nowrap;
 }
+
+/* Force consistent button size */
+.btn.btn-success,
+.btn.btn-info,
+.btn.btn-secondary,
+.btn.btn-primary {
+    padding: 0.5rem 1rem !important;
+    font-size: 1rem !important;
+    line-height: 1.5 !important;
+}
+
+/* Override base.html primary button border radius */
+button.btn-primary {
+    border-radius: 0.375rem !important;
+}
+
+/* But keep small buttons small */
+.btn.btn-sm {
+    padding: 0.25rem 0.5rem !important;
+    font-size: 0.875rem !important;
+}
 </style>
 <div class="container-fluid mt-4">
     <div class="row mb-4">
@@ -46,17 +67,20 @@ body > table.fixed-header-table thead th {
                 </div>
                 <div class="col-lg-8 col-md-18">
                     <div class="d-flex flex-wrap gap-2 justify-content-lg-end justify-content-start">
-                        <a href="{% url 'coefficient_create' %}" class="btn btn-success d-inline-flex align-items-center">
-                            <i class="bi bi-plus-circle me-1"></i> {% trans "新增系数" %}
+                        <a href="{% url 'coefficient_create' %}" class="btn btn-success d-inline-flex align-items-center text-nowrap">
+                            <i class="bi bi-plus-circle me-1"></i>
+                            <span>{% trans "新增系数" %}</span>
                         </a>
-                        <a href="{% url 'coefficient_import' %}" class="btn btn-info d-inline-flex align-items-center">
-                            <i class="bi bi-upload me-1"></i> {% trans "批量导入" %}
+                        <a href="{% url 'coefficient_import' %}" class="btn btn-info d-inline-flex align-items-center text-nowrap">
+                            <i class="bi bi-upload me-1"></i>
+                            <span>{% trans "批量导入" %}</span>
                         </a>
-                        <a href="{% url 'coefficient_template' %}" class="btn btn-secondary d-inline-flex align-items-center">
-                            <i class="bi bi-download me-1"></i> {% trans "下载模板" %}    
+                        <a href="{% url 'coefficient_template' %}" class="btn btn-secondary d-inline-flex align-items-center text-nowrap">
+                            <i class="bi bi-download me-1"></i>
+                            <span>{% trans "下载模板" %}</span>
                         </a>
-                        <button type="button" id="exportBtn" class="btn btn-primary d-inline-flex align-items-center">
-                            <i class="bi bi-file-earmark-excel me-1"></i> 
+                        <button type="button" id="exportBtn" class="btn btn-primary d-inline-flex align-items-center text-nowrap">
+                            <i class="bi bi-file-earmark-excel me-1"></i>
                             <span id="exportBtnText">{% trans "导出数据" %}</span>
                         </button>
                     </div>

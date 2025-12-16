@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-{% block title %}{% trans "导入结果" %} - {% trans "碳排放管理系统" %}{% endblock %}
+{% block title %}{% trans "消费者数据导入结果" %} - {% trans "碳排放管理系统" %}{% endblock %}
 
 {% block content %}
 <style>
@@ -14,7 +14,7 @@
 <div class="container mt-4">
     <div class="row mb-4">
         <div class="col">
-            <h2><i class="bi bi-check-circle"></i> {% trans "导入结果" %}</h2>
+            <h2><i class="bi bi-check-circle"></i> {% trans "消费者数据导入结果" %}</h2>
             <p class="text-muted">{% trans "数据导入完成" %}</p>
         </div>
     </div>
@@ -87,23 +87,24 @@
     <div class="alert alert-success">
         <i class="bi bi-check-circle-fill"></i>
         {% blocktrans count counter=result.success_count %}
-            成功导入 {{ counter }} 条记录！
+            成功导入 {{ counter }} 条消费者数据记录！
         {% plural %}
-            成功导入 {{ counter }} 条记录！
+            成功导入 {{ counter }} 条消费者数据记录！
         {% endblocktrans %}
     </div>
     {% endif %}
     
     <!-- Action Buttons -->
     <div class="d-flex justify-content-between">
-        <a href="{% url 'data_import' %}" class="btn btn-primary d-inline-flex align-items-center">
+        <a href="{% url 'consumer_import' %}" class="btn btn-primary d-inline-flex align-items-center">
             <i class="bi bi-upload me-1"></i>
             <span>{% trans "继续导入" %}</span>
         </a>
-        <a href="{% url 'consumption_list' %}" class="btn btn-success d-inline-flex align-items-center">
+        <a href="{% url 'consumer_list' %}" class="btn btn-success d-inline-flex align-items-center">
             <i class="bi bi-list-ul me-1"></i>
             <span>{% trans "查看记录列表" %}</span>
         </a>
     </div>
 </div>
 {% endblock %}
+

@@ -273,3 +273,34 @@ class ConsumerSearchForm(forms.Form):
             'placeholder': _('搜索酒店名称或部门...')
         })
     )
+
+
+class ConsumerDataImportForm(forms.Form):
+    """Form for importing consumer data from Excel/CSV"""
+    
+    file = forms.FileField(
+        label=_('选择文件'),
+        required=True,
+        widget=forms.FileInput(attrs={
+            'class': 'form-control',
+            'accept': '.xlsx,.xls,.csv'
+        }),
+        help_text=_('支持 Excel (.xlsx, .xls) 和 CSV (.csv) 格式')
+    )
+    
+    def clean_file(self):
+        file = self.cleaned_data.get('file')
+        
+        if not file:
+            raise forms.ValidationError(_('请选择要导入的文件'))
+        
+        # Check file extension
+        file_name = file.name.lower()
+        if not (file_name.endswith('.xlsx') or file_name.endswith('.xls') or file_name.endswith('.csv')):
+            raise forms.ValidationError(_('文件格式不支持，请上传 Excel 或 CSV 文件'))
+        
+        # Check file size (limit to 10MB)
+        if file.size > 10 * 1024 * 1024:
+            raise forms.ValidationError(_('文件大小不能超过 10MB'))
+        
+        return file

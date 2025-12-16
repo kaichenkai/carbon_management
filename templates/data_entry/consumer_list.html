@@ -24,9 +24,20 @@ body > table.fixed-header-table thead th {
     white-space: nowrap;
 }
 
-/* Force consistent button height */
-.btn.d-inline-flex.align-items-center {
-    min-height: 38px;
+/* Force consistent button size in operation bar */
+.operation-bar .btn.btn-success,
+.operation-bar .btn.btn-info,
+.operation-bar .btn.btn-secondary,
+.operation-bar .btn.btn-warning {
+    padding: 0.5rem 1rem !important;
+    font-size: 1rem !important;
+    line-height: 1.5 !important;
+}
+
+/* But keep small buttons small */
+.btn.btn-sm {
+    padding: 0.25rem 0.5rem !important;
+    font-size: 0.875rem !important;
 }
 </style>
 <div class="container-fluid mt-4">
@@ -99,7 +110,15 @@ body > table.fixed-header-table thead th {
                             <i class="bi bi-plus-circle me-1"></i> 
                             <span>{% trans "新增消费者数据" %}</span>
                         </a>
-                        <a href="{% url 'consumer_refresh_emissions' %}" class="btn btn-info d-inline-flex align-items-center text-nowrap" 
+                        <a href="{% url 'consumer_import' %}" class="btn btn-info d-inline-flex align-items-center text-nowrap">
+                            <i class="bi bi-upload me-1"></i> 
+                            <span>{% trans "批量导入" %}</span>
+                        </a>
+                        <a href="{% url 'consumer_download_template' %}" class="btn btn-secondary d-inline-flex align-items-center text-nowrap">
+                            <i class="bi bi-download me-1"></i> 
+                            <span>{% trans "下载模板" %}</span>
+                        </a>
+                        <a href="{% url 'consumer_refresh_emissions' %}" class="btn btn-warning d-inline-flex align-items-center text-nowrap" 
                            onclick="return confirm('{% trans "确定要刷新所有记录的碳排放数据吗？" %}')">
                             <i class="bi bi-arrow-clockwise me-1"></i> 
                             <span>{% trans "刷新碳排放" %}</span>
@@ -119,7 +138,7 @@ body > table.fixed-header-table thead th {
                         <tr>
                             <th>{% trans "序号" %}</th>
                             <th>
-                                <a href="?sort=hotel_name&order={% if current_sort == 'hotel_name' and current_order == 'asc' %}desc{% else %}asc{% endif %}" 
+                                <a href="?sort=hotel_name&order={% if current_sort == 'hotel_name' and current_order == 'asc' %}desc{% else %}asc{% endif %}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}" 
                                    class="text-decoration-none text-dark d-inline-flex align-items-center">
                                     {% trans "酒店名称" %}
                                     <span class="ms-1">
@@ -136,7 +155,7 @@ body > table.fixed-header-table thead th {
                                 </a>
                             </th>
                             <th>
-                                <a href="?sort=department&order={% if current_sort == 'department' and current_order == 'asc' %}desc{% else %}asc{% endif %}" 
+                                <a href="?sort=department&order={% if current_sort == 'department' and current_order == 'asc' %}desc{% else %}asc{% endif %}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}" 
                                    class="text-decoration-none text-dark d-inline-flex align-items-center">
                                     {% trans "部门" %}
                                     <span class="ms-1">
@@ -153,7 +172,7 @@ body > table.fixed-header-table thead th {
                                 </a>
                             </th>
                             <th>
-                                <a href="?sort=consumption_date&order={% if current_sort == 'consumption_date' and current_order == 'asc' %}desc{% else %}asc{% endif %}" 
+                                <a href="?sort=consumption_date&order={% if current_sort == 'consumption_date' and current_order == 'asc' %}desc{% else %}asc{% endif %}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}" 
                                    class="text-decoration-none text-dark d-inline-flex align-items-center">
                                     {% trans "消耗日期" %}
                                     <span class="ms-1">
@@ -170,7 +189,7 @@ body > table.fixed-header-table thead th {
                                 </a>
                             </th>
                             <th>
-                                <a href="?sort=consumer_count&order={% if current_sort == 'consumer_count' and current_order == 'asc' %}desc{% else %}asc{% endif %}" 
+                                <a href="?sort=consumer_count&order={% if current_sort == 'consumer_count' and current_order == 'asc' %}desc{% else %}asc{% endif %}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}" 
                                    class="text-decoration-none text-dark d-inline-flex align-items-center">
                                     {% trans "消费者人数" %}
                                     <span class="ms-1">
@@ -187,7 +206,7 @@ body > table.fixed-header-table thead th {
                                 </a>
                             </th>
                             <th>
-                                <a href="?sort=daily_carbon_emission&order={% if current_sort == 'daily_carbon_emission' and current_order == 'asc' %}desc{% else %}asc{% endif %}" 
+                                <a href="?sort=daily_carbon_emission&order={% if current_sort == 'daily_carbon_emission' and current_order == 'asc' %}desc{% else %}asc{% endif %}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}" 
                                    class="text-decoration-none text-dark d-inline-flex align-items-center">
                                     {% trans "当日碳排总量" %}
                                     <span class="ms-1">
@@ -260,12 +279,12 @@ body > table.fixed-header-table thead th {
                 <ul class="pagination justify-content-center">
                     {% if page_obj.has_previous %}
                     <li class="page-item">
-                        <a class="page-link" href="?page=1&sort={{ current_sort }}&order={{ current_order }}">
+                        <a class="page-link" href="?page=1&sort={{ current_sort }}&order={{ current_order }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}">
                             <i class="bi bi-chevron-double-left"></i>
                         </a>
                     </li>
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}&sort={{ current_sort }}&order={{ current_order }}">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}&sort={{ current_sort }}&order={{ current_order }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}">
                             <i class="bi bi-chevron-left"></i>
                         </a>
                     </li>
@@ -276,19 +295,19 @@ body > table.fixed-header-table thead th {
                         <li class="page-item active"><span class="page-link">{{ num }}</span></li>
                         {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
                         <li class="page-item">
-                            <a class="page-link" href="?page={{ num }}&sort={{ current_sort }}&order={{ current_order }}">{{ num }}</a>
+                            <a class="page-link" href="?page={{ num }}&sort={{ current_sort }}&order={{ current_order }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}">{{ num }}</a>
                         </li>
                         {% endif %}
                     {% endfor %}
                     
                     {% if page_obj.has_next %}
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.next_page_number }}&sort={{ current_sort }}&order={{ current_order }}">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}&sort={{ current_sort }}&order={{ current_order }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}">
                             <i class="bi bi-chevron-right"></i>
                         </a>
                     </li>
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&sort={{ current_sort }}&order={{ current_order }}">
+                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&sort={{ current_sort }}&order={{ current_order }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}">
                             <i class="bi bi-chevron-double-right"></i>
                         </a>
                     </li>

@@ -1467,3 +1467,75 @@ msgstr "View Record List"
 #: data_entry/forms.py:234
 msgid "请选择酒店"
 msgstr "Please select a hotel"
+
+#: templates/data_entry/consumer_import_form.html:4
+#: templates/data_entry/consumer_import_form.html:10
+msgid "消费者数据导入"
+msgstr "Consumer Data Import"
+
+#: templates/data_entry/consumer_import_form.html:11
+msgid "批量导入消费者数据记录"
+msgstr "Batch import consumer data records"
+
+#: templates/data_entry/consumer_import_form.html:30
+msgid "整数，必须大于0"
+msgstr "Integer, must be greater than 0"
+
+#: templates/data_entry/consumer_import_form.html:31
+msgid "（可选）备注信息"
+msgstr "(Optional) Notes"
+
+#: templates/data_entry/consumer_import_form.html:38
+msgid "部门名称必须与系统中的数据完全匹配"
+msgstr "Department name must exactly match the data in the system"
+
+#: templates/data_entry/consumer_import_form.html:39
+msgid "同一酒店、部门、日期的记录不能重复"
+msgstr "Records with the same hotel, department, and date cannot be duplicated"
+
+#: templates/data_entry/consumer_import_form.html:40
+msgid "日期格式必须正确"
+msgstr "Date format must be correct"
+
+#: templates/data_entry/consumer_import_form.html:41
+msgid "消费者人数必须是正整数"
+msgstr "Consumer count must be a positive integer"
+
+#: templates/data_entry/consumer_import_form.html:43
+msgid "如果记录已存在，将被视为导入失败"
+msgstr "If a record already exists, it will be treated as an import failure"
+
+#: data_entry/views.py:785
+msgid "酒店名称不能为空"
+msgstr "Hotel name cannot be empty"
+
+#: data_entry/views.py:794
+msgid "无效的部门：%(dept)s"
+msgstr "Invalid department: %(dept)s"
+
+#: data_entry/views.py:805
+msgid "消耗日期格式错误：%(date)s"
+msgstr "Consumption date format error: %(date)s"
+
+#: data_entry/views.py:815
+msgid "消费者人数必须大于0"
+msgstr "Consumer count must be greater than 0"
+
+#: data_entry/views.py:821
+msgid "消费者人数格式错误：%(count)s"
+msgstr "Consumer count format error: %(count)s"
+
+#: data_entry/views.py:841
+msgid "记录已存在（ID: %(id)s）"
+msgstr "Record already exists (ID: %(id)s)"
+
+#: templates/data_entry/consumer_import_result.html:4
+msgid "消费者数据导入结果"
+msgstr "Consumer Data Import Results"
+
+#: templates/data_entry/consumer_import_result.html:83
+#, python-format
+msgid "成功导入 %(counter)s 条消费者数据记录！"
+msgid_plural "成功导入 %(counter)s 条消费者数据记录！"
+msgstr[0] "Successfully imported %(counter)s consumer data record!"
+msgstr[1] "Successfully imported %(counter)s consumer data records!"

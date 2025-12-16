@@ -17,5 +17,7 @@ urlpatterns = [
     path('consumer/create/', views.consumer_create, name='consumer_create'),
     path('consumer/<int:pk>/edit/', views.consumer_edit, name='consumer_edit'),
     path('consumer/<int:pk>/delete/', views.consumer_delete, name='consumer_delete'),
+    path('consumer/import/', views.consumer_import, name='consumer_import'),
+    path('consumer/import/template/', views.consumer_download_template, name='consumer_download_template'),
     path('consumer/refresh-emissions/', views.consumer_refresh_emissions, name='consumer_refresh_emissions'),
 ]

@@ -7,7 +7,14 @@ from django.http import JsonResponse, HttpResponse
 from django.db import transaction
 from django.db.models import Q
 from .models import MaterialConsumption, ConsumerData
-from .forms import MaterialConsumptionForm, DataImportForm, ConsumptionSearchForm, ConsumerDataForm, ConsumerSearchForm
+from .forms import (
+    MaterialConsumptionForm, 
+    DataImportForm, 
+    ConsumptionSearchForm, 
+    ConsumerDataForm, 
+    ConsumerSearchForm,
+    ConsumerDataImportForm
+)
 from coefficients.models import EmissionCoefficient, EmissionCategory
 import pandas as pd
 from datetime import datetime, date, time
@@ -685,3 +692,212 @@ def consumer_refresh_emissions(request):
         messages.error(request, _('刷新失败：%(error)s') % {'error': str(e)})
     
     return redirect('consumer_list')
+
+
+def consumer_import(request):
+    """Import consumer data from Excel/CSV file"""
+    if request.method == 'POST':
+        form = ConsumerDataImportForm(request.POST, request.FILES)
+        if form.is_valid():
+            file = request.FILES['file']
+            
+            try:
+                # Read file based on extension
+                if file.name.endswith('.csv'):
+                    df = pd.read_csv(file)
+                else:
+                    df = pd.read_excel(file)
+                
+                # Process the data
+                result = process_consumer_import_data(df)
+                
+                if result['success']:
+                    messages.success(
+                        request,
+                        gettext('成功导入 %(count)s 条记录') % {'count': result["success_count"]}
+                    )
+                    if result['errors']:
+                        messages.warning(
+                            request,
+                            gettext('失败 %(count)s 条记录，详情见下方') % {'count': len(result["errors"])}
+                        )
+                    return render(request, 'data_entry/consumer_import_result.html', {
+                        'result': result
+                    })
+                else:
+                    messages.error(request, gettext('导入失败：%(error)s') % {'error': result['error']})
+                    
+            except Exception as e:
+                messages.error(request, gettext('文件处理失败：%(error)s') % {'error': str(e)})
+    else:
+        form = ConsumerDataImportForm()
+    
+    context = {
+        'form': form,
+    }
+    return render(request, 'data_entry/consumer_import_form.html', context)
+
+
+def process_consumer_import_data(df):
+    """Process imported consumer data and validate"""
+    # Expected column mapping (Chinese to English)
+    column_mapping = {
+        '酒店名称': 'hotel_name',
+        '部门': 'department',
+        '消耗日期': 'consumption_date',
+        '消费者人数': 'consumer_count',
+    }
+    
+    # Check if all required columns exist
+    missing_columns = [col for col in column_mapping.keys() if col not in df.columns]
+    if missing_columns:
+        return {
+            'success': False,
+            'error': gettext('缺少必需列：%(columns)s') % {'columns': ', '.join(missing_columns)}
+        }
+    
+    # Rename columns
+    df = df.rename(columns=column_mapping)
+    
+    # Optional columns
+    if '特殊备注' in df.columns:
+        df = df.rename(columns={'特殊备注': 'notes'})
+    
+    # Results tracking
+    success_count = 0
+    errors = []
+    
+    # Department choices mapping
+    dept_mapping = dict(EmissionCoefficient.DEPARTMENT_CHOICES)
+    dept_reverse_mapping = {v: k for k, v in dept_mapping.items()}
+    
+    # Process each row
+    with transaction.atomic():
+        for index, row in df.iterrows():
+            row_num = index + 2  # Excel row (1-indexed + header)
+            
+            try:
+                # Validate hotel name
+                hotel_name = str(row['hotel_name']).strip()
+                if not hotel_name or hotel_name == 'nan':
+                    errors.append({
+                        'row': row_num,
+                        'error': gettext('酒店名称不能为空')
+                    })
+                    continue
+                
+                # Validate department
+                department_str = str(row['department']).strip()
+                if department_str not in dept_reverse_mapping:
+                    errors.append({
+                        'row': row_num,
+                        'error': gettext('无效的部门：%(dept)s') % {'dept': department_str}
+                    })
+                    continue
+                department = dept_reverse_mapping[department_str]
+                
+                # Parse consumption date
+                try:
+                    consumption_date = pd.to_datetime(row['consumption_date']).date()
+                except:
+                    errors.append({
+                        'row': row_num,
+                        'error': gettext('消耗日期格式错误：%(date)s') % {'date': row['consumption_date']}
+                    })
+                    continue
+                
+                # Parse consumer count
+                try:
+                    consumer_count = int(row['consumer_count'])
+                    if consumer_count <= 0:
+                        errors.append({
+                            'row': row_num,
+                            'error': gettext('消费者人数必须大于0')
+                        })
+                        continue
+                except:
+                    errors.append({
+                        'row': row_num,
+                        'error': gettext('消费者人数格式错误：%(count)s') % {'count': row['consumer_count']}
+                    })
+                    continue
+                
+                # Get notes (optional)
+                notes = ''
+                if 'notes' in row and pd.notna(row['notes']):
+                    notes = str(row['notes']).strip()
+                
+                # Check if record already exists
+                existing_record = ConsumerData.objects.filter(
+                    hotel_name=hotel_name,
+                    department=department,
+                    consumption_date=consumption_date,
+                ).first()
+                
+                if existing_record:
+                    # Record already exists - treat as error
+                    errors.append({
+                        'row': row_num,
+                        'error': gettext('记录已存在（ID: %(id)s）') % {'id': existing_record.id}
+                    })
+                    continue
+                
+                # Create new record
+                ConsumerData.objects.create(
+                    hotel_name=hotel_name,
+                    department=department,
+                    consumption_date=consumption_date,
+                    consumer_count=consumer_count,
+                    notes=notes,
+                )
+                success_count += 1
+                    
+            except Exception as e:
+                errors.append({
+                    'row': row_num,
+                    'error': gettext('处理失败：%(error)s') % {'error': str(e)}
+                })
+    
+    return {
+        'success': True,
+        'success_count': success_count,
+        'errors': errors,
+        'total_rows': len(df)
+    }
+
+
+def consumer_download_template(request):
+    """Download Excel template for consumer data import"""
+    # Create a sample DataFrame with column headers
+    df = pd.DataFrame(columns=[
+        '酒店名称',
+        '部门',
+        '消耗日期',
+        '消费者人数',
+        '特殊备注'
+    ])
+    
+    # Add sample data
+    df.loc[0] = [
+        '示例酒店',
+        '客房部',
+        '2024-01-01',
+        '100',
+        '示例备注（可选）'
+    ]
+    
+    # Create Excel file in memory
+    output = BytesIO()
+    with pd.ExcelWriter(output, engine='openpyxl') as writer:
+        df.to_excel(writer, index=False, sheet_name='消费者数据导入模板')
+    
+    output.seek(0)
+    
+    # Return as download
+    response = HttpResponse(
+        output.read(),
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    response['Content-Disposition'] = 'attachment; filename="consumer_data_import_template.xlsx"'
+    
+    return response
