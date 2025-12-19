@@ -1539,3 +1539,23 @@ msgid "成功导入 %(counter)s 条消费者数据记录！"
 msgid_plural "成功导入 %(counter)s 条消费者数据记录！"
 msgstr[0] "Successfully imported %(counter)s consumer data record!"
 msgstr[1] "Successfully imported %(counter)s consumer data records!"
+
+#: templates/data_entry/consumer_list.html
+msgid "调整后当日碳排总量"
+msgstr "Adjusted Daily Total Carbon Emission"
+
+#: templates/dashboard/dashboard.html
+msgid "调整后的日碳排量"
+msgstr "Adjusted Carbon Emission Trend"
+
+#: templates/dashboard/dashboard.html
+msgid "月度人均碳排量"
+msgstr "Monthly Per Capita Carbon Emission"
+
+#: templates/dashboard/dashboard.html
+msgid "调整后碳排量"
+msgstr "Adjusted Carbon Emission"
+
+#: templates/dashboard/dashboard.html
+msgid "人均碳排量"
+msgstr "Per Capita Emission"

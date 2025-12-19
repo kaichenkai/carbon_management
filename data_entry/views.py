@@ -5,7 +5,7 @@ from django.utils.translation import gettext
 from django.core.paginator import Paginator
 from django.http import JsonResponse, HttpResponse
 from django.db import transaction
-from django.db.models import Q
+from django.db.models import Q, Sum
 from .models import MaterialConsumption, ConsumerData
 from .forms import (
     MaterialConsumptionForm, 
@@ -18,6 +18,7 @@ from .forms import (
 from coefficients.models import EmissionCoefficient, EmissionCategory
 import pandas as pd
 from datetime import datetime, date, time
+from decimal import Decimal
 from io import BytesIO
 from decimal import Decimal
 
@@ -613,6 +614,33 @@ def consumer_list(request):
     paginator = Paginator(consumers, 20)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
+    
+    # Calculate adjusted carbon emission for each record in current page
+    for consumer in page_obj:
+        # Get the year and month of this record
+        year = consumer.consumption_date.year
+        month = consumer.consumption_date.month
+        
+        # Query all records for the same hotel, department, and month
+        monthly_data = ConsumerData.objects.filter(
+            hotel_name=consumer.hotel_name,
+            department=consumer.department,
+            consumption_date__year=year,
+            consumption_date__month=month
+        ).aggregate(
+            total_emission=Sum('daily_carbon_emission'),
+            total_consumers=Sum('consumer_count')
+        )
+        
+        # Calculate adjusted carbon emission
+        total_emission = monthly_data['total_emission'] or Decimal('0')
+        total_consumers = monthly_data['total_consumers'] or 0
+        
+        if total_consumers > 0:
+            # Formula: (当月总碳排 / 当月总人数) × 当日消费者人数
+            consumer.adjusted_daily_carbon_emission = (total_emission / Decimal(total_consumers)) * Decimal(consumer.consumer_count)
+        else:
+            consumer.adjusted_daily_carbon_emission = Decimal('0')
     
     context = {
         'page_obj': page_obj,

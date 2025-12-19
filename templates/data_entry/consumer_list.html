@@ -222,6 +222,7 @@ body > table.fixed-header-table thead th {
                                     </span>
                                 </a>
                             </th>
+                            <th>{% trans "调整后当日碳排总量" %}</th>
                             <th>{% trans "更新时间" %}</th>
                             <th>{% trans "特殊备注" %}</th>
                             <th>{% trans "操作" %}</th>
@@ -239,6 +240,9 @@ body > table.fixed-header-table thead th {
                             </td>
                             <td>
                                 <span class="badge bg-success">{{ consumer.daily_carbon_emission }} kgCO2e</span>
+                            </td>
+                            <td>
+                                <span class="badge bg-info">{{ consumer.adjusted_daily_carbon_emission|floatformat:6 }} kgCO2e</span>
                             </td>
                             <td>
                                 {{ consumer.updated_at|date:"Y-m-d H:i" }}
@@ -263,7 +267,7 @@ body > table.fixed-header-table thead th {
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="9" class="text-center py-5">
+                            <td colspan="10" class="text-center py-5">
                                 <i class="bi bi-inbox" style="font-size: 48px; color: #ccc;"></i>
                                 <p class="text-muted mt-3">{% trans "暂无消费者数据" %}</p>
                             </td>

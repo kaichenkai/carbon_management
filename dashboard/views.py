@@ -2,10 +2,11 @@ from django.shortcuts import render
 from django.utils.translation import gettext_lazy as _
 from django.utils.encoding import force_str
 from django.db.models import Sum, Count, F
-from data_entry.models import MaterialConsumption
+from data_entry.models import MaterialConsumption, ConsumerData
 from coefficients.models import EmissionCoefficient, EmissionCategory
 from datetime import datetime, timedelta
 from collections import defaultdict
+from decimal import Decimal
 import json
 
 
@@ -151,6 +152,64 @@ def dashboard_view(request):
                 'name': cat2.name
             })
     
+    # Query consumer data for adjusted daily carbon emission chart
+    consumer_data = ConsumerData.objects.filter(
+        consumption_date__range=[start_date, end_date]
+    ).order_by('consumption_date')
+    
+    # Calculate adjusted daily carbon emission for each record
+    adjusted_daily_stats = defaultdict(lambda: Decimal('0'))
+    
+    for consumer in consumer_data:
+        # Get the year and month of this record
+        year = consumer.consumption_date.year
+        month = consumer.consumption_date.month
+        
+        # Query all records for the same hotel, department, and month
+        monthly_data = ConsumerData.objects.filter(
+            hotel_name=consumer.hotel_name,
+            department=consumer.department,
+            consumption_date__year=year,
+            consumption_date__month=month
+        ).aggregate(
+            total_emission=Sum('daily_carbon_emission'),
+            total_consumers=Sum('consumer_count')
+        )
+        
+        # Calculate adjusted carbon emission
+        total_emission = monthly_data['total_emission'] or Decimal('0')
+        total_consumers = monthly_data['total_consumers'] or 0
+        
+        if total_consumers > 0:
+            # Formula: (当月总碳排 / 当月总人数) × 当日消费者人数
+            adjusted_emission = (total_emission / Decimal(total_consumers)) * Decimal(consumer.consumer_count)
+            date_key = consumer.consumption_date.strftime('%Y-%m-%d')
+            adjusted_daily_stats[date_key] += adjusted_emission
+    
+    # Prepare adjusted daily carbon emission data
+    adjusted_dates = sorted(adjusted_daily_stats.keys())
+    adjusted_emissions = [float(adjusted_daily_stats[date]) for date in adjusted_dates]
+    
+    # Calculate monthly per capita carbon emission
+    monthly_per_capita_stats = defaultdict(lambda: {'total_emission': Decimal('0'), 'total_consumers': 0})
+    
+    for consumer in consumer_data:
+        month_key = consumer.consumption_date.strftime('%Y-%m')
+        monthly_per_capita_stats[month_key]['total_emission'] += consumer.daily_carbon_emission
+        monthly_per_capita_stats[month_key]['total_consumers'] += consumer.consumer_count
+    
+    # Prepare monthly per capita data
+    monthly_per_capita_dates = sorted(monthly_per_capita_stats.keys())
+    monthly_per_capita_emissions = []
+    
+    for month in monthly_per_capita_dates:
+        stats = monthly_per_capita_stats[month]
+        if stats['total_consumers'] > 0:
+            per_capita = float(stats['total_emission'] / Decimal(stats['total_consumers']))
+        else:
+            per_capita = 0
+        monthly_per_capita_emissions.append(per_capita)
+    
     context = {
         'start_date': start_date,
         'end_date': end_date,
@@ -173,6 +232,11 @@ def dashboard_view(request):
         'category_hierarchy_json': json.dumps(category_hierarchy),
         'selected_category_level1': category_level1_id,
         'selected_category_level2': category_level2_id,
+        # Consumer data charts
+        'adjusted_dates_json': json.dumps(adjusted_dates),
+        'adjusted_emissions_json': json.dumps(adjusted_emissions),
+        'monthly_per_capita_dates_json': json.dumps(monthly_per_capita_dates),
+        'monthly_per_capita_emissions_json': json.dumps(monthly_per_capita_emissions),
     }
     
     return render(request, 'dashboard/dashboard.html', context)

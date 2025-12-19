@@ -142,7 +142,31 @@
         </div>
     </div>
 
-    <!-- Charts Row 2 - Category Charts with Tabs -->
+    <!-- Charts Row 2 - Consumer Data Charts -->
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-bar-chart-line"></i> {% trans "调整后的日碳排量" %}</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="adjustedDailyChart" height="80"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-graph-up"></i> {% trans "月度人均碳排量" %}</h5>
+                </div>
+                <div class="card-body d-flex align-items-center">
+                    <canvas id="perCapitaChart" height="80"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row 3 - Category Charts with Tabs -->
     <div class="row mb-4">
         <div class="col-lg-12">
             <div class="card h-100">
@@ -275,8 +299,6 @@ const emissionChart = new Chart(emissionCtx, {
         datasets: [{
             label: '{% trans "碳排放量(kgCO2e)" %}',
             data: currentData.emissions,
-            // backgroundColor: 'rgba(220, 53, 69, 0.7)',
-            // borderColor: 'rgba(220, 53, 69, 1)',
             borderWidth: 1
         }]
     },
@@ -380,8 +402,6 @@ const categoryChart = new Chart(categoryChartCtx, {
         datasets: [{
             label: '{% trans "碳排放量" %} (kgCO2e)',
             data: categoryLevel1Emissions,
-            backgroundColor: 'rgba(54, 162, 235, 0.7)',
-            borderColor: 'rgba(54, 162, 235, 1)',
             borderWidth: 1
         }]
     },
@@ -525,6 +545,132 @@ document.addEventListener('DOMContentLoaded', function() {
 // Add event listener for level 1 change
 categoryLevel1Select.addEventListener('change', function() {
     updateLevel2Options(this.value);
+});
+
+// Consumer Data Charts
+const adjustedDates = {{ adjusted_dates_json|safe }};
+const adjustedEmissions = {{ adjusted_emissions_json|safe }};
+const monthlyPerCapitaDates = {{ monthly_per_capita_dates_json|safe }};
+const monthlyPerCapitaEmissions = {{ monthly_per_capita_emissions_json|safe }};
+
+// Adjusted Daily Carbon Emission Chart (Bar Chart)
+const adjustedDailyCtx = document.getElementById('adjustedDailyChart').getContext('2d');
+const adjustedDailyChart = new Chart(adjustedDailyCtx, {
+    type: 'bar',
+    data: {
+        labels: adjustedDates,
+        datasets: [{
+            label: '{% trans "调整后碳排量" %} (kgCO2e)',
+            data: adjustedEmissions,
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        layout: {
+            padding: {
+                bottom: 0
+            }
+        },
+        plugins: {
+            legend: {
+                display: true,
+                position: 'top'
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        return context.dataset.label + ': ' + context.parsed.y.toFixed(2);
+                    }
+                }
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                grace: '5%',
+                ticks: {
+                    callback: function(value) {
+                        return value.toFixed(2);
+                    }
+                }
+            },
+            x: {
+                ticks: {
+                    maxRotation: 45,
+                    minRotation: 0,
+                    autoSkip: true,
+                    maxTicksLimit: 20,
+                    padding: 5
+                }
+            }
+        }
+    }
+});
+
+// Monthly Per Capita Carbon Emission Chart (Line Chart)
+const perCapitaCtx = document.getElementById('perCapitaChart').getContext('2d');
+const perCapitaChart = new Chart(perCapitaCtx, {
+    type: 'line',
+    data: {
+        labels: monthlyPerCapitaDates,
+        datasets: [{
+            label: '{% trans "人均碳排量" %} (kgCO2e)',
+            data: monthlyPerCapitaEmissions,
+            // backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            // borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1,
+            fill: true,
+            tension: 0.4,  // 轻微到中等平滑曲线
+            pointRadius: 3,
+            pointHoverRadius: 5,
+            // pointBackgroundColor: 'rgba(54, 162, 235, 1)',
+            // pointBorderColor: '#fff',
+            pointBorderWidth:1
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        layout: {
+            padding: {
+                bottom: 0
+            }
+        },
+        plugins: {
+            legend: {
+                display: true,
+                position: 'top'
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        return context.dataset.label + ': ' + context.parsed.y.toFixed(6);
+                    }
+                }
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                grace: '5%',
+                ticks: {
+                    stepSize: 1,
+                    callback: function(value) {
+                        return value.toFixed(2);
+                    }
+                }
+            },
+            x: {
+                ticks: {
+                    maxRotation: 0,
+                    minRotation: 0,
+                    padding: 5
+                }
+            }
+        }
+    }
 });
 
 </script>
