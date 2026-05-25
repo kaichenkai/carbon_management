@@ -45,20 +45,21 @@ class MaterialConsumptionForm(forms.ModelForm):
     class Meta:
         model = MaterialConsumption
         fields = [
-            'hotel_name', 'department', 'category_level1', 'category_level2',
+            'restaurant', 'product_code', 'category_level1', 'category_level2',
             'product_name',
-            'consumption_date', 'consumption_time',
+            'order_date', 'consumption_time',
             'quantity', 'special_note'
         ]
         widgets = {
-            'hotel_name': forms.TextInput(attrs={
+            'restaurant': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': _('输入酒店名称')
+                'placeholder': _('输入餐厅名称')
             }),
-            'department': forms.Select(attrs={
-                'class': 'form-select'
+            'product_code': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': _('输入产品编码')
             }),
-            'consumption_date': forms.DateInput(attrs={
+            'order_date': forms.DateInput(attrs={
                 'class': 'form-control',
                 'type': 'date'
             }),
@@ -81,13 +82,6 @@ class MaterialConsumptionForm(forms.ModelForm):
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        
-        # Set department choices
-        from .models import DEPARTMENT_CHOICES as DEPT_CHOICES
-        self.fields['department'].widget = forms.Select(
-            choices=DEPT_CHOICES,
-            attrs={'class': 'form-select'}
-        )
         
         # If editing existing record, populate fields
         if self.instance.pk:
@@ -127,12 +121,12 @@ class MaterialConsumptionForm(forms.ModelForm):
         except EmissionCoefficient.DoesNotExist:
             raise forms.ValidationError(_('产品编号不存在或与所选分类不匹配'))
         
-        # Validate consumption date is not in the future
-        consumption_date = cleaned_data.get('consumption_date')
-        if consumption_date:
+        # Validate order date is not in the future
+        order_date = cleaned_data.get('order_date')
+        if order_date:
             from datetime import date
-            if consumption_date > date.today():
-                raise forms.ValidationError(_('消耗日期不能是未来日期'))
+            if order_date > date.today():
+                raise forms.ValidationError(_('订单日期不能是未来日期'))
         
         return cleaned_data
     
@@ -198,18 +192,15 @@ class ConsumerDataForm(forms.ModelForm):
     class Meta:
         model = ConsumerData
         fields = [
-            'hotel_name', 'department', 'consumption_date',
+            'restaurant', 'order_date',
             'consumer_count', 'notes'
         ]
         widgets = {
-            'hotel_name': forms.TextInput(attrs={
+            'restaurant': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': _('输入酒店名称')
+                'placeholder': _('输入餐厅名称')
             }),
-            'department': forms.Select(attrs={
-                'class': 'form-select'
-            }),
-            'consumption_date': forms.DateInput(attrs={
+            'order_date': forms.DateInput(attrs={
                 'class': 'form-control',
                 'type': 'date'
             }),
@@ -228,33 +219,15 @@ class ConsumerDataForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
-        # Get unique hotel names from MaterialConsumption
-        from .models import MaterialConsumption
-        hotel_names = MaterialConsumption.objects.values_list('hotel_name', flat=True).distinct().order_by('hotel_name')
-        hotel_choices = [('', _('请选择酒店'))] + [(name, name) for name in hotel_names if name]
-        
-        # Change hotel_name to Select widget
-        self.fields['hotel_name'].widget = forms.Select(
-            choices=hotel_choices,
-            attrs={'class': 'form-select'}
-        )
-        
-        # Set department choices
-        from .models import DEPARTMENT_CHOICES as DEPT_CHOICES
-        self.fields['department'].widget = forms.Select(
-            choices=DEPT_CHOICES,
-            attrs={'class': 'form-select'}
-        )
-    
     def clean(self):
         cleaned_data = super().clean()
         
-        # Validate consumption date is not in the future
-        consumption_date = cleaned_data.get('consumption_date')
-        if consumption_date:
+        # Validate order date is not in the future
+        order_date = cleaned_data.get('order_date')
+        if order_date:
             from datetime import date
-            if consumption_date > date.today():
-                raise forms.ValidationError(_('消耗日期不能是未来日期'))
+            if order_date > date.today():
+                raise forms.ValidationError(_('订单日期不能是未来日期'))
         
         # Validate consumer count is positive
         consumer_count = cleaned_data.get('consumer_count')
@@ -271,7 +244,7 @@ class ConsumerSearchForm(forms.Form):
         label=_('搜索'),
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': _('搜索酒店名称或部门...')
+            'placeholder': _('搜索餐厅...')
         })
     )
 

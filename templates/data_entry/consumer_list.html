@@ -138,11 +138,11 @@ body > table.fixed-header-table thead th {
                         <tr>
                             <th>{% trans "序号" %}</th>
                             <th>
-                                <a href="?sort=hotel_name&order={% if current_sort == 'hotel_name' and current_order == 'asc' %}desc{% else %}asc{% endif %}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}" 
+                                <a href="?sort=restaurant&order={% if current_sort == 'restaurant' and current_order == 'asc' %}desc{% else %}asc{% endif %}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}" 
                                    class="text-decoration-none text-dark d-inline-flex align-items-center">
-                                    {% trans "酒店名称" %}
+                                    {% trans "餐厅" %}
                                     <span class="ms-1">
-                                        {% if current_sort == 'hotel_name' %}
+                                        {% if current_sort == 'restaurant' %}
                                             {% if current_order == 'asc' %}
                                                 <i class="bi bi-arrow-up text-primary"></i>
                                             {% else %}
@@ -155,28 +155,11 @@ body > table.fixed-header-table thead th {
                                 </a>
                             </th>
                             <th>
-                                <a href="?sort=department&order={% if current_sort == 'department' and current_order == 'asc' %}desc{% else %}asc{% endif %}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}" 
+                                <a href="?sort=order_date&order={% if current_sort == 'order_date' and current_order == 'asc' %}desc{% else %}asc{% endif %}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}" 
                                    class="text-decoration-none text-dark d-inline-flex align-items-center">
-                                    {% trans "部门" %}
+                                    {% trans "订单日期" %}
                                     <span class="ms-1">
-                                        {% if current_sort == 'department' %}
-                                            {% if current_order == 'asc' %}
-                                                <i class="bi bi-arrow-up text-primary"></i>
-                                            {% else %}
-                                                <i class="bi bi-arrow-down text-primary"></i>
-                                            {% endif %}
-                                        {% else %}
-                                            <i class="bi bi-arrow-down-up text-muted opacity-50"></i>
-                                        {% endif %}
-                                    </span>
-                                </a>
-                            </th>
-                            <th>
-                                <a href="?sort=consumption_date&order={% if current_sort == 'consumption_date' and current_order == 'asc' %}desc{% else %}asc{% endif %}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}" 
-                                   class="text-decoration-none text-dark d-inline-flex align-items-center">
-                                    {% trans "消耗日期" %}
-                                    <span class="ms-1">
-                                        {% if current_sort == 'consumption_date' %}
+                                        {% if current_sort == 'order_date' %}
                                             {% if current_order == 'asc' %}
                                                 <i class="bi bi-arrow-up text-primary"></i>
                                             {% else %}
@@ -232,9 +215,8 @@ body > table.fixed-header-table thead th {
                         {% for consumer in page_obj %}
                         <tr>
                             <td>{{ forloop.counter|add:page_obj.start_index|add:"-1" }}</td>
-                            <td>{{ consumer.hotel_name }}</td>
-                            <td>{{ consumer.get_department_display }}</td>
-                            <td>{{ consumer.consumption_date|date:"Y-m-d" }}</td>
+                            <td>{{ consumer.restaurant }}</td>
+                            <td>{{ consumer.order_date|date:"Y-m-d" }}</td>
                             <td>
                                 <strong>{{ consumer.consumer_count }}</strong> {% trans "人" %}
                             </td>

@@ -17,8 +17,7 @@ class MaterialConsumption(models.Model):
     """Material consumption record for carbon emission tracking"""
     
     # Basic information
-    hotel_name = models.CharField(_('酒店名称'), max_length=200, blank=True)
-    department = models.CharField(_('部门名称'), max_length=50, choices=DEPARTMENT_CHOICES)
+    restaurant = models.CharField(_('餐厅'), max_length=50, default='')
     
     # Product information (from EmissionCoefficient)
     category_level1 = models.ForeignKey(
@@ -35,13 +34,14 @@ class MaterialConsumption(models.Model):
         related_name='consumptions_level2',
         limit_choices_to={'level': 2}
     )
+    product_code = models.CharField(_('产品编码'), max_length=100)
     product_name = models.CharField(_('产品名称'), max_length=200)
     product_unit = models.CharField(_('产品单位'), max_length=20)
     emission_coefficient = models.DecimalField(_('碳排放系数'), max_digits=10, decimal_places=6)
     
-    # Consumption date and time
-    consumption_date = models.DateField(_('消耗日期'), null=True)
-    consumption_time = models.TimeField(_('消耗时间'), null=True)
+    # Order date
+    order_date = models.DateField(_('订单日期'), null=True)
+    consumption_time = models.TimeField(_('消耗时间'), null=True, blank=True)
     
     # Consumption data
     quantity = models.DecimalField(_('消耗数量'), max_digits=10, decimal_places=6)
@@ -65,14 +65,15 @@ class MaterialConsumption(models.Model):
     class Meta:
         verbose_name = _('物料消耗记录')
         verbose_name_plural = _('物料消耗记录')
-        ordering = ['-consumption_date', '-consumption_time', '-created_at']
+        ordering = ['-order_date', '-consumption_time', '-created_at']
         indexes = [
-            models.Index(fields=['hotel_name', 'department']),
-            models.Index(fields=['consumption_date', 'consumption_time']),
+            models.Index(fields=['restaurant']),
+            models.Index(fields=['order_date']),
+            models.Index(fields=['order_date', 'consumption_time']),
             # Dashboard query optimization indexes
-            models.Index(fields=['consumption_date', 'category_level1']),
-            models.Index(fields=['consumption_date', 'category_level2']),
-            models.Index(fields=['consumption_date', 'department']),
+            models.Index(fields=['order_date', 'category_level1']),
+            models.Index(fields=['order_date', 'category_level2']),
+            models.Index(fields=['order_date', 'restaurant']),
             models.Index(fields=['category_level1', 'category_level2']),
         ]
     
@@ -86,17 +87,15 @@ class MaterialConsumption(models.Model):
     
     def delete(self, *args, **kwargs):
         # Store info before deletion
-        hotel_name = self.hotel_name
-        department = self.department
-        consumption_date = self.consumption_date
+        restaurant = self.restaurant
+        order_date = self.order_date
         
         super().delete(*args, **kwargs)
         
         # Update related ConsumerData records after deletion
         consumer_data = ConsumerData.objects.filter(
-            hotel_name=hotel_name,
-            department=department,
-            consumption_date=consumption_date
+            restaurant=restaurant,
+            order_date=order_date
         )
         for cd in consumer_data:
             cd.daily_carbon_emission = cd.calculate_daily_emission()
@@ -106,9 +105,8 @@ class MaterialConsumption(models.Model):
         """Update daily carbon emission for related ConsumerData records"""
         try:
             consumer_data = ConsumerData.objects.filter(
-                hotel_name=self.hotel_name,
-                department=self.department,
-                consumption_date=self.consumption_date
+                restaurant=self.restaurant,
+                order_date=self.order_date
             )
             for cd in consumer_data:
                 cd.daily_carbon_emission = cd.calculate_daily_emission()
@@ -117,18 +115,17 @@ class MaterialConsumption(models.Model):
             pass
     
     def __str__(self):
-        return f"{self.hotel_name} - {self.product_name} ({self.consumption_date} {self.consumption_time.strftime('%H:%M')})"
+        return f"{self.restaurant} - {self.product_name} ({self.order_date})"
 
 
 class ConsumerData(models.Model):
     """Consumer data record for tracking daily consumer count and carbon emissions"""
     
     # Basic information
-    hotel_name = models.CharField(_('酒店名称'), max_length=200, blank=True)
-    department = models.CharField(_('部门名称'), max_length=50, choices=DEPARTMENT_CHOICES)
+    restaurant = models.CharField(_('餐厅'), max_length=50, default='')
     
     # Date information
-    consumption_date = models.DateField(_('消耗日期'))
+    order_date = models.DateField(_('订单日期'), null=True)
     
     # Consumer count
     consumer_count = models.IntegerField(_('消费者人数'), default=0)
@@ -152,21 +149,20 @@ class ConsumerData(models.Model):
     class Meta:
         verbose_name = _('消费者数据')
         verbose_name_plural = _('消费者数据')
-        ordering = ['-consumption_date', '-created_at']
+        ordering = ['-order_date', '-created_at']
         indexes = [
-            models.Index(fields=['hotel_name', 'department']),
-            models.Index(fields=['consumption_date']),
+            models.Index(fields=['restaurant']),
+            models.Index(fields=['order_date']),
         ]
-        # Ensure unique record per hotel/department/date
-        unique_together = [['hotel_name', 'department', 'consumption_date']]
+        # Ensure unique record per restaurant/date
+        unique_together = [['restaurant', 'order_date']]
     
     def calculate_daily_emission(self):
         """Calculate total carbon emission for this hotel/department/date"""
         from django.db.models import Sum
         total = MaterialConsumption.objects.filter(
-            hotel_name=self.hotel_name,
-            department=self.department,
-            consumption_date=self.consumption_date
+            restaurant=self.restaurant,
+            order_date=self.order_date
         ).aggregate(total=Sum('carbon_emission'))['total']
         return total or 0
     
@@ -176,4 +172,4 @@ class ConsumerData(models.Model):
         super().save(*args, **kwargs)
     
     def __str__(self):
-        return f"{self.hotel_name} - {self.get_department_display()} ({self.consumption_date})"
+        return f"{self.restaurant} ({self.order_date})"

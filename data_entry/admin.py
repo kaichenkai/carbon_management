@@ -9,31 +9,30 @@ class MaterialConsumptionAdmin(admin.ModelAdmin):
     
     # List display
     list_display = [
-        'hotel_name',
-        'department',
+        'restaurant',
+        'product_code',
         'product_name',
         'quantity',
         'product_unit',
         'emission_coefficient',
         'carbon_emission_display',
-        'consumption_date',
+        'order_date',
         'consumption_time',
         'created_at',
     ]
     
     # List filters
     list_filter = [
-        'department',
-        'hotel_name',
+        'restaurant',
         'category_level1',
         'category_level2',
-        'consumption_date',
+        'order_date',
         'created_at',
     ]
     
     # Search fields
     search_fields = [
-        'hotel_name',
+        'product_code',
         'product_name',
         'notes',
     ]
@@ -48,10 +47,11 @@ class MaterialConsumptionAdmin(admin.ModelAdmin):
     # Fieldsets for better organization
     fieldsets = (
         ('基本信息', {
-            'fields': ('hotel_name', 'department')
+            'fields': ('restaurant',)
         }),
         ('产品信息', {
             'fields': (
+                'product_code',
                 'product_name',
                 'category_level1',
                 'category_level2',
@@ -59,8 +59,8 @@ class MaterialConsumptionAdmin(admin.ModelAdmin):
                 'emission_coefficient',
             )
         }),
-        ('消耗时间', {
-            'fields': (('consumption_date', 'consumption_time'),)
+        ('时间信息', {
+            'fields': (('order_date', 'consumption_time'),)
         }),
         ('消耗数据', {
             'fields': ('quantity', 'carbon_emission')
@@ -72,10 +72,10 @@ class MaterialConsumptionAdmin(admin.ModelAdmin):
     )
     
     # Ordering
-    ordering = ['-consumption_date', '-consumption_time', '-created_at']
+    ordering = ['-order_date', '-created_at']
     
     # Date hierarchy
-    date_hierarchy = 'consumption_date'
+    date_hierarchy = 'order_date'
     
     # Items per page
     list_per_page = 25

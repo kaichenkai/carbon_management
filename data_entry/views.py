@@ -34,40 +34,34 @@ def consumption_list(request):
     # Apply search filter
     if query:
         consumptions = consumptions.filter(
-            Q(department__icontains=query) |
+            Q(restaurant__icontains=query) |
             Q(category_level1__name__icontains=query) |
             Q(category_level2__name__icontains=query) |
-            Q(product_name__icontains=query) |
-            Q(hotel_name__icontains=query)
+            Q(product_name__icontains=query)
         )
     
-    # Date and time filters
+    # Date filters
     start_date = request.GET.get('start_date', '').strip()
     end_date = request.GET.get('end_date', '').strip()
-    start_time = request.GET.get('start_time', '').strip()
-    end_time = request.GET.get('end_time', '').strip()
     
     if start_date:
-        consumptions = consumptions.filter(consumption_date__gte=start_date)
+        consumptions = consumptions.filter(order_date__gte=start_date)
     if end_date:
-        consumptions = consumptions.filter(consumption_date__lte=end_date)
-    if start_time:
-        consumptions = consumptions.filter(consumption_time__gte=start_time)
-    if end_time:
-        consumptions = consumptions.filter(consumption_time__lte=end_time)
+        consumptions = consumptions.filter(order_date__lte=end_date)
     
     # Sorting
-    sort_by = request.GET.get('sort', '-consumption_date')
+    sort_by = request.GET.get('sort', '-order_date')
     order = request.GET.get('order', 'desc')
     
     # Valid sort fields
     valid_sorts = {
-        'hotel_name': 'hotel_name',
-        'department': 'department',
+        'restaurant': 'restaurant',
+        'product_code': 'product_code',
         'product_name': 'product_name',
         'category_level1': 'category_level1__name',
         'category_level2': 'category_level2__name',
-        'consumption_date': 'consumption_date',
+        'order_date': 'order_date',
+        'consumption_time': 'consumption_time',
         'quantity': 'quantity',
         'carbon_emission': 'carbon_emission',
     }
@@ -81,7 +75,7 @@ def consumption_list(request):
         else:
             consumptions = consumptions.order_by(f'-{actual_sort_field}')
     else:
-        consumptions = consumptions.order_by('-consumption_date', '-consumption_time', '-created_at')
+        consumptions = consumptions.order_by('-order_date', '-consumption_time', '-created_at')
     
     # Pagination
     paginator = Paginator(consumptions, 20)
@@ -249,36 +243,34 @@ def data_import(request):
 def process_import_data(df):
     """Process imported data and validate"""
     # Expected column mapping (Chinese to English)
+    required_columns = ['餐厅', '产品编码', '一级分类', '二级分类', '产品名称', '订单日期', '消耗数量']
+    optional_columns = ['消耗时间']
     column_mapping = {
-        '酒店名称': 'hotel_name',
-        '部门': 'department',
+        '餐厅': 'restaurant',
+        '产品编码': 'product_code',
         '一级分类': 'category_level1',
         '二级分类': 'category_level2',
         '产品名称': 'product_name',
-        '消耗日期': 'consumption_date',
+        '订单日期': 'order_date',
         '消耗时间': 'consumption_time',
         '消耗数量': 'quantity',
     }
     
-    # Check if all required columns exist
-    missing_columns = [col for col in column_mapping.keys() if col not in df.columns]
+    # Check required columns only
+    missing_columns = [col for col in required_columns if col not in df.columns]
     if missing_columns:
         return {
             'success': False,
             'error': gettext('缺少必需列：%(columns)s') % {'columns': ', '.join(missing_columns)}
         }
     
-    # Rename columns
-    df = df.rename(columns=column_mapping)
+    # Rename columns (only those present)
+    rename_map = {k: v for k, v in column_mapping.items() if k in df.columns}
+    df = df.rename(columns=rename_map)
     
     # Results tracking
     success_count = 0
     errors = []
-    
-    # Department choices mapping
-    from .models import DEPARTMENT_CHOICES as DEPT_CHOICES
-    dept_mapping = dict(DEPT_CHOICES)
-    dept_reverse_mapping = {v: k for k, v in dept_mapping.items()}
     
     # Process each row
     with transaction.atomic():
@@ -287,16 +279,12 @@ def process_import_data(df):
                 # Validate and convert data
                 row_num = index + 2  # Excel row number (1-indexed + header)
                 
-                # Get hotel name
-                hotel_name = str(row['hotel_name']).strip() if pd.notna(row['hotel_name']) else ''
-                
-                # Get department
-                dept_name = str(row['department']).strip()
-                department = dept_reverse_mapping.get(dept_name)
-                if not department:
+                # Get restaurant
+                restaurant = str(row['restaurant']).strip()
+                if not restaurant:
                     errors.append({
                         'row': row_num,
-                        'error': gettext('部门 "%(dept)s" 不存在') % {'dept': dept_name}
+                        'error': gettext('餐厅不能为空')
                     })
                     continue
                 
@@ -326,6 +314,15 @@ def process_import_data(df):
                     })
                     continue
                 
+                # Get product code (required)
+                product_code = str(row['product_code']).strip() if pd.notna(row.get('product_code')) else ''
+                if not product_code:
+                    errors.append({
+                        'row': row_num,
+                        'error': gettext('产品编码不能为空')
+                    })
+                    continue
+                
                 # Get product name
                 product_name = str(row['product_name']).strip()
                 
@@ -347,44 +344,42 @@ def process_import_data(df):
                 emission_coefficient = coefficient.coefficient
                 
                 # Parse date
-                consumption_date = None
-                if pd.notna(row['consumption_date']):
+                order_date = None
+                if pd.notna(row['order_date']):
                     try:
-                        if isinstance(row['consumption_date'], str):
-                            consumption_date = datetime.strptime(row['consumption_date'], '%Y-%m-%d').date()
+                        if isinstance(row['order_date'], str):
+                            order_date = datetime.strptime(row['order_date'], '%Y-%m-%d').date()
                         else:
-                            consumption_date = pd.to_datetime(row['consumption_date']).date()
+                            order_date = pd.to_datetime(row['order_date']).date()
                     except:
                         errors.append({
                             'row': row_num,
-                            'error': gettext('日期格式错误：%(date)s') % {'date': row['consumption_date']}
+                            'error': gettext('日期格式错误：%(date)s') % {'date': row['order_date']}
                         })
                         continue
                 
-                # Parse time
+                # Parse time (optional)
                 consumption_time = None
-                if pd.notna(row['consumption_time']):
+                if 'consumption_time' in df.columns and pd.notna(row.get('consumption_time')):
+                    from datetime import time as time_type
                     try:
-                        # If already a time object
-                        if isinstance(row['consumption_time'], time):
-                            consumption_time = row['consumption_time']
-                        # If it's a string
-                        elif isinstance(row['consumption_time'], str):
-                            time_str = row['consumption_time'].strip()
+                        val = row['consumption_time']
+                        if isinstance(val, time_type):
+                            consumption_time = val
+                        elif isinstance(val, str):
+                            time_str = val.strip()
                             try:
                                 consumption_time = datetime.strptime(time_str, '%H:%M:%S').time()
                             except:
                                 consumption_time = datetime.strptime(time_str, '%H:%M').time()
-                        # If it's a datetime object
-                        elif isinstance(row['consumption_time'], pd.Timestamp):
-                            consumption_time = row['consumption_time'].time()
-                        # Try to convert to datetime
+                        elif hasattr(val, 'time'):
+                            consumption_time = val.time() if hasattr(val.time, '__call__') else val.time
                         else:
-                            consumption_time = pd.to_datetime(row['consumption_time']).time()
+                            consumption_time = pd.to_datetime(val).time()
                     except Exception as e:
                         errors.append({
                             'row': row_num,
-                            'error': gettext('时间格式错误：%(time)s (%(error)s)') % {'time': row['consumption_time'], 'error': str(e)}
+                            'error': gettext('时间格式错误：%(time)s') % {'time': str(row['consumption_time'])}
                         })
                         continue
                 
@@ -406,12 +401,11 @@ def process_import_data(df):
 
                 # Check if record already exists
                 existing_record = MaterialConsumption.objects.filter(
-                    hotel_name=hotel_name,
-                    department=department,
+                    restaurant=restaurant,
                     category_level1=category_level1,
                     category_level2=category_level2,
                     product_name=product_name,
-                    consumption_date=consumption_date,
+                    order_date=order_date,
                     consumption_time=consumption_time,
                 ).first()
                 
@@ -419,18 +413,18 @@ def process_import_data(df):
                     # Record already exists - treat as error
                     errors.append({
                         'row': row_num,
-                        'error': gettext('重复记录：该酒店、部门、产品在此日期时间已有消耗记录 (ID: %(id)s)') % {'id': existing_record.id}
+                        'error': gettext('重复记录：该餐厅、产品在此日期已有消耗记录 (ID: %(id)s)') % {'id': existing_record.id}
                     })
                     continue
                 
                 # Create new record
                 MaterialConsumption.objects.create(
-                    hotel_name=hotel_name,
-                    department=department,
+                    restaurant=restaurant,
+                    product_code=product_code,
                     category_level1=category_level1,
                     category_level2=category_level2,
                     product_name=product_name,
-                    consumption_date=consumption_date,
+                    order_date=order_date,
                     consumption_time=consumption_time,
                     quantity=Decimal(str(quantity)),
                     product_unit=product_unit,
@@ -457,20 +451,20 @@ def download_import_template(request):
     """Download Excel template for data import"""
     # Create a sample DataFrame with column headers
     df = pd.DataFrame(columns=[
-        '酒店名称',
-        '部门',
+        '餐厅',
+        '产品编码',
         '一级分类',
         '二级分类',
         '产品名称',
-        '消耗日期',
+        '订单日期',
         '消耗时间',
         '消耗数量'
     ])
     
     # Add sample data
     df.loc[0] = [
-        '示例酒店',
-        '客房部',
+        'F&B',
+        'SKU-001',
         '示例一级分类',
         '示例二级分类',
         '示例产品',
@@ -504,10 +498,10 @@ def consumption_export(request):
     
     # Get records based on selection
     if export_all:
-        consumptions = MaterialConsumption.objects.all().order_by('-consumption_date', '-consumption_time')
+        consumptions = MaterialConsumption.objects.all().order_by('-order_date')
     elif ids:
         id_list = [int(id.strip()) for id in ids.split(',') if id.strip()]
-        consumptions = MaterialConsumption.objects.filter(pk__in=id_list).order_by('-consumption_date', '-consumption_time')
+        consumptions = MaterialConsumption.objects.filter(pk__in=id_list).order_by('-order_date')
     else:
         consumptions = MaterialConsumption.objects.none()
     
@@ -515,15 +509,15 @@ def consumption_export(request):
     data = []
     for consumption in consumptions:
         data.append({
-            gettext('酒店名称'): consumption.hotel_name,
-            gettext('部门'): consumption.get_department_display(),
+            gettext('餐厅'): consumption.restaurant,
+            gettext('产品编码'): consumption.product_code,
+            gettext('产品名称'): consumption.product_name,
+            gettext('订单日期'): consumption.order_date.strftime('%Y-%m-%d') if consumption.order_date else '',
+            gettext('消耗时间'): consumption.consumption_time.strftime('%H:%M:%S') if consumption.consumption_time else '',
             gettext('一级分类'): consumption.category_level1.name,
             gettext('二级分类'): consumption.category_level2.name,
-            gettext('产品名称'): consumption.product_name,
-            gettext('消耗日期'): consumption.consumption_date.strftime('%Y-%m-%d') if consumption.consumption_date else '',
-            gettext('消耗时间'): consumption.consumption_time.strftime('%H:%M:%S') if consumption.consumption_time else '',
-            gettext('消耗数量'): float(consumption.quantity),
             gettext('碳排放系数'): float(consumption.emission_coefficient),
+            gettext('消耗数量'): float(consumption.quantity),
             gettext('碳排放量(kgCO2e)'): float(consumption.carbon_emission),
             gettext('特殊备注'): consumption.special_note,
             gettext('创建时间'): consumption.created_at.strftime('%Y-%m-%d %H:%M:%S'),
@@ -576,8 +570,7 @@ def consumer_list(request):
     # Apply search filter
     if query:
         consumers = consumers.filter(
-            Q(hotel_name__icontains=query) |
-            Q(department__icontains=query)
+            Q(restaurant__icontains=query)
         )
     
     # Date filters
@@ -585,19 +578,18 @@ def consumer_list(request):
     end_date = request.GET.get('end_date', '').strip()
     
     if start_date:
-        consumers = consumers.filter(consumption_date__gte=start_date)
+        consumers = consumers.filter(order_date__gte=start_date)
     if end_date:
-        consumers = consumers.filter(consumption_date__lte=end_date)
+        consumers = consumers.filter(order_date__lte=end_date)
     
     # Sorting
-    sort_by = request.GET.get('sort', '-consumption_date')
+    sort_by = request.GET.get('sort', '-order_date')
     order = request.GET.get('order', 'desc')
     
     # Valid sort fields
     valid_sorts = {
-        'hotel_name': 'hotel_name',
-        'department': 'department',
-        'consumption_date': 'consumption_date',
+        'restaurant': 'restaurant',
+        'order_date': 'order_date',
         'consumer_count': 'consumer_count',
         'daily_carbon_emission': 'daily_carbon_emission',
     }
@@ -609,7 +601,7 @@ def consumer_list(request):
         else:
             consumers = consumers.order_by(f'-{actual_sort_field}')
     else:
-        consumers = consumers.order_by('-consumption_date', '-created_at')
+        consumers = consumers.order_by('-order_date', '-created_at')
     
     # Pagination
     paginator = Paginator(consumers, 20)
@@ -619,15 +611,14 @@ def consumer_list(request):
     # Calculate adjusted carbon emission for each record in current page
     for consumer in page_obj:
         # Get the year and month of this record
-        year = consumer.consumption_date.year
-        month = consumer.consumption_date.month
+        year = consumer.order_date.year
+        month = consumer.order_date.month
         
-        # Query all records for the same hotel, department, and month
+        # Query all records for the same restaurant and month
         monthly_data = ConsumerData.objects.filter(
-            hotel_name=consumer.hotel_name,
-            department=consumer.department,
-            consumption_date__year=year,
-            consumption_date__month=month
+            restaurant=consumer.restaurant,
+            order_date__year=year,
+            order_date__month=month
         ).aggregate(
             total_emission=Sum('daily_carbon_emission'),
             total_consumers=Sum('consumer_count')
@@ -771,9 +762,8 @@ def process_consumer_import_data(df):
     """Process imported consumer data and validate"""
     # Expected column mapping (Chinese to English)
     column_mapping = {
-        '酒店名称': 'hotel_name',
-        '部门': 'department',
-        '消耗日期': 'consumption_date',
+        '餐厅': 'restaurant',
+        '订单日期': 'order_date',
         '消费者人数': 'consumer_count',
     }
     
@@ -796,43 +786,28 @@ def process_consumer_import_data(df):
     success_count = 0
     errors = []
     
-    # Department choices mapping
-    from .models import DEPARTMENT_CHOICES as DEPT_CHOICES
-    dept_mapping = dict(DEPT_CHOICES)
-    dept_reverse_mapping = {v: k for k, v in dept_mapping.items()}
-    
     # Process each row
     with transaction.atomic():
         for index, row in df.iterrows():
             row_num = index + 2  # Excel row (1-indexed + header)
             
             try:
-                # Validate hotel name
-                hotel_name = str(row['hotel_name']).strip()
-                if not hotel_name or hotel_name == 'nan':
+                # Validate restaurant
+                restaurant = str(row['restaurant']).strip()
+                if not restaurant:
                     errors.append({
                         'row': row_num,
-                        'error': gettext('酒店名称不能为空')
+                        'error': gettext('餐厅不能为空')
                     })
                     continue
                 
-                # Validate department
-                department_str = str(row['department']).strip()
-                if department_str not in dept_reverse_mapping:
-                    errors.append({
-                        'row': row_num,
-                        'error': gettext('无效的部门：%(dept)s') % {'dept': department_str}
-                    })
-                    continue
-                department = dept_reverse_mapping[department_str]
-                
-                # Parse consumption date
+                # Parse order date
                 try:
-                    consumption_date = pd.to_datetime(row['consumption_date']).date()
+                    order_date = pd.to_datetime(row['order_date']).date()
                 except:
                     errors.append({
                         'row': row_num,
-                        'error': gettext('消耗日期格式错误：%(date)s') % {'date': row['consumption_date']}
+                        'error': gettext('日期格式错误：%(date)s') % {'date': row['order_date']}
                     })
                     continue
                 
@@ -859,9 +834,8 @@ def process_consumer_import_data(df):
                 
                 # Check if record already exists
                 existing_record = ConsumerData.objects.filter(
-                    hotel_name=hotel_name,
-                    department=department,
-                    consumption_date=consumption_date,
+                    restaurant=restaurant,
+                    order_date=order_date,
                 ).first()
                 
                 if existing_record:
@@ -874,9 +848,8 @@ def process_consumer_import_data(df):
                 
                 # Create new record
                 ConsumerData.objects.create(
-                    hotel_name=hotel_name,
-                    department=department,
-                    consumption_date=consumption_date,
+                    restaurant=restaurant,
+                    order_date=order_date,
                     consumer_count=consumer_count,
                     notes=notes,
                 )
@@ -900,17 +873,15 @@ def consumer_download_template(request):
     """Download Excel template for consumer data import"""
     # Create a sample DataFrame with column headers
     df = pd.DataFrame(columns=[
-        '酒店名称',
-        '部门',
-        '消耗日期',
+        '餐厅',
+        '订单日期',
         '消费者人数',
         '特殊备注'
     ])
     
     # Add sample data
     df.loc[0] = [
-        '示例酒店',
-        '客房部',
+        'F&B',
         '2024-01-01',
         '100',
         '示例备注（可选）'

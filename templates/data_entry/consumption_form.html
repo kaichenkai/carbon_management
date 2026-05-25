@@ -39,28 +39,42 @@
                         {% endif %}
                         
                         <div class="row g-3">
-                            <!-- 酒店名称 -->
-                            <div class="col-md-6">
-                                <label for="{{ form.hotel_name.id_for_label }}" class="form-label">
-                                    {{ form.hotel_name.label }}
+                            <!-- 餐厅 -->
+                            <div class="col-md-12">
+                                <label for="{{ form.restaurant.id_for_label }}" class="form-label">
+                                    {{ form.restaurant.label }} <span class="text-danger">*</span>
                                 </label>
-                                {{ form.hotel_name }}
-                                {% if form.hotel_name.errors %}
-                                    <div class="text-danger small mt-1">{{ form.hotel_name.errors }}</div>
+                                {{ form.restaurant }}
+                                {% if form.restaurant.errors %}
+                                    <div class="text-danger small mt-1">{{ form.restaurant.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            <!-- 产品编码 -->
+                            <div class="col-md-6">
+                                <label for="{{ form.product_code.id_for_label }}" class="form-label">
+                                    {{ form.product_code.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.product_code }}
+                                {% if form.product_code.errors %}
+                                    <div class="text-danger small mt-1">{{ form.product_code.errors }}</div>
                                 {% endif %}
                             </div>
                             
-                            <!-- 部门 -->
+                            <!-- 产品名称 -->
                             <div class="col-md-6">
-                                <label for="{{ form.department.id_for_label }}" class="form-label">
-                                    {{ form.department.label }} <span class="text-danger">*</span>
+                                <label for="{{ form.product_name.id_for_label }}" class="form-label">
+                                    {{ form.product_name.label }} <span class="text-danger">*</span>
                                 </label>
-                                {{ form.department }}
-                                {% if form.department.errors %}
-                                    <div class="text-danger small mt-1">{{ form.department.errors }}</div>
+                                {{ form.product_name }}
+                                <datalist id="product-names">
+                                    <!-- Will be populated dynamically -->
+                                </datalist>
+                                {% if form.product_name.errors %}
+                                    <div class="text-danger small mt-1">{{ form.product_name.errors }}</div>
                                 {% endif %}
                             </div>
-                            
+
                             <!-- 一级分类 -->
                             <div class="col-md-6">
                                 <label for="{{ form.category_level1.id_for_label }}" class="form-label">
@@ -92,19 +106,7 @@
                                     <div class="text-danger small mt-1">{{ form.category_level2.errors }}</div>
                                 {% endif %}
                             </div>
-                            <!-- 产品名称 -->
-                            <div class="col-md-6">
-                                <label for="{{ form.product_name.id_for_label }}" class="form-label">
-                                    {{ form.product_name.label }} <span class="text-danger">*</span>
-                                </label>
-                                {{ form.product_name }}
-                                <datalist id="product-names">
-                                    <!-- Will be populated dynamically -->
-                                </datalist>
-                                {% if form.product_name.errors %}
-                                    <div class="text-danger small mt-1">{{ form.product_name.errors }}</div>
-                                {% endif %}
-                            </div>
+            
                             
 
                             
@@ -129,21 +131,21 @@
                                 </div>
                             </div>
                             
-                            <!-- 消耗日期 -->
+                            <!-- 订单日期 -->
                             <div class="col-md-6">
-                                <label for="{{ form.consumption_date.id_for_label }}" class="form-label">
-                                    {{ form.consumption_date.label }} <span class="text-danger">*</span>
+                                <label for="{{ form.order_date.id_for_label }}" class="form-label">
+                                    {{ form.order_date.label }} <span class="text-danger">*</span>
                                 </label>
-                                {{ form.consumption_date }}
-                                {% if form.consumption_date.errors %}
-                                    <div class="text-danger small mt-1">{{ form.consumption_date.errors }}</div>
+                                {{ form.order_date }}
+                                {% if form.order_date.errors %}
+                                    <div class="text-danger small mt-1">{{ form.order_date.errors }}</div>
                                 {% endif %}
                             </div>
-                            
+
                             <!-- 消耗时间 -->
                             <div class="col-md-6">
                                 <label for="{{ form.consumption_time.id_for_label }}" class="form-label">
-                                    {{ form.consumption_time.label }} <span class="text-danger">*</span>
+                                    {{ form.consumption_time.label }}
                                 </label>
                                 {{ form.consumption_time }}
                                 {% if form.consumption_time.errors %}

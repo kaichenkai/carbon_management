@@ -44,7 +44,7 @@ def dashboard_view(request):
     
     # Query consumption data with filters - use select_related to avoid N+1 queries
     consumptions_base = MaterialConsumption.objects.filter(
-        consumption_date__range=[start_date, end_date]
+        order_date__range=[start_date, end_date]
     )
     
     # Apply category filters if provided
@@ -57,7 +57,7 @@ def dashboard_view(request):
     consumptions = consumptions_base.select_related(
         'category_level1', 
         'category_level2'
-    ).order_by('consumption_date')
+    ).order_by('order_date')
     
     # Single pass through data to collect all statistics
     daily_stats = defaultdict(lambda: {'quantity': 0, 'emission': 0, 'count': 0})
@@ -72,13 +72,13 @@ def dashboard_view(request):
     # Single iteration to gather all statistics
     for consumption in consumptions:
         # Daily stats
-        date_key = consumption.consumption_date.strftime('%Y-%m-%d')
+        date_key = consumption.order_date.strftime('%Y-%m-%d')
         daily_stats[date_key]['quantity'] += float(consumption.quantity)
         daily_stats[date_key]['emission'] += float(consumption.carbon_emission)
         daily_stats[date_key]['count'] += 1
         
-        # Department stats
-        dept = consumption.department
+        # Restaurant stats
+        dept = consumption.restaurant
         department_stats[dept]['emission'] += float(consumption.carbon_emission)
         department_stats[dept]['count'] += 1
         
@@ -132,8 +132,8 @@ def dashboard_view(request):
         }
     
     # Get the latest record date for quick range buttons
-    latest_record = MaterialConsumption.objects.order_by('-consumption_date').first()
-    latest_date = latest_record.consumption_date if latest_record else end_date
+    latest_record = MaterialConsumption.objects.order_by('-order_date').first()
+    latest_date = latest_record.order_date if latest_record else end_date
     
     # Get all categories for filter dropdowns
     categories_level1 = EmissionCategory.objects.filter(level=1).order_by('name')
@@ -154,23 +154,22 @@ def dashboard_view(request):
     
     # Query consumer data for adjusted daily carbon emission chart
     consumer_data = ConsumerData.objects.filter(
-        consumption_date__range=[start_date, end_date]
-    ).order_by('consumption_date')
+        order_date__range=[start_date, end_date]
+    ).order_by('order_date')
     
     # Calculate adjusted daily carbon emission for each record
     adjusted_daily_stats = defaultdict(lambda: Decimal('0'))
     
     for consumer in consumer_data:
         # Get the year and month of this record
-        year = consumer.consumption_date.year
-        month = consumer.consumption_date.month
+        year = consumer.order_date.year
+        month = consumer.order_date.month
         
-        # Query all records for the same hotel, department, and month
+        # Query all records for the same restaurant and month
         monthly_data = ConsumerData.objects.filter(
-            hotel_name=consumer.hotel_name,
-            department=consumer.department,
-            consumption_date__year=year,
-            consumption_date__month=month
+            restaurant=consumer.restaurant,
+            order_date__year=year,
+            order_date__month=month
         ).aggregate(
             total_emission=Sum('daily_carbon_emission'),
             total_consumers=Sum('consumer_count')
@@ -183,7 +182,7 @@ def dashboard_view(request):
         if total_consumers > 0:
             # Formula: (当月总碳排 / 当月总人数) × 当日消费者人数
             adjusted_emission = (total_emission / Decimal(total_consumers)) * Decimal(consumer.consumer_count)
-            date_key = consumer.consumption_date.strftime('%Y-%m-%d')
+            date_key = consumer.order_date.strftime('%Y-%m-%d')
             adjusted_daily_stats[date_key] += adjusted_emission
     
     # Prepare adjusted daily carbon emission data
@@ -194,7 +193,7 @@ def dashboard_view(request):
     monthly_per_capita_stats = defaultdict(lambda: {'total_emission': Decimal('0'), 'total_consumers': 0})
     
     for consumer in consumer_data:
-        month_key = consumer.consumption_date.strftime('%Y-%m')
+        month_key = consumer.order_date.strftime('%Y-%m')
         monthly_per_capita_stats[month_key]['total_emission'] += consumer.daily_carbon_emission
         monthly_per_capita_stats[month_key]['total_consumers'] += consumer.consumer_count
     
