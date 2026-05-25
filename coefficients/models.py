@@ -84,14 +84,6 @@ class EmissionCoefficient(models.Model):
         ('L', _('L')),
     ]
     
-    DEPARTMENT_CHOICES = [
-        ('production', _('生产部')),
-        ('rd', _('研发部')),
-        ('administration', _('行政部')),
-        ('logistics', _('后勤部')),
-        ('F&B', _('F&B')),
-    ]
-
     category_level1 = models.ForeignKey(
         EmissionCategory,
         on_delete=models.PROTECT,
@@ -110,7 +102,6 @@ class EmissionCoefficient(models.Model):
     product_name_en = models.CharField(_('产品名称(英文)'), max_length=200, blank=True, null=True)
     unit = models.CharField(_('单位'), max_length=20, choices=UNIT_CHOICES)
     coefficient = models.DecimalField(_('碳排放系数'), max_digits=10, decimal_places=6)
-    department = models.CharField(_('部门名称'), max_length=50, choices=DEPARTMENT_CHOICES)
     special_note = models.TextField(_('特殊备注'), blank=True)
     created_at = models.DateTimeField(_('创建时间'), auto_now_add=True)
     updated_at = models.DateTimeField(_('最后更新'), auto_now=True)

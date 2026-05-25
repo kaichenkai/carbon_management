@@ -19,4 +19,5 @@ urlpatterns = [
     path('coefficients/export/', views.coefficient_export, name='coefficient_export'),
     path('coefficients/template/', views.coefficient_template, name='coefficient_template'),
     path('coefficients/import/', views.coefficient_import, name='coefficient_import'),
+    path('api/level2-categories/', views.api_level2_categories, name='api_level2_categories'),
 ]

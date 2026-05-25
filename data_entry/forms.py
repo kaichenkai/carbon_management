@@ -82,10 +82,10 @@ class MaterialConsumptionForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
-        # Set department choices from EmissionCoefficient
-        from coefficients.models import EmissionCoefficient
+        # Set department choices
+        from .models import DEPARTMENT_CHOICES as DEPT_CHOICES
         self.fields['department'].widget = forms.Select(
-            choices=EmissionCoefficient.DEPARTMENT_CHOICES,
+            choices=DEPT_CHOICES,
             attrs={'class': 'form-select'}
         )
         
@@ -239,9 +239,10 @@ class ConsumerDataForm(forms.ModelForm):
             attrs={'class': 'form-select'}
         )
         
-        # Set department choices from EmissionCoefficient
+        # Set department choices
+        from .models import DEPARTMENT_CHOICES as DEPT_CHOICES
         self.fields['department'].widget = forms.Select(
-            choices=EmissionCoefficient.DEPARTMENT_CHOICES,
+            choices=DEPT_CHOICES,
             attrs={'class': 'form-select'}
         )
     

@@ -4,12 +4,21 @@ from coefficients.models import EmissionCoefficient, EmissionCategory
 
 # Create your models here.
 
+DEPARTMENT_CHOICES = [
+    ('production', _('生产部')),
+    ('rd', _('研发部')),
+    ('administration', _('行政部')),
+    ('logistics', _('后勤部')),
+    ('F&B', _('F&B')),
+]
+
+
 class MaterialConsumption(models.Model):
     """Material consumption record for carbon emission tracking"""
     
     # Basic information
     hotel_name = models.CharField(_('酒店名称'), max_length=200, blank=True)
-    department = models.CharField(_('部门名称'), max_length=50, choices=EmissionCoefficient.DEPARTMENT_CHOICES)
+    department = models.CharField(_('部门名称'), max_length=50, choices=DEPARTMENT_CHOICES)
     
     # Product information (from EmissionCoefficient)
     category_level1 = models.ForeignKey(
@@ -116,7 +125,7 @@ class ConsumerData(models.Model):
     
     # Basic information
     hotel_name = models.CharField(_('酒店名称'), max_length=200, blank=True)
-    department = models.CharField(_('部门名称'), max_length=50, choices=EmissionCoefficient.DEPARTMENT_CHOICES)
+    department = models.CharField(_('部门名称'), max_length=50, choices=DEPARTMENT_CHOICES)
     
     # Date information
     consumption_date = models.DateField(_('消耗日期'))

@@ -23,14 +23,16 @@
                     <div class="card bg-light mb-4">
                         <div class="card-body">
                             <dl class="row mb-0">
-                                <dt class="col-sm-4">{% trans "产品名称" %}:</dt>
-                                <dd class="col-sm-8">{{ coefficient.product_name }}</dd>
-                                
                                 <dt class="col-sm-4">{% trans "分类" %}:</dt>
                                 <dd class="col-sm-8">{{ coefficient.category_level1.name }} > {{ coefficient.category_level2.name }}</dd>
                                 
                                 <dt class="col-sm-4">{% trans "系数" %}:</dt>
                                 <dd class="col-sm-8"><strong>{{ coefficient.coefficient }}</strong> {{ coefficient.unit }}</dd>
+                                
+                                {% if coefficient.special_note %}
+                                <dt class="col-sm-4">{% trans "产品举例" %}:</dt>
+                                <dd class="col-sm-8">{{ coefficient.special_note }}</dd>
+                                {% endif %}
                             </dl>
                         </div>
                     </div>

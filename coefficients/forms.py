@@ -65,27 +65,10 @@ class EmissionCoefficientForm(forms.ModelForm):
         })
     )
     
-    department = forms.ChoiceField(
-        label=_('部门名称'),
-        required=True,
-        widget=forms.Select(attrs={
-            'class': 'form-select'
-        })
-    )
-    
     class Meta:
         model = EmissionCoefficient
-        fields = ['product_name', 'product_name_en', 
-                  'unit', 'coefficient', 'special_note']
+        fields = ['unit', 'coefficient', 'special_note']
         widgets = {
-            'product_name': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': _('产品名称')
-            }),
-            'product_name_en': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': _('Product Name (English)')
-            }),
             'unit': forms.Select(attrs={
                 'class': 'form-select'
             }),
@@ -97,16 +80,12 @@ class EmissionCoefficientForm(forms.ModelForm):
             'special_note': forms.Textarea(attrs={
                 'class': 'form-control',
                 'rows': 3,
-                'placeholder': _('特殊备注（可选）')
+                'placeholder': _('产品举例（可选）')
             }),
         }
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        
-        # Set department choices from model
-        from .models import EmissionCoefficient
-        self.fields['department'].choices = EmissionCoefficient.DEPARTMENT_CHOICES
         
         if self.instance.pk:
             # Editing existing coefficient
@@ -114,8 +93,6 @@ class EmissionCoefficientForm(forms.ModelForm):
                 self.fields['category_level1_name'].initial = self.instance.category_level1.name
             if self.instance.category_level2:
                 self.fields['category_level2_name'].initial = self.instance.category_level2.name
-            if self.instance.department:
-                self.fields['department'].initial = self.instance.department
     
     def save(self, commit=True):
         instance = super().save(commit=False)
@@ -138,7 +115,6 @@ class EmissionCoefficientForm(forms.ModelForm):
         
         instance.category_level1 = level1_category
         instance.category_level2 = level2_category
-        instance.department = self.cleaned_data['department']
         
         if commit:
             instance.save()
@@ -152,6 +128,6 @@ class CoefficientSearchForm(forms.Form):
         label=_('搜索'),
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': _('搜索产品编号、分类或产品名称...')
+            'placeholder': _('搜索分类或产品举例...')
         })
     )

@@ -276,7 +276,8 @@ def process_import_data(df):
     errors = []
     
     # Department choices mapping
-    dept_mapping = dict(EmissionCoefficient.DEPARTMENT_CHOICES)
+    from .models import DEPARTMENT_CHOICES as DEPT_CHOICES
+    dept_mapping = dict(DEPT_CHOICES)
     dept_reverse_mapping = {v: k for k, v in dept_mapping.items()}
     
     # Process each row
@@ -796,7 +797,8 @@ def process_consumer_import_data(df):
     errors = []
     
     # Department choices mapping
-    dept_mapping = dict(EmissionCoefficient.DEPARTMENT_CHOICES)
+    from .models import DEPARTMENT_CHOICES as DEPT_CHOICES
+    dept_mapping = dict(DEPT_CHOICES)
     dept_reverse_mapping = {v: k for k, v in dept_mapping.items()}
     
     # Process each row

@@ -56,36 +56,46 @@ button.btn-primary {
     <!-- Operation Bar -->
     <div class="card mb-4">
         <div class="card-body">
-            <div class="row g-3 align-items-center">
-                <div class="col-lg-4 col-md-6">
-                    <form method="get" class="d-flex gap-2">
-                        {{ search_form.query }}
-                        {% comment %} <button type="submit" class="btn btn-primary d-inline-flex align-items-center flex-shrink-0" style="display: none;">
-                            <i class="bi bi-search me-1"></i> {% trans "搜索" %}
-                        </button> {% endcomment %}
-                    </form>
-                </div>
-                <div class="col-lg-8 col-md-18">
-                    <div class="d-flex flex-wrap gap-2 justify-content-lg-end justify-content-start">
+            <form method="get" id="filterForm">
+                <input type="hidden" name="sort" value="{{ current_sort }}">
+                <input type="hidden" name="order" value="{{ current_order }}">
+                <!-- Single row: filters + buttons -->
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <input type="text" name="query" value="{{ request.GET.query }}" class="form-control" style="width:270px;" placeholder="{{ search_form.query.field.widget.attrs.placeholder }}" title="{{ search_form.query.field.widget.attrs.placeholder }}">
+                    <select id="level1Select" name="level1" class="form-select" style="width:220px;" title="{{ level1_filter|default:'' }}">
+                        <option value="">{% trans "一级分类" %}</option>
+                        {% for cat in level1_categories %}
+                        <option value="{{ cat }}" title="{{ cat }}" {% if cat == level1_filter %}selected{% endif %}>{{ cat }}</option>
+                        {% endfor %}
+                    </select>
+                    <select id="level2Select" name="level2" class="form-select" style="width:220px;" title="{{ level2_filter|default:'' }}">
+                        <option value="">{% trans "二级分类" %}</option>
+                        {% for cat in level2_filter_options %}
+                        <option value="{{ cat }}" title="{{ cat }}" {% if cat == level2_filter %}selected{% endif %}>{{ cat }}</option>
+                        {% endfor %}
+                    </select>
+                    {% if level1_filter or level2_filter or request.GET.query %}
+                    <a href="{% url 'coefficient_list' %}" class="btn btn-outline-secondary d-inline-flex align-items-center text-nowrap">
+                        <i class="bi bi-x-circle me-1"></i> {% trans "清除筛选" %}
+                    </a>
+                    {% endif %}
+                    <div class="ms-auto d-flex gap-2">
                         <a href="{% url 'coefficient_create' %}" class="btn btn-success d-inline-flex align-items-center text-nowrap">
-                            <i class="bi bi-plus-circle me-1"></i>
-                            <span>{% trans "新增系数" %}</span>
+                            <i class="bi bi-plus-circle me-1"></i> {% trans "新增系数" %}
                         </a>
                         <a href="{% url 'coefficient_import' %}" class="btn btn-info d-inline-flex align-items-center text-nowrap">
-                            <i class="bi bi-upload me-1"></i>
-                            <span>{% trans "批量导入" %}</span>
+                            <i class="bi bi-upload me-1"></i> {% trans "批量导入" %}
                         </a>
                         <a href="{% url 'coefficient_template' %}" class="btn btn-secondary d-inline-flex align-items-center text-nowrap">
-                            <i class="bi bi-download me-1"></i>
-                            <span>{% trans "下载模板" %}</span>
+                            <i class="bi bi-download me-1"></i> {% trans "下载模板" %}
                         </a>
                         <button type="button" id="exportBtn" class="btn btn-primary d-inline-flex align-items-center text-nowrap">
-                            <i class="bi bi-file-earmark-excel me-1"></i> 
+                            <i class="bi bi-file-earmark-excel me-1"></i>
                             <span id="exportBtnText">{% trans "导出数据" %}</span>
                         </button>
                     </div>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
     
@@ -100,23 +110,6 @@ button.btn-primary {
                                 <input type="checkbox" id="selectAll" class="form-check-input">
                             </th>
                             <th>{% trans "序号" %}</th>
-                            <th>
-                                <a href="?sort=department&order={% if current_sort == 'department' and current_order == 'asc' %}desc{% else %}asc{% endif %}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}" 
-                                   class="text-decoration-none text-dark d-inline-flex align-items-center">
-                                    {% trans "部门" %}
-                                    <span class="ms-1">
-                                        {% if current_sort == 'department' %}
-                                            {% if current_order == 'asc' %}
-                                                <i class="bi bi-arrow-up text-primary"></i>
-                                            {% else %}
-                                                <i class="bi bi-arrow-down text-primary"></i>
-                                            {% endif %}
-                                        {% else %}
-                                            <i class="bi bi-arrow-down-up text-muted opacity-50"></i>
-                                        {% endif %}
-                                    </span>
-                                </a>
-                            </th>
                             <th>
                                 <a href="?sort=category_level1&order={% if current_sort == 'category_level1' and current_order == 'asc' %}desc{% else %}asc{% endif %}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}" 
                                    class="text-decoration-none text-dark d-inline-flex align-items-center">
@@ -140,23 +133,6 @@ button.btn-primary {
                                     {% trans "二级分类" %}
                                     <span class="ms-1">
                                         {% if current_sort == 'category_level2' %}
-                                            {% if current_order == 'asc' %}
-                                                <i class="bi bi-arrow-up text-primary"></i>
-                                            {% else %}
-                                                <i class="bi bi-arrow-down text-primary"></i>
-                                            {% endif %}
-                                        {% else %}
-                                            <i class="bi bi-arrow-down-up text-muted opacity-50"></i>
-                                        {% endif %}
-                                    </span>
-                                </a>
-                            </th>
-                            <th>
-                                <a href="?sort=product_name&order={% if current_sort == 'product_name' and current_order == 'asc' %}desc{% else %}asc{% endif %}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}" 
-                                   class="text-decoration-none text-dark d-inline-flex align-items-center">
-                                    {% trans "产品名称" %}
-                                    <span class="ms-1">
-                                        {% if current_sort == 'product_name' %}
                                             {% if current_order == 'asc' %}
                                                 <i class="bi bi-arrow-up text-primary"></i>
                                             {% else %}
@@ -203,7 +179,7 @@ button.btn-primary {
                                     </span>
                                 </a>
                             </th>
-                            <th>{% trans "特殊备注" %}</th>
+                            <th>{% trans "产品举例" %}</th>
                             <th>{% trans "操作" %}</th>
                         </tr>
                     </thead>
@@ -214,19 +190,8 @@ button.btn-primary {
                                 <input type="checkbox" class="form-check-input coefficient-checkbox" value="{{ coefficient.pk }}">
                             </td>
                             <td>{{ forloop.counter|add:page_obj.start_index|add:"-1" }}</td>
-                            <td>{{ coefficient.get_department_display }}</td>
                             <td>{{ coefficient.category_level1.name }}</td>
                             <td>{{ coefficient.category_level2.name }}</td>
-                            <td>
-                                {% if coefficient.product_name %}
-                                <small>{{ coefficient.product_name|truncatewords:10 }}</small>
-                                {% else %}
-                                <span class="text-muted">-</span>
-                                {% endif %}
-                                {% if coefficient.product_name_en %}
-                                <br><small class="text-muted">{{ coefficient.product_name_en }}</small>
-                                {% endif %}
-                            </td>
                             <td><span class="badge bg-secondary">{{ coefficient.unit }}</span></td>
                             <td><strong>{{ coefficient.coefficient }}</strong></td>
 
@@ -253,7 +218,7 @@ button.btn-primary {
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="12" class="text-center py-5">
+                            <td colspan="10" class="text-center py-5">
                                 <i class="bi bi-inbox" style="font-size: 48px; color: #ccc;"></i>
                                 <p class="text-muted mt-3">{% trans "暂无数据" %}</p>
                             </td>
@@ -317,34 +282,58 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize fixed table header
     initFixedTableHeader();
     
-    const searchForm = document.querySelector('form[method="get"]');
-    const searchInput = searchForm.querySelector('input[name="query"]');
-    let searchTimeout;
-    
-    // Auto-submit search after user stops typing
-    searchInput.addEventListener('input', function() {
-        // Clear previous timeout
-        clearTimeout(searchTimeout);
-        
-        // Set new timeout - submit after 500ms of no typing
-        searchTimeout = setTimeout(function() {
-            searchForm.submit();
-        }, 500);
-    });
-    
-    // Also allow manual submit with Enter key
-    searchInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            clearTimeout(searchTimeout);
-            searchForm.submit();
+    // ── Cascading category filters ──────────────────────────────────────────
+    const filterForm   = document.getElementById('filterForm');
+    const level1Select = document.getElementById('level1Select');
+    const level2Select = document.getElementById('level2Select');
+    const apiUrl       = '{% url "api_level2_categories" %}';
+
+    function submitFilter() {
+        filterForm.submit();
+    }
+
+    level1Select.addEventListener('change', function () {
+        const level1Val = this.value;
+        level2Select.innerHTML = '<option value="">…</option>';
+
+        if (!level1Val) {
+            level2Select.innerHTML = '<option value="">— {% trans "二级分类" %} —</option>';
+            submitFilter();
+            return;
         }
+
+        fetch(`${apiUrl}?level1=${encodeURIComponent(level1Val)}`)
+            .then(r => r.json())
+            .then(data => {
+                level2Select.innerHTML = '<option value="">— {% trans "二级分类" %} —</option>';
+                data.categories.forEach(cat => {
+                    const opt = document.createElement('option');
+                    opt.value = cat;
+                    opt.textContent = cat;
+                    opt.title = cat;
+                    level2Select.appendChild(opt);
+                });
+                submitFilter();
+            });
     });
-    
-    // Restore focus after page load (after search)
-    if (searchInput.value) {
-        searchInput.focus();
-        // Move cursor to end of text
-        searchInput.setSelectionRange(searchInput.value.length, searchInput.value.length);
+
+    level2Select.addEventListener('change', submitFilter);
+
+    // Auto-submit search with debounce
+    const searchInput = filterForm.querySelector('[name=query]');
+    if (searchInput) {
+        let searchTimer;
+        searchInput.addEventListener('input', function () {
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(submitFilter, 400);
+        });
+        searchInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') { clearTimeout(searchTimer); submitFilter(); }
+        });
+        if (searchInput.value) {
+            searchInput.focus();
+            searchInput.setSelectionRange(searchInput.value.length, searchInput.value.length);
+        }
     }
     
     // Multi-select functionality
@@ -442,5 +431,6 @@ document.addEventListener('DOMContentLoaded', function() {
         form.submit();
     });
 });
+
 </script>
 {% endblock %}
