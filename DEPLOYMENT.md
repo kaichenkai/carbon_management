@@ -14,7 +14,7 @@
 
 ```bash
 # 在本地打包项目
-cd /Users/kai/Desktop/practice/2025/10/08_Ruby/Ruby_code
+cd /Users/kai/Desktop/practice/Ruby/
 tar -czf carbon_management.tar.gz carbon_management/
 
 # 上传到服务器（替换为你的服务器IP）

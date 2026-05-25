@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.utils.translation import gettext_lazy as _
 from django.utils.encoding import force_str
 from django.db.models import Sum, Count, F
-from data_entry.models import MaterialConsumption, ConsumerData
+from data_entry.models import MaterialConsumption, ConsumerData, DEPARTMENT_CHOICES
 from coefficients.models import EmissionCoefficient, EmissionCategory
 from datetime import datetime, timedelta
 from collections import defaultdict
@@ -108,7 +108,7 @@ def dashboard_view(request):
     department_emissions = []
     
     for dept, stats in sorted_departments:
-        dept_name = dict(EmissionCoefficient.DEPARTMENT_CHOICES).get(dept, dept)
+        dept_name = dict(DEPARTMENT_CHOICES).get(dept, dept)
         department_labels.append(force_str(dept_name))
         department_emissions.append(stats['emission'])
     
