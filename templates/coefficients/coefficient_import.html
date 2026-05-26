@@ -25,10 +25,10 @@
                     <h5 class="card-title"><i class="bi bi-info-circle"></i> {% trans "导入说明" %}</h5>
                     <ol>
                         <li>{% trans "点击下方按钮下载导入模板" %}</li>
-                        <li>{% trans "在模板中填写数据，必填字段：产品编号、一级分类、二级分类、产品名称、单位、碳排放系数" %}</li>
-                        <li>{% trans "碳排放系数必须为数字，保留小数点后2位" %}</li>
+                        <li>{% trans "在模板中填写数据，必填字段：一级分类、二级分类、单位、碳排放系数；可选字段：产品举例" %}</li>
+                        <li>{% trans "碳排放系数必须为数字，保留小数点后3位" %}</li>
                         <li>{% trans "上传填写好的Excel文件进行导入" %}</li>
-                        <li>{% trans "如果产品编号已存在，将更新该记录" %}</li>
+                        <li>{% trans "如果同一一二级分类已存在，将更新该记录" %}</li>
                     </ol>
                     
                     <a href="{% url 'coefficient_template' %}" class="btn btn-secondary">

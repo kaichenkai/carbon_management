@@ -207,7 +207,7 @@ button.btn-primary {
                             <td>{{ coefficient.category_level1.name }}</td>
                             <td>{{ coefficient.category_level2.name }}</td>
                             <td><span class="badge bg-secondary">{{ coefficient.unit }}</span></td>
-                            <td><strong>{{ coefficient.coefficient }}</strong></td>
+                            <td><strong>{{ coefficient.coefficient|floatformat:3 }}</strong></td>
 
                             <td><small>{{ coefficient.updated_at|date:"Y/m/d" }}</small></td>
                             

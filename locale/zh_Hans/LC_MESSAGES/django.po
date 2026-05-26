@@ -733,8 +733,8 @@ msgid "可输入新分类或从列表选择"
 msgstr "可输入新分类或从列表选择"
 
 #: templates/coefficients/coefficient_form.html:86
-msgid "保留小数点后2位"
-msgstr "保留小数点后2位"
+msgid "保留小数点后3位"
+msgstr "保留小数点后3位"
 
 #: templates/coefficients/coefficient_form.html:105
 #: templates/data_entry/consumer_form.html:129
@@ -773,8 +773,8 @@ msgstr ""
 "排放系数"
 
 #: templates/coefficients/coefficient_import.html:29
-msgid "碳排放系数必须为数字，保留小数点后2位"
-msgstr "碳排放系数必须为数字，保留小数点后2位"
+msgid "碳排放系数必须为数字，保留小数点后3位"
+msgstr "碳排放系数必须为数字，保留小数点后3位"
 
 #: templates/coefficients/coefficient_import.html:30
 msgid "上传填写好的Excel文件进行导入"

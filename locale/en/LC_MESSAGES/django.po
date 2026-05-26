@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-26 19:26+0800\n"
+"POT-Creation-Date: 2026-05-26 21:34+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -56,21 +56,21 @@ msgid "记住我"
 msgstr "Remember Me"
 
 #: coefficients/forms.py:49 coefficients/models.py:51 coefficients/models.py:90
-#: coefficients/views.py:294 coefficients/views.py:351 data_entry/forms.py:14
+#: coefficients/views.py:291 coefficients/views.py:347 data_entry/forms.py:14
 #: data_entry/models.py:26 data_entry/views.py:549
-#: templates/coefficients/coefficient_list.html:119
+#: templates/coefficients/coefficient_list.html:129
 #: templates/dashboard/dashboard.html:35
-#: templates/data_entry/consumption_list.html:239
+#: templates/data_entry/consumption_list.html:249
 #: templates/data_entry/import_form.html:32
 msgid "一级分类"
 msgstr "Level 1 Category"
 
 #: coefficients/forms.py:59 coefficients/models.py:52 coefficients/models.py:97
-#: coefficients/views.py:294 coefficients/views.py:351 data_entry/forms.py:25
+#: coefficients/views.py:291 coefficients/views.py:347 data_entry/forms.py:25
 #: data_entry/models.py:33 data_entry/views.py:550
-#: templates/coefficients/coefficient_list.html:136
+#: templates/coefficients/coefficient_list.html:146
 #: templates/dashboard/dashboard.html:46
-#: templates/data_entry/consumption_list.html:256
+#: templates/data_entry/consumption_list.html:266
 #: templates/data_entry/import_form.html:33
 msgid "二级分类"
 msgstr "Level 2 Category"
@@ -126,13 +126,13 @@ msgid "酒店名称(英文)"
 msgstr "Hotel Name (English)"
 
 #: coefficients/models.py:12 coefficients/models.py:66
-#: coefficients/models.py:106 data_entry/models.py:62 data_entry/models.py:146
+#: coefficients/models.py:104 data_entry/models.py:62 data_entry/models.py:146
 #: data_entry/views.py:555
 msgid "创建时间"
 msgstr "Created At"
 
 #: coefficients/models.py:13 coefficients/models.py:67 data_entry/models.py:63
-#: data_entry/models.py:147 templates/data_entry/consumer_list.html:209
+#: data_entry/models.py:147 templates/data_entry/consumer_list.html:208
 msgid "更新时间"
 msgstr "Updated At"
 
@@ -198,46 +198,34 @@ msgstr ""
 msgid "L"
 msgstr ""
 
-#: coefficients/models.py:101 coefficients/views.py:294
-#: coefficients/views.py:351 data_entry/forms.py:36 data_entry/models.py:38
-#: data_entry/views.py:546 templates/data_entry/consumption_form.html:119
-#: templates/data_entry/consumption_list.html:189
-#: templates/data_entry/import_form.html:29
-msgid "产品名称"
-msgstr "Product Name"
-
-#: coefficients/models.py:102 coefficients/views.py:351
-msgid "产品名称(英文)"
-msgstr "Product Name (English)"
-
-#: coefficients/models.py:103 coefficients/views.py:295
-#: coefficients/views.py:352 templates/coefficients/coefficient_list.html:151
+#: coefficients/models.py:101 coefficients/views.py:292
+#: coefficients/views.py:348 templates/coefficients/coefficient_list.html:161
 #: templates/dashboard/dashboard.html:90
 #: templates/data_entry/consumption_form.html:125
 msgid "单位"
 msgstr "Unit"
 
-#: coefficients/models.py:104 coefficients/models.py:117
-#: coefficients/models.py:118 coefficients/views.py:295
-#: coefficients/views.py:352 data_entry/models.py:40 data_entry/views.py:551
-#: templates/coefficients/coefficient_list.html:155
-#: templates/data_entry/consumption_list.html:271
+#: coefficients/models.py:102 coefficients/models.py:115
+#: coefficients/models.py:116 coefficients/views.py:292
+#: coefficients/views.py:348 data_entry/models.py:40 data_entry/views.py:551
+#: templates/coefficients/coefficient_list.html:165
+#: templates/data_entry/consumption_list.html:281
 msgid "碳排放系数"
 msgstr "Emission Coefficient"
 
-#: coefficients/models.py:105 data_entry/models.py:59 data_entry/views.py:554
+#: coefficients/models.py:103 data_entry/models.py:59 data_entry/views.py:554
 #: templates/data_entry/consumer_import_form.html:30
-#: templates/data_entry/consumer_list.html:210
-#: templates/data_entry/consumption_list.html:306
+#: templates/data_entry/consumer_list.html:209
+#: templates/data_entry/consumption_list.html:316
 msgid "特殊备注"
 msgstr "Special Notes"
 
-#: coefficients/models.py:107 coefficients/views.py:295
-#: templates/coefficients/coefficient_list.html:172
+#: coefficients/models.py:105 coefficients/views.py:292
+#: templates/coefficients/coefficient_list.html:182
 msgid "最后更新"
 msgstr "Last Updated"
 
-#: coefficients/models.py:113
+#: coefficients/models.py:111
 msgid "更新人"
 msgstr "Updated By"
 
@@ -262,47 +250,54 @@ msgstr "You have successfully logged out"
 msgid "个人信息更新成功！"
 msgstr "Profile updated successfully!"
 
-#: coefficients/views.py:204
+#: coefficients/views.py:201
 msgid "系数添加成功！"
 msgstr "Coefficient added successfully!"
 
-#: coefficients/views.py:233
+#: coefficients/views.py:230
 msgid "系数更新成功！"
 msgstr "Coefficient updated successfully!"
 
-#: coefficients/views.py:259
+#: coefficients/views.py:256
 msgid "系数删除成功！"
 msgstr "Coefficient deleted successfully!"
 
-#: coefficients/views.py:290 coefficients/views.py:331
+#: coefficients/views.py:287 coefficients/views.py:327
 msgid "碳排放系数库"
 msgstr "Carbon Emission Coefficient Database"
 
-#: coefficients/views.py:295 coefficients/views.py:352
+#: coefficients/views.py:292 coefficients/views.py:348
 #: templates/coefficients/coefficient_confirm_delete.html:33
 #: templates/coefficients/coefficient_form.html:91
-#: templates/coefficients/coefficient_list.html:186
+#: templates/coefficients/coefficient_list.html:196
 msgid "产品举例"
 msgstr "Product Examples"
 
-#: coefficients/views.py:394
+#: coefficients/views.py:390
 msgid "碳排放系数导入模板"
 msgstr "Carbon_Coefficient_Import_Template"
 
-#: coefficients/views.py:467 data_entry/views.py:244 data_entry/views.py:778
+#: coefficients/views.py:462 data_entry/views.py:244 data_entry/views.py:778
 #, python-format
 msgid "成功导入 %(count)s 条记录"
 msgstr "Successfully imported %(count)s records"
 
-#: coefficients/views.py:469
+#: coefficients/views.py:464
 #, python-format
 msgid "失败 %(count)s 条记录"
 msgstr "Failed %(count)s records"
 
-#: coefficients/views.py:474
+#: coefficients/views.py:469
 #, python-format
 msgid "文件处理失败: %(error)s"
 msgstr "File processing failed: %(error)s"
+
+#: data_entry/forms.py:36 data_entry/models.py:38 data_entry/views.py:546
+#: templates/data_entry/consumption_form.html:119
+#: templates/data_entry/consumption_list.html:199
+#: templates/data_entry/import_form.html:29
+msgid "产品名称"
+msgstr "Product Name"
 
 #: data_entry/forms.py:40
 msgid "输入产品名称"
@@ -381,14 +376,14 @@ msgstr "F&B"
 
 #: data_entry/models.py:20 data_entry/models.py:125 data_entry/views.py:544
 #: templates/data_entry/consumer_import_form.html:27
-#: templates/data_entry/consumer_list.html:143
-#: templates/data_entry/consumption_list.html:154
+#: templates/data_entry/consumer_list.html:142
+#: templates/data_entry/consumption_list.html:164
 #: templates/data_entry/import_form.html:27
 msgid "餐厅"
 msgstr "Restaurant"
 
 #: data_entry/models.py:37 data_entry/views.py:545
-#: templates/data_entry/consumption_list.html:171
+#: templates/data_entry/consumption_list.html:181
 #: templates/data_entry/import_form.html:28
 msgid "产品编码"
 msgstr "Product Code"
@@ -399,14 +394,14 @@ msgstr "Product Unit"
 
 #: data_entry/models.py:43 data_entry/models.py:128 data_entry/views.py:547
 #: templates/data_entry/consumer_import_form.html:28
-#: templates/data_entry/consumer_list.html:160
-#: templates/data_entry/consumption_list.html:206
+#: templates/data_entry/consumer_list.html:159
+#: templates/data_entry/consumption_list.html:216
 #: templates/data_entry/import_form.html:30
 msgid "订单日期"
 msgstr "Order Date"
 
 #: data_entry/models.py:44 data_entry/views.py:548
-#: templates/data_entry/consumption_list.html:223
+#: templates/data_entry/consumption_list.html:233
 #: templates/data_entry/import_form.html:31
 msgid "消耗时间"
 msgstr "Consumption Time"
@@ -419,19 +414,19 @@ msgstr "Consumption Quantity"
 #: data_entry/models.py:53 data_entry/views.py:553
 #: templates/dashboard/dashboard.html:300
 #: templates/data_entry/consumption_form.html:176
-#: templates/data_entry/consumption_list.html:292
+#: templates/data_entry/consumption_list.html:302
 msgid "碳排放量(kgCO2e)"
 msgstr "Carbon Emission (kgCO2e)"
 
 #: data_entry/models.py:66 data_entry/models.py:67
-#: templates/data_entry/consumer_list.html:52
+#: templates/data_entry/consumer_list.html:62
 #: templates/data_entry/consumption_list.html:4
-#: templates/data_entry/consumption_list.html:72
+#: templates/data_entry/consumption_list.html:82
 msgid "物料消耗记录"
 msgstr "Material Consumption Records"
 
 #: data_entry/models.py:131 templates/data_entry/consumer_import_form.html:29
-#: templates/data_entry/consumer_list.html:177
+#: templates/data_entry/consumer_list.html:176
 msgid "消费者人数"
 msgstr "Consumer Count"
 
@@ -446,8 +441,8 @@ msgstr "Notes"
 #: data_entry/models.py:150 data_entry/models.py:151
 #: templates/data_entry/consumer_form.html:27
 #: templates/data_entry/consumer_list.html:4
-#: templates/data_entry/consumer_list.html:65
-#: templates/data_entry/consumption_list.html:85
+#: templates/data_entry/consumer_list.html:75
+#: templates/data_entry/consumption_list.html:95
 msgid "消费者数据"
 msgstr "Consumer Data"
 
@@ -668,7 +663,7 @@ msgstr "Edit Coefficient"
 
 #: templates/coefficients/coefficient_form.html:5
 #: templates/coefficients/coefficient_form.html:14
-#: templates/coefficients/coefficient_list.html:88
+#: templates/coefficients/coefficient_list.html:98
 msgid "新增系数"
 msgstr "Add Coefficient"
 
@@ -678,10 +673,10 @@ msgid "首页"
 msgstr "Home"
 
 #: templates/coefficients/coefficient_form.html:21
-#: templates/coefficients/coefficient_list.html:215
+#: templates/coefficients/coefficient_list.html:225
 #: templates/data_entry/consumer_form.html:30
-#: templates/data_entry/consumer_list.html:242
-#: templates/data_entry/consumption_list.html:362
+#: templates/data_entry/consumer_list.html:241
+#: templates/data_entry/consumption_list.html:372
 msgid "编辑"
 msgstr "Edit"
 
@@ -696,8 +691,8 @@ msgid "可输入新分类或从列表选择"
 msgstr "Enter a new category or select from the list"
 
 #: templates/coefficients/coefficient_form.html:86
-msgid "保留小数点后2位"
-msgstr "Keep up to 2 decimal places"
+msgid "保留小数点后3位"
+msgstr "Keep up to 3 decimal places"
 
 #: templates/coefficients/coefficient_form.html:105
 #: templates/data_entry/consumer_form.html:129
@@ -707,9 +702,9 @@ msgstr "Save"
 
 #: templates/coefficients/coefficient_import.html:4
 #: templates/coefficients/coefficient_import.html:15
-#: templates/coefficients/coefficient_list.html:91
-#: templates/data_entry/consumer_list.html:115
-#: templates/data_entry/consumption_list.html:126
+#: templates/coefficients/coefficient_list.html:101
+#: templates/data_entry/consumer_list.html:116
+#: templates/data_entry/consumption_list.html:136
 msgid "批量导入"
 msgstr "Batch Import"
 
@@ -729,23 +724,25 @@ msgstr "Click the button below to download the import template"
 
 #: templates/coefficients/coefficient_import.html:28
 msgid ""
-"在模板中填写数据，必填字段：产品编号、一级分类、二级分类、产品名称、单位、碳"
-"排放系数"
+"在模板中填写数据，必填字段：一级分类、二级分类、单位、碳排放系数；可选字段："
+"产品举例"
 msgstr ""
-"Fill in the data in the template. Required fields: Product Code, Level 1 "
-"Category, Level 2 Category, Product Name, Unit, Emission Coefficient"
+"Fill in the data in the template. Required fields: Level 1 Category, Level 2 "
+"Category, Unit, Emission Coefficient; Optional: Product Notes"
 
 #: templates/coefficients/coefficient_import.html:29
-msgid "碳排放系数必须为数字，保留小数点后2位"
-msgstr "Emission coefficient must be a number with up to 2 decimal places"
+msgid "碳排放系数必须为数字，保留小数点后3位"
+msgstr "Emission coefficient must be a number with up to 3 decimal places"
 
 #: templates/coefficients/coefficient_import.html:30
 msgid "上传填写好的Excel文件进行导入"
 msgstr "Upload the completed Excel file to import"
 
 #: templates/coefficients/coefficient_import.html:31
-msgid "如果产品编号已存在，将更新该记录"
-msgstr "If the product code already exists, the record will be updated"
+msgid "如果同一一二级分类已存在，将更新该记录"
+msgstr ""
+"If the same Level 1 and Level 2 category already exists, the record will be "
+"updated"
 
 #: templates/coefficients/coefficient_import.html:35
 msgid "下载导入模板"
@@ -774,108 +771,109 @@ msgstr "Start Import"
 msgid "导入中..."
 msgstr "Importing..."
 
-#: templates/coefficients/coefficient_list.html:67
+#: templates/coefficients/coefficient_list.html:77
 msgid "碳排放系数管理"
 msgstr "Carbon Emission Coefficient Management"
 
-#: templates/coefficients/coefficient_list.html:68
+#: templates/coefficients/coefficient_list.html:78
 msgid "统一管理碳排放系数库"
 msgstr "Unified management of carbon emission coefficient database"
 
-#: templates/coefficients/coefficient_list.html:83
-#: templates/data_entry/consumption_list.html:118
+#: templates/coefficients/coefficient_list.html:93
+#: templates/data_entry/consumer_list.html:108
+#: templates/data_entry/consumption_list.html:128
 msgid "清除筛选"
 msgstr "Clear Filters"
 
-#: templates/coefficients/coefficient_list.html:94
+#: templates/coefficients/coefficient_list.html:104
 #: templates/data_entry/consumer_list.html:119
-#: templates/data_entry/consumption_list.html:129
+#: templates/data_entry/consumption_list.html:139
 msgid "下载模板"
 msgstr "Download Template"
 
-#: templates/coefficients/coefficient_list.html:98
-#: templates/coefficients/coefficient_list.html:361
-#: templates/data_entry/consumption_list.html:133
-#: templates/data_entry/consumption_list.html:562
+#: templates/coefficients/coefficient_list.html:108
+#: templates/coefficients/coefficient_list.html:371
+#: templates/data_entry/consumption_list.html:143
+#: templates/data_entry/consumption_list.html:572
 msgid "导出数据"
 msgstr "Export Data"
 
-#: templates/coefficients/coefficient_list.html:116
-#: templates/data_entry/consumer_list.html:139
-#: templates/data_entry/consumption_list.html:151
+#: templates/coefficients/coefficient_list.html:126
+#: templates/data_entry/consumer_list.html:138
+#: templates/data_entry/consumption_list.html:161
 msgid "序号"
 msgstr "Number"
 
-#: templates/coefficients/coefficient_list.html:125
-#: templates/coefficients/coefficient_list.html:142
-#: templates/data_entry/consumption_list.html:160
-#: templates/data_entry/consumption_list.html:177
-#: templates/data_entry/consumption_list.html:245
-#: templates/data_entry/consumption_list.html:262
+#: templates/coefficients/coefficient_list.html:135
+#: templates/coefficients/coefficient_list.html:152
+#: templates/data_entry/consumption_list.html:170
+#: templates/data_entry/consumption_list.html:187
+#: templates/data_entry/consumption_list.html:255
+#: templates/data_entry/consumption_list.html:272
 msgid "搜索..."
 msgstr "Search..."
 
-#: templates/coefficients/coefficient_list.html:126
-#: templates/coefficients/coefficient_list.html:143
+#: templates/coefficients/coefficient_list.html:136
+#: templates/coefficients/coefficient_list.html:153
 #: templates/dashboard/dashboard.html:37 templates/dashboard/dashboard.html:48
 #: templates/dashboard/dashboard.html:510
-#: templates/data_entry/consumption_list.html:161
-#: templates/data_entry/consumption_list.html:178
-#: templates/data_entry/consumption_list.html:246
-#: templates/data_entry/consumption_list.html:263
+#: templates/data_entry/consumption_list.html:171
+#: templates/data_entry/consumption_list.html:188
+#: templates/data_entry/consumption_list.html:256
+#: templates/data_entry/consumption_list.html:273
 msgid "全部"
 msgstr "All"
 
-#: templates/coefficients/coefficient_list.html:187
-#: templates/data_entry/consumer_list.html:211
-#: templates/data_entry/consumption_list.html:307
+#: templates/coefficients/coefficient_list.html:197
+#: templates/data_entry/consumer_list.html:210
+#: templates/data_entry/consumption_list.html:317
 msgid "操作"
 msgstr "Actions"
 
-#: templates/coefficients/coefficient_list.html:218
-#: templates/data_entry/consumer_list.html:245
-#: templates/data_entry/consumption_list.html:365
+#: templates/coefficients/coefficient_list.html:228
+#: templates/data_entry/consumer_list.html:244
+#: templates/data_entry/consumption_list.html:375
 msgid "删除"
 msgstr "Delete"
 
-#: templates/coefficients/coefficient_list.html:227
+#: templates/coefficients/coefficient_list.html:237
 msgid "暂无数据"
 msgstr "No data available"
 
-#: templates/coefficients/coefficient_list.html:276
-#: templates/data_entry/consumer_list.html:303
-#: templates/data_entry/consumption_list.html:423
+#: templates/coefficients/coefficient_list.html:286
+#: templates/data_entry/consumer_list.html:302
+#: templates/data_entry/consumption_list.html:433
 msgid "第"
 msgstr "Page"
 
-#: templates/coefficients/coefficient_list.html:276
-#: templates/data_entry/consumer_list.html:303
-#: templates/data_entry/consumption_list.html:423
+#: templates/coefficients/coefficient_list.html:286
+#: templates/data_entry/consumer_list.html:302
+#: templates/data_entry/consumption_list.html:433
 msgid "页，共"
 msgstr "of"
 
-#: templates/coefficients/coefficient_list.html:276
-#: templates/data_entry/consumer_list.html:303
-#: templates/data_entry/consumption_list.html:423
+#: templates/coefficients/coefficient_list.html:286
+#: templates/data_entry/consumer_list.html:302
+#: templates/data_entry/consumption_list.html:433
 msgid "页"
 msgstr "pages"
 
-#: templates/coefficients/coefficient_list.html:276
-#: templates/data_entry/consumer_list.html:303
-#: templates/data_entry/consumption_list.html:423
+#: templates/coefficients/coefficient_list.html:286
+#: templates/data_entry/consumer_list.html:302
+#: templates/data_entry/consumption_list.html:433
 msgid "总计"
 msgstr "Total"
 
-#: templates/coefficients/coefficient_list.html:276
+#: templates/coefficients/coefficient_list.html:286
 #: templates/dashboard/dashboard.html:74
-#: templates/data_entry/consumer_list.html:303
-#: templates/data_entry/consumption_list.html:423
-#: templates/data_entry/consumption_list.html:439
+#: templates/data_entry/consumer_list.html:302
+#: templates/data_entry/consumption_list.html:433
+#: templates/data_entry/consumption_list.html:449
 msgid "条"
 msgstr "items"
 
-#: templates/coefficients/coefficient_list.html:357
-#: templates/data_entry/consumption_list.html:555
+#: templates/coefficients/coefficient_list.html:367
+#: templates/data_entry/consumption_list.html:565
 msgid "导出选中"
 msgstr "Export Selected"
 
@@ -1075,18 +1073,18 @@ msgid "消耗记录数据可视化分析"
 msgstr "Consumption Data Visualization and Analysis"
 
 #: templates/dashboard/dashboard.html:21 templates/dashboard/dashboard.html:24
-#: templates/data_entry/consumer_list.html:90
-#: templates/data_entry/consumer_list.html:92
-#: templates/data_entry/consumption_list.html:104
-#: templates/data_entry/consumption_list.html:106
+#: templates/data_entry/consumer_list.html:94
+#: templates/data_entry/consumer_list.html:96
+#: templates/data_entry/consumption_list.html:114
+#: templates/data_entry/consumption_list.html:116
 msgid "开始日期"
 msgstr "Start Date"
 
 #: templates/dashboard/dashboard.html:28 templates/dashboard/dashboard.html:31
-#: templates/data_entry/consumer_list.html:98
-#: templates/data_entry/consumer_list.html:100
-#: templates/data_entry/consumption_list.html:111
-#: templates/data_entry/consumption_list.html:113
+#: templates/data_entry/consumer_list.html:101
+#: templates/data_entry/consumer_list.html:103
+#: templates/data_entry/consumption_list.html:121
+#: templates/data_entry/consumption_list.html:123
 msgid "结束日期"
 msgstr "End Date"
 
@@ -1095,12 +1093,12 @@ msgid "总记录数"
 msgstr "Total Records"
 
 #: templates/dashboard/dashboard.html:88
-#: templates/data_entry/consumption_list.html:443
+#: templates/data_entry/consumption_list.html:453
 msgid "总消耗数量"
 msgstr "Total Quantity"
 
 #: templates/dashboard/dashboard.html:104
-#: templates/data_entry/consumption_list.html:448
+#: templates/data_entry/consumption_list.html:458
 msgid "总碳排放量"
 msgstr "Total Carbon Emission"
 
@@ -1168,7 +1166,7 @@ msgstr "Edit Consumer Data"
 
 #: templates/data_entry/consumer_form.html:8
 #: templates/data_entry/consumer_form.html:42
-#: templates/data_entry/consumer_list.html:111
+#: templates/data_entry/consumer_list.html:113
 msgid "新增消费者数据"
 msgstr "Add Consumer Data"
 
@@ -1186,7 +1184,9 @@ msgstr "Note:"
 
 #: templates/data_entry/consumer_form.html:118
 msgid "当日碳排总量将根据该餐厅和日期的物料消耗记录自动计算。"
-msgstr "Daily carbon emissions will be automatically calculated based on material consumption records for this restaurant and date."
+msgstr ""
+"Daily carbon emissions will be automatically calculated based on material "
+"consumption records for this restaurant and date."
 
 #: templates/data_entry/consumer_import_form.html:4
 #: templates/data_entry/consumer_import_form.html:10
@@ -1363,23 +1363,23 @@ msgstr "Continue Import"
 msgid "查看记录列表"
 msgstr "View Record List"
 
-#: templates/data_entry/consumer_list.html:54
-#: templates/data_entry/consumption_list.html:74
+#: templates/data_entry/consumer_list.html:64
+#: templates/data_entry/consumption_list.html:84
 msgid "记录和管理物料消耗数据"
 msgstr "Record and Manage Material Consumption Data"
 
-#: templates/data_entry/consumer_list.html:67
-#: templates/data_entry/consumption_list.html:87
+#: templates/data_entry/consumer_list.html:77
+#: templates/data_entry/consumption_list.html:97
 msgid "记录餐厅当日消费者数量"
 msgstr "Record daily consumer count for the restaurant"
 
-#: templates/data_entry/consumer_list.html:91
-#: templates/data_entry/consumption_list.html:105
+#: templates/data_entry/consumer_list.html:95
+#: templates/data_entry/consumption_list.html:115
 msgid "选择开始日期"
 msgstr "Select start date"
 
-#: templates/data_entry/consumer_list.html:99
-#: templates/data_entry/consumption_list.html:112
+#: templates/data_entry/consumer_list.html:102
+#: templates/data_entry/consumption_list.html:122
 msgid "选择结束日期"
 msgstr "Select end date"
 
@@ -1387,28 +1387,28 @@ msgstr "Select end date"
 msgid "确定要刷新所有记录的碳排放数据吗？"
 msgstr "Are you sure you want to refresh carbon emission data for all records?"
 
-#: templates/data_entry/consumer_list.html:124
+#: templates/data_entry/consumer_list.html:123
 msgid "刷新碳排放"
 msgstr "Refresh Emissions"
 
-#: templates/data_entry/consumer_list.html:194
+#: templates/data_entry/consumer_list.html:193
 msgid "当日碳排总量"
 msgstr "Daily Total Emissions"
 
-#: templates/data_entry/consumer_list.html:208
+#: templates/data_entry/consumer_list.html:207
 msgid "调整后当日碳排总量"
 msgstr "Adjusted Daily Total Carbon Emission"
 
-#: templates/data_entry/consumer_list.html:221
+#: templates/data_entry/consumer_list.html:220
 msgid "人"
 msgstr "people"
 
-#: templates/data_entry/consumer_list.html:244
-#: templates/data_entry/consumption_list.html:364
+#: templates/data_entry/consumer_list.html:243
+#: templates/data_entry/consumption_list.html:374
 msgid "确定要删除这条记录吗？"
 msgstr "Are you sure you want to delete this record?"
 
-#: templates/data_entry/consumer_list.html:254
+#: templates/data_entry/consumer_list.html:253
 msgid "暂无消费者数据"
 msgstr "No consumer data available"
 
@@ -1419,7 +1419,7 @@ msgstr "Edit Consumption Record"
 
 #: templates/data_entry/consumption_form.html:5
 #: templates/data_entry/consumption_form.html:23
-#: templates/data_entry/consumption_list.html:123
+#: templates/data_entry/consumption_list.html:133
 msgid "新增消耗记录"
 msgstr "Add Consumption Record"
 
@@ -1443,23 +1443,23 @@ msgstr "Auto-calculated: Quantity × Emission Coefficient"
 msgid "待选择"
 msgstr "Pending Selection"
 
-#: templates/data_entry/consumption_list.html:275
+#: templates/data_entry/consumption_list.html:285
 msgid "消耗数量(KG)"
 msgstr "Consumption Quantity (KG)"
 
-#: templates/data_entry/consumption_list.html:374
+#: templates/data_entry/consumption_list.html:384
 msgid "暂无消耗记录"
 msgstr "No consumption records"
 
-#: templates/data_entry/consumption_list.html:437
+#: templates/data_entry/consumption_list.html:447
 msgid "已选择"
 msgstr "Selected"
 
-#: templates/data_entry/consumption_list.html:454
+#: templates/data_entry/consumption_list.html:464
 msgid "清除"
 msgstr "Clear"
 
-#: templates/data_entry/consumption_list.html:588
+#: templates/data_entry/consumption_list.html:598
 msgid "导出中..."
 msgstr "Exporting..."
 
@@ -1535,6 +1535,9 @@ msgstr[1] ""
 "\n"
 "            Successfully imported %(counter)s records!\n"
 "        "
+
+#~ msgid "产品名称(英文)"
+#~ msgstr "Product Name (English)"
 
 #~ msgid "酒店的名称"
 #~ msgstr "Hotel name"

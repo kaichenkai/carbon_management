@@ -220,10 +220,10 @@ body > table.fixed-header-table thead th {
                                 <strong>{{ consumer.consumer_count }}</strong> {% trans "人" %}
                             </td>
                             <td>
-                                <span class="badge bg-success">{{ consumer.daily_carbon_emission }} kgCO2e</span>
+                                <span class="badge bg-success">{{ consumer.daily_carbon_emission|floatformat:3 }} kgCO2e</span>
                             </td>
                             <td>
-                                <span class="badge bg-info">{{ consumer.adjusted_daily_carbon_emission|floatformat:6 }} kgCO2e</span>
+                                <span class="badge bg-info">{{ consumer.adjusted_daily_carbon_emission|floatformat:3 }} kgCO2e</span>
                             </td>
                             <td>
                                 {{ consumer.updated_at|date:"Y-m-d H:i" }}

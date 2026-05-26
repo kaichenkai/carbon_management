@@ -117,8 +117,6 @@ def coefficient_list(request):
         query = search_form.cleaned_data.get('query')
         if query:
             coefficients = coefficients.filter(
-                Q(product_name__icontains=query) |
-                Q(product_name_en__icontains=query) |
                 Q(category_level1__name__icontains=query) |
                 Q(category_level2__name__icontains=query) |
                 Q(coefficient__icontains=query)
@@ -132,7 +130,6 @@ def coefficient_list(request):
     valid_sorts = {
         'category_level1': 'category_level1__name',
         'category_level2': 'category_level2__name',
-        'product_name': 'product_name',
         'coefficient': 'coefficient',
         'updated_at': 'updated_at',
     }
@@ -291,7 +288,7 @@ def coefficient_export(request):
     
     # Define headers
     headers = [
-        _('一级分类'), _('二级分类'), _('产品名称'), 
+        _('一级分类'), _('二级分类'),
         _('单位'), _('碳排放系数'), _('最后更新'), _('产品举例'),
     ]
     
@@ -304,11 +301,10 @@ def coefficient_export(request):
     for row_num, coef in enumerate(coefficients, 2):
         ws.cell(row=row_num, column=1).value = coef.category_level1.name
         ws.cell(row=row_num, column=2).value = coef.category_level2.name
-        ws.cell(row=row_num, column=3).value = coef.product_name
-        ws.cell(row=row_num, column=4).value = coef.unit
-        ws.cell(row=row_num, column=5).value = float(coef.coefficient)
-        ws.cell(row=row_num, column=6).value = coef.updated_at.strftime('%Y/%m/%d')
-        ws.cell(row=row_num, column=7).value = coef.special_note
+        ws.cell(row=row_num, column=3).value = coef.unit
+        ws.cell(row=row_num, column=4).value = float(coef.coefficient)
+        ws.cell(row=row_num, column=5).value = coef.updated_at.strftime('%Y/%m/%d')
+        ws.cell(row=row_num, column=6).value = coef.special_note
     
     # Adjust column widths
     for col in ws.columns:
@@ -348,7 +344,7 @@ def coefficient_template(request):
     
     # Define headers
     headers = [
-        _('一级分类'), _('二级分类'), _('产品名称'), _('产品名称(英文)'),
+        _('一级分类'), _('二级分类'),
         _('单位'), _('碳排放系数'), _('产品举例')
     ]
     
@@ -365,8 +361,8 @@ def coefficient_template(request):
     
     # Add example data
     example_data = [
-        ['Seafood', 'Molluscs, other', 'Chiton（石鳖）', 'Chiton', 'KG', '7.30', ''],
-        ['Meat', 'Bovine meat', 'Ground Beef（牛肉末）', 'Ground Beef', 'KG', '42.80', ''],
+        ['Seafood', 'Molluscs, other', 'KG', '7.30', ''],
+        ['Meat', 'Bovine meat', 'KG', '42.80', ''],
     ]
     
     for row_num, data in enumerate(example_data, 2):
@@ -419,7 +415,7 @@ def coefficient_import(request):
             # Skip header row
             for row_num, row in enumerate(ws.iter_rows(min_row=2, values_only=True), start=2):
                 try:
-                    level1_name, level2_name, product_name, product_name_en, unit, coefficient, special_note = row[:7]
+                    level1_name, level2_name, unit, coefficient, special_note = row[:5]
                     
                     # Validation
                     if coefficient is None:
@@ -448,7 +444,6 @@ def coefficient_import(request):
                     EmissionCoefficient.objects.update_or_create(
                         category_level1=level1_category,
                         category_level2=level2_category,
-                        product_name=product_name,
                         defaults={
                             'unit': unit,
                             'coefficient': float(coefficient),
