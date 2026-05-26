@@ -181,7 +181,7 @@ class ConsumptionSearchForm(forms.Form):
         label=_('搜索'),
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': _('搜索部门、分类或产品名称...')
+            'placeholder': _('搜索产品编码或产品名称...')
         })
     )
 
@@ -200,7 +200,7 @@ class ConsumerDataForm(forms.ModelForm):
                 'class': 'form-control',
                 'placeholder': _('输入餐厅名称')
             }),
-            'order_date': forms.DateInput(attrs={
+            'order_date': forms.DateInput(format='%Y-%m-%d', attrs={
                 'class': 'form-control',
                 'type': 'date'
             }),

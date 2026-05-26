@@ -24,9 +24,8 @@
                 <li>{% trans "文件大小不超过 10MB" %}</li>
                 <li>{% trans "必须包含以下列（顺序不限）：" %}
                     <ul>
-                        <li><strong>{% trans "酒店名称" %}</strong> - {% trans "酒店的名称" %}</li>
-                        <li><strong>{% trans "部门" %}</strong> - {% trans "部门名称（必须是系统中已存在的部门）" %}</li>
-                        <li><strong>{% trans "消耗日期" %}</strong> - {% trans "格式：YYYY-MM-DD，例如：2024-01-01" %}</li>
+                        <li><strong>{% trans "餐厅" %}</strong> - {% trans "餐厅名称" %}</li>
+                        <li><strong>{% trans "订单日期" %}</strong> - {% trans "格式：YYYY-MM-DD，例如：2024-01-01" %}</li>
                         <li><strong>{% trans "消费者人数" %}</strong> - {% trans "整数，必须大于0" %}</li>
                         <li><strong>{% trans "特殊备注" %}</strong> - {% trans "（可选）备注信息" %}</li>
                     </ul>
@@ -35,8 +34,7 @@
             
             <h6 class="mt-3">{% trans "注意事项：" %}</h6>
             <ul>
-                <li>{% trans "部门名称必须与系统中的数据完全匹配" %}</li>
-                <li>{% trans "同一酒店、部门、日期的记录不能重复" %}</li>
+                <li>{% trans "同一餐厅、日期的记录不能重复" %}</li>
                 <li>{% trans "日期格式必须正确" %}</li>
                 <li>{% trans "消费者人数必须是正整数" %}</li>
                 <li>{% trans "导入过程中会自动验证数据，无效的行将被跳过并显示错误信息" %}</li>

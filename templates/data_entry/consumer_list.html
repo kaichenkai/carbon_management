@@ -5,6 +5,16 @@
 
 {% block content %}
 <style>
+.btn-clear-filter {
+    border-color: #dee2e6;
+    color: #6c757d;
+}
+.btn-clear-filter:hover {
+    background-color: transparent;
+    border-color: #adb5bd;
+    color: #495057;
+}
+
 .fixed-header-table {
     border-collapse: separate;
     border-spacing: 0;
@@ -64,7 +74,7 @@ body > table.fixed-header-table thead th {
                             <i class="bi bi-people" style="font-size: 1.5rem;"></i>
                             {% trans "消费者数据" %}
                         </h4>
-                        <p class="card-text text-muted mb-0">{% trans "记录酒店当日消费者数量" %}</p>
+                        <p class="card-text text-muted mb-0">{% trans "记录餐厅当日消费者数量" %}</p>
                     </div>
                 </div>
             </a>
@@ -74,58 +84,47 @@ body > table.fixed-header-table thead th {
     <!-- Operation Bar with Search and Filters -->
     <div class="card mb-4 operation-bar">
         <div class="card-body">
-            <div class="row g-3 align-items-end">
-                <!-- Search and Filter Form -->
-                <div class="col-lg-5 col-md-12">
-                    <form method="get" id="filterForm" class="row g-2">
-                        <!-- Search Box -->
-                        <div class="col-md-6">
-                            {{ search_form.query }}
-                        </div>
-                        
-                        <!-- Date Filters -->
-                        <div class="col-md-3">
-                            <input type="date" class="form-control form-control-sm" id="start_date" name="start_date" 
-                                   value="{{ request.GET.start_date }}" 
-                                   placeholder="{% trans '开始日期' %}"
-                                   title="{% trans '选择开始日期' %}"
-                                   aria-label="{% trans '开始日期' %}"
-                                   lang="{{ LANGUAGE_CODE }}">
-                        </div>
-                        <div class="col-md-3">
-                            <input type="date" class="form-control form-control-sm" id="end_date" name="end_date" 
-                                   value="{{ request.GET.end_date }}" 
-                                   placeholder="{% trans '结束日期' %}"
-                                   title="{% trans '选择结束日期' %}"
-                                   aria-label="{% trans '结束日期' %}"
-                                   lang="{{ LANGUAGE_CODE }}">
-                        </div>
-                    </form>
-                </div>
-                
-                <!-- Action Buttons -->
-                <div class="col-lg-7 col-md-12">
-                    <div class="d-flex flex-wrap gap-2 justify-content-lg-end justify-content-start">
+            <form method="get" id="filterForm">
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <input type="text" name="query" value="{{ request.GET.query }}"
+                           class="form-control" style="width:270px;"
+                           placeholder="{{ search_form.query.field.widget.attrs.placeholder }}">
+                    <input type="date" class="form-control" id="start_date" name="start_date"
+                           value="{{ request.GET.start_date }}"
+                           placeholder="{% trans '开始日期' %}"
+                           title="{% trans '选择开始日期' %}"
+                           aria-label="{% trans '开始日期' %}"
+                           style="width:160px;"
+                           lang="{{ LANGUAGE_CODE }}">
+                    <input type="date" class="form-control" id="end_date" name="end_date"
+                           value="{{ request.GET.end_date }}"
+                           placeholder="{% trans '结束日期' %}"
+                           title="{% trans '选择结束日期' %}"
+                           aria-label="{% trans '结束日期' %}"
+                           style="width:160px;"
+                           lang="{{ LANGUAGE_CODE }}">
+                    {% if request.GET.query or request.GET.start_date or request.GET.end_date %}
+                    <a href="{% url 'consumer_list' %}" class="btn btn-outline-secondary btn-clear-filter d-inline-flex align-items-center text-nowrap" style="height:45px;">
+                        <i class="bi bi-x-circle me-1"></i>{% trans "清除筛选" %}
+                    </a>
+                    {% endif %}
+                    <div class="ms-auto d-flex gap-2">
                         <a href="{% url 'consumer_create' %}" class="btn btn-success d-inline-flex align-items-center text-nowrap">
-                            <i class="bi bi-plus-circle me-1"></i> 
-                            <span>{% trans "新增消费者数据" %}</span>
+                            <i class="bi bi-plus-circle me-1"></i>{% trans "新增消费者数据" %}
                         </a>
                         <a href="{% url 'consumer_import' %}" class="btn btn-info d-inline-flex align-items-center text-nowrap">
-                            <i class="bi bi-upload me-1"></i> 
-                            <span>{% trans "批量导入" %}</span>
+                            <i class="bi bi-upload me-1"></i>{% trans "批量导入" %}
                         </a>
                         <a href="{% url 'consumer_download_template' %}" class="btn btn-secondary d-inline-flex align-items-center text-nowrap">
-                            <i class="bi bi-download me-1"></i> 
-                            <span>{% trans "下载模板" %}</span>
+                            <i class="bi bi-download me-1"></i>{% trans "下载模板" %}
                         </a>
-                        <a href="{% url 'consumer_refresh_emissions' %}" class="btn btn-warning d-inline-flex align-items-center text-nowrap" 
+                        <a href="{% url 'consumer_refresh_emissions' %}" class="btn btn-warning d-inline-flex align-items-center text-nowrap"
                            onclick="return confirm('{% trans "确定要刷新所有记录的碳排放数据吗？" %}')">
-                            <i class="bi bi-arrow-clockwise me-1"></i> 
-                            <span>{% trans "刷新碳排放" %}</span>
+                            <i class="bi bi-arrow-clockwise me-1"></i>{% trans "刷新碳排放" %}
                         </a>
                     </div>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
     

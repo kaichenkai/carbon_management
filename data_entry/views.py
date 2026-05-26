@@ -31,14 +31,27 @@ def consumption_list(request):
     search_form = ConsumptionSearchForm(request.GET)
     query = request.GET.get('query', '').strip()
     
-    # Apply search filter
+    # Search: product_code and product_name only
     if query:
         consumptions = consumptions.filter(
-            Q(restaurant__icontains=query) |
-            Q(category_level1__name__icontains=query) |
-            Q(category_level2__name__icontains=query) |
+            Q(product_code__icontains=query) |
             Q(product_name__icontains=query)
         )
+    
+    # Dropdown filters
+    filter_restaurant = request.GET.get('filter_restaurant', '').strip()
+    filter_product_code = request.GET.get('filter_product_code', '').strip()
+    filter_category1 = request.GET.get('filter_category1', '').strip()
+    filter_category2 = request.GET.get('filter_category2', '').strip()
+    
+    if filter_restaurant:
+        consumptions = consumptions.filter(restaurant=filter_restaurant)
+    if filter_product_code:
+        consumptions = consumptions.filter(product_code=filter_product_code)
+    if filter_category1:
+        consumptions = consumptions.filter(category_level1__name=filter_category1)
+    if filter_category2:
+        consumptions = consumptions.filter(category_level2__name=filter_category2)
     
     # Date filters
     start_date = request.GET.get('start_date', '').strip()
@@ -67,15 +80,22 @@ def consumption_list(request):
     }
     
     if sort_by.lstrip('-') in valid_sorts:
-        # Get the actual field name for sorting (handles ForeignKey relations)
         actual_sort_field = valid_sorts[sort_by.lstrip('-')]
-        # Toggle order if clicking the same column
         if order == 'asc':
             consumptions = consumptions.order_by(actual_sort_field)
         else:
             consumptions = consumptions.order_by(f'-{actual_sort_field}')
     else:
         consumptions = consumptions.order_by('-order_date', '-consumption_time', '-created_at')
+    
+    # Build filter option lists (distinct values from DB)
+    all_records = MaterialConsumption.objects.all()
+    filter_options = {
+        'restaurants': all_records.values_list('restaurant', flat=True).distinct().order_by('restaurant'),
+        'product_codes': all_records.values_list('product_code', flat=True).distinct().order_by('product_code'),
+        'category1_list': EmissionCategory.objects.filter(level=1).order_by('name'),
+        'category2_list': EmissionCategory.objects.filter(level=2).order_by('name'),
+    }
     
     # Pagination
     paginator = Paginator(consumptions, 20)
@@ -87,6 +107,11 @@ def consumption_list(request):
         'current_sort': sort_by.lstrip('-'),
         'current_order': order,
         'search_form': search_form,
+        'filter_options': filter_options,
+        'filter_restaurant': filter_restaurant,
+        'filter_product_code': filter_product_code,
+        'filter_category1': filter_category1,
+        'filter_category2': filter_category2,
     }
     return render(request, 'data_entry/consumption_list.html', context)
 
@@ -453,11 +478,11 @@ def download_import_template(request):
     df = pd.DataFrame(columns=[
         '餐厅',
         '产品编码',
-        '一级分类',
-        '二级分类',
         '产品名称',
         '订单日期',
         '消耗时间',
+        '一级分类',
+        '二级分类',
         '消耗数量'
     ])
     
@@ -465,11 +490,11 @@ def download_import_template(request):
     df.loc[0] = [
         'F&B',
         'SKU-001',
-        '示例一级分类',
-        '示例二级分类',
         '示例产品',
         '2024-01-01',
         '10:30:00',
+        '示例一级分类',
+        '示例二级分类',
         '100'
     ]
     
@@ -485,7 +510,14 @@ def download_import_template(request):
         output.read(),
         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
-    response['Content-Disposition'] = 'attachment; filename="material_consumption_import_template.xlsx"'
+    from django.utils import translation
+    from urllib.parse import quote
+    lang = translation.get_language()
+    if lang and lang.startswith('zh'):
+        filename = '物料消耗导入模板.xlsx'
+    else:
+        filename = 'material_consumption_import_template.xlsx'
+    response['Content-Disposition'] = f"attachment; filename*=UTF-8''{quote(filename)}"
     
     return response
 
@@ -545,14 +577,20 @@ def consumption_export(request):
     # Generate filename with timestamp
     from datetime import datetime as dt
     timestamp = dt.now().strftime('%Y%m%d_%H%M%S')
-    filename = f'consumption_records_{timestamp}.xlsx'
+    from django.utils import translation
+    from urllib.parse import quote
+    lang = translation.get_language()
+    if lang and lang.startswith('zh'):
+        filename = f'物料消耗记录_{timestamp}.xlsx'
+    else:
+        filename = f'consumption_records_{timestamp}.xlsx'
     
     # Return as download
     response = HttpResponse(
         output.read(),
         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
-    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    response['Content-Disposition'] = f"attachment; filename*=UTF-8''{quote(filename)}"
     
     return response
 
@@ -611,6 +649,9 @@ def consumer_list(request):
     # Calculate adjusted carbon emission for each record in current page
     for consumer in page_obj:
         # Get the year and month of this record
+        if not consumer.order_date:
+            consumer.adjusted_emission = None
+            continue
         year = consumer.order_date.year
         month = consumer.order_date.month
         

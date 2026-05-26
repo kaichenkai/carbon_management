@@ -24,13 +24,13 @@
                 <li>{% trans "文件大小不超过 10MB" %}</li>
                 <li>{% trans "必须包含以下列（顺序不限）：" %}
                     <ul>
-                        <li><strong>{% trans "酒店名称" %}</strong> - {% trans "酒店的名称" %}</li>
-                        <li><strong>{% trans "部门" %}</strong> - {% trans "部门名称（必须是系统中已存在的部门）" %}</li>
+                        <li><strong>{% trans "餐厅" %}</strong> - {% trans "餐厅名称" %}</li>
+                        <li><strong>{% trans "产品编码" %}</strong> - {% trans "产品编码（必填）" %}</li>
+                        <li><strong>{% trans "产品名称" %}</strong> - {% trans "产品的名称" %}</li>
+                        <li><strong>{% trans "订单日期" %}</strong> - {% trans "格式：YYYY-MM-DD，例如：2024-01-01" %}</li>
+                        <li><strong>{% trans "消耗时间" %}</strong> - {% trans "格式：HH:MM:SS 或 HH:MM，例如：10:30:00" %}</li>
                         <li><strong>{% trans "一级分类" %}</strong> - {% trans "产品的一级分类名称" %}</li>
                         <li><strong>{% trans "二级分类" %}</strong> - {% trans "产品的二级分类名称" %}</li>
-                        <li><strong>{% trans "产品名称" %}</strong> - {% trans "产品的名称" %}</li>
-                        <li><strong>{% trans "消耗日期" %}</strong> - {% trans "格式：YYYY-MM-DD，例如：2024-01-01" %}</li>
-                        <li><strong>{% trans "消耗时间" %}</strong> - {% trans "格式：HH:MM:SS 或 HH:MM，例如：10:30:00" %}</li>
                         <li><strong>{% trans "消耗数量" %}</strong> - {% trans "数字，必须大于0" %}</li>
                     </ul>
                 </li>
@@ -38,7 +38,8 @@
             
             <h6 class="mt-3">{% trans "注意事项：" %}</h6>
             <ul>
-                <li>{% trans "部门、分类和产品名称必须与系统中的数据完全匹配" %}</li>
+                <li>{% trans "产品编码为必填字段，不可为空" %}</li>
+                <li>{% trans "分类和产品名称必须与系统中的数据完全匹配" %}</li>
                 <li>{% trans "产品必须在对应的分类下存在" %}</li>
                 <li>{% trans "日期和时间格式必须正确" %}</li>
                 <li>{% trans "导入过程中会自动验证数据，无效的行将被跳过并显示错误信息" %}</li>

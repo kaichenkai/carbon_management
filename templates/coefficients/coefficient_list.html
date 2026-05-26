@@ -5,6 +5,16 @@
 
 {% block content %}
 <style>
+.btn-clear-filter {
+    border-color: #dee2e6;
+    color: #6c757d;
+}
+.btn-clear-filter:hover {
+    background-color: transparent;
+    border-color: #adb5bd;
+    color: #495057;
+}
+
 .fixed-header-table {
     border-collapse: separate;
     border-spacing: 0;
@@ -13,6 +23,22 @@
 .fixed-header-table thead th {
     background-color: #fff;
     border-bottom: 2px solid #dee2e6;
+    vertical-align: middle;
+    height: 42px;
+    padding-top: 0;
+    padding-bottom: 0;
+    white-space: nowrap;
+}
+
+.fixed-header-table thead th .d-flex {
+    height: 100%;
+    align-items: center;
+}
+
+.fixed-header-table thead th a.text-decoration-none {
+    line-height: 42px;
+    display: inline-flex;
+    align-items: center;
 }
 
 /* Fixed header clone styling */
@@ -62,20 +88,8 @@ button.btn-primary {
                 <!-- Single row: filters + buttons -->
                 <div class="d-flex align-items-center gap-2 flex-wrap">
                     <input type="text" name="query" value="{{ request.GET.query }}" class="form-control" style="width:270px;" placeholder="{{ search_form.query.field.widget.attrs.placeholder }}" title="{{ search_form.query.field.widget.attrs.placeholder }}">
-                    <select id="level1Select" name="level1" class="form-select" style="width:220px;" title="{{ level1_filter|default:'' }}">
-                        <option value="">{% trans "一级分类" %}</option>
-                        {% for cat in level1_categories %}
-                        <option value="{{ cat }}" title="{{ cat }}" {% if cat == level1_filter %}selected{% endif %}>{{ cat }}</option>
-                        {% endfor %}
-                    </select>
-                    <select id="level2Select" name="level2" class="form-select" style="width:220px;" title="{{ level2_filter|default:'' }}">
-                        <option value="">{% trans "二级分类" %}</option>
-                        {% for cat in level2_filter_options %}
-                        <option value="{{ cat }}" title="{{ cat }}" {% if cat == level2_filter %}selected{% endif %}>{{ cat }}</option>
-                        {% endfor %}
-                    </select>
                     {% if level1_filter or level2_filter or request.GET.query %}
-                    <a href="{% url 'coefficient_list' %}" class="btn btn-outline-secondary d-inline-flex align-items-center text-nowrap">
+                    <a href="{% url 'coefficient_list' %}" class="btn btn-outline-secondary btn-clear-filter d-inline-flex align-items-center text-nowrap" style="height:45px;">
                         <i class="bi bi-x-circle me-1"></i> {% trans "清除筛选" %}
                     </a>
                     {% endif %}
@@ -111,38 +125,38 @@ button.btn-primary {
                             </th>
                             <th>{% trans "序号" %}</th>
                             <th>
-                                <a href="?sort=category_level1&order={% if current_sort == 'category_level1' and current_order == 'asc' %}desc{% else %}asc{% endif %}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}" 
-                                   class="text-decoration-none text-dark d-inline-flex align-items-center">
-                                    {% trans "一级分类" %}
-                                    <span class="ms-1">
-                                        {% if current_sort == 'category_level1' %}
-                                            {% if current_order == 'asc' %}
-                                                <i class="bi bi-arrow-up text-primary"></i>
-                                            {% else %}
-                                                <i class="bi bi-arrow-down text-primary"></i>
-                                            {% endif %}
-                                        {% else %}
-                                            <i class="bi bi-arrow-down-up text-muted opacity-50"></i>
-                                        {% endif %}
-                                    </span>
-                                </a>
+                                <div class="d-flex align-items-center gap-1">
+                                    <span>{% trans "一级分类" %}</span>
+                                    <div class="dropdown">
+                                        <button class="btn btn-link btn-sm p-0 ms-1" type="button" data-bs-toggle="dropdown">
+                                            <i class="bi {% if level1_filter %}bi-funnel-fill text-primary{% else %}bi-funnel text-muted opacity-50{% endif %}"></i>
+                                        </button>
+                                        <div class="dropdown-menu p-2" style="min-width:200px; max-height:320px; overflow-y:auto;">
+                                            <input type="text" class="form-control form-control-sm mb-2 dropdown-filter-search" placeholder="{% trans '搜索...' %}">
+                                            <a class="dropdown-item{% if not level1_filter %} active{% endif %}" href="?{% if request.GET.query %}query={{ request.GET.query }}&{% endif %}{% if level2_filter %}level2={{ level2_filter }}&{% endif %}sort={{ current_sort }}&order={{ current_order }}">{% trans "全部" %}</a>
+                                            {% for cat in level1_categories %}
+                                            <a class="dropdown-item{% if level1_filter == cat %} active{% endif %}" href="?{% if request.GET.query %}query={{ request.GET.query }}&{% endif %}level1={{ cat }}&sort={{ current_sort }}&order={{ current_order }}">{{ cat }}</a>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
                             </th>
                             <th>
-                                <a href="?sort=category_level2&order={% if current_sort == 'category_level2' and current_order == 'asc' %}desc{% else %}asc{% endif %}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}" 
-                                   class="text-decoration-none text-dark d-inline-flex align-items-center">
-                                    {% trans "二级分类" %}
-                                    <span class="ms-1">
-                                        {% if current_sort == 'category_level2' %}
-                                            {% if current_order == 'asc' %}
-                                                <i class="bi bi-arrow-up text-primary"></i>
-                                            {% else %}
-                                                <i class="bi bi-arrow-down text-primary"></i>
-                                            {% endif %}
-                                        {% else %}
-                                            <i class="bi bi-arrow-down-up text-muted opacity-50"></i>
-                                        {% endif %}
-                                    </span>
-                                </a>
+                                <div class="d-flex align-items-center gap-1">
+                                    <span>{% trans "二级分类" %}</span>
+                                    <div class="dropdown">
+                                        <button class="btn btn-link btn-sm p-0 ms-1" type="button" data-bs-toggle="dropdown">
+                                            <i class="bi {% if level2_filter %}bi-funnel-fill text-primary{% else %}bi-funnel text-muted opacity-50{% endif %}"></i>
+                                        </button>
+                                        <div class="dropdown-menu p-2" style="min-width:200px; max-height:320px; overflow-y:auto;">
+                                            <input type="text" class="form-control form-control-sm mb-2 dropdown-filter-search" placeholder="{% trans '搜索...' %}">
+                                            <a class="dropdown-item{% if not level2_filter %} active{% endif %}" href="?{% if request.GET.query %}query={{ request.GET.query }}&{% endif %}{% if level1_filter %}level1={{ level1_filter }}&{% endif %}sort={{ current_sort }}&order={{ current_order }}">{% trans "全部" %}</a>
+                                            {% for cat in level2_filter_options %}
+                                            <a class="dropdown-item{% if level2_filter == cat %} active{% endif %}" href="?{% if request.GET.query %}query={{ request.GET.query }}&{% endif %}{% if level1_filter %}level1={{ level1_filter }}&{% endif %}level2={{ cat }}&sort={{ current_sort }}&order={{ current_order }}">{{ cat }}</a>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
                             </th>
                             <th>{% trans "单位" %}</th>
                             <th>
@@ -283,58 +297,36 @@ document.addEventListener('DOMContentLoaded', function() {
     initFixedTableHeader();
     
     // ── Cascading category filters ──────────────────────────────────────────
-    const filterForm   = document.getElementById('filterForm');
-    const level1Select = document.getElementById('level1Select');
-    const level2Select = document.getElementById('level2Select');
-    const apiUrl       = '{% url "api_level2_categories" %}';
-
-    function submitFilter() {
-        filterForm.submit();
-    }
-
-    level1Select.addEventListener('change', function () {
-        const level1Val = this.value;
-        level2Select.innerHTML = '<option value="">…</option>';
-
-        if (!level1Val) {
-            level2Select.innerHTML = '<option value="">— {% trans "二级分类" %} —</option>';
-            submitFilter();
-            return;
-        }
-
-        fetch(`${apiUrl}?level1=${encodeURIComponent(level1Val)}`)
-            .then(r => r.json())
-            .then(data => {
-                level2Select.innerHTML = '<option value="">— {% trans "二级分类" %} —</option>';
-                data.categories.forEach(cat => {
-                    const opt = document.createElement('option');
-                    opt.value = cat;
-                    opt.textContent = cat;
-                    opt.title = cat;
-                    level2Select.appendChild(opt);
-                });
-                submitFilter();
-            });
-    });
-
-    level2Select.addEventListener('change', submitFilter);
-
     // Auto-submit search with debounce
-    const searchInput = filterForm.querySelector('[name=query]');
+    const filterForm = document.getElementById('filterForm');
+    const searchInput = filterForm ? filterForm.querySelector('[name=query]') : null;
     if (searchInput) {
         let searchTimer;
         searchInput.addEventListener('input', function () {
             clearTimeout(searchTimer);
-            searchTimer = setTimeout(submitFilter, 400);
+            searchTimer = setTimeout(() => filterForm.submit(), 400);
         });
         searchInput.addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') { clearTimeout(searchTimer); submitFilter(); }
+            if (e.key === 'Enter') { clearTimeout(searchTimer); filterForm.submit(); }
         });
         if (searchInput.value) {
             searchInput.focus();
             searchInput.setSelectionRange(searchInput.value.length, searchInput.value.length);
         }
     }
+
+    // Dropdown filter search
+    document.querySelectorAll('.dropdown-filter-search').forEach(input => {
+        input.addEventListener('input', function () {
+            const q = this.value.toLowerCase();
+            const menu = this.closest('.dropdown-menu');
+            menu.querySelectorAll('a.dropdown-item').forEach(item => {
+                item.style.display = item.textContent.toLowerCase().includes(q) ? '' : 'none';
+            });
+        });
+        input.addEventListener('click', e => e.stopPropagation());
+        input.addEventListener('keydown', e => e.stopPropagation());
+    });
     
     // Multi-select functionality
     const selectAllCheckbox = document.getElementById('selectAll');
