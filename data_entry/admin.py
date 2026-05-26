@@ -34,7 +34,7 @@ class MaterialConsumptionAdmin(admin.ModelAdmin):
     search_fields = [
         'product_code',
         'product_name',
-        'notes',
+        'special_note',
     ]
     
     # Read-only fields
@@ -66,7 +66,7 @@ class MaterialConsumptionAdmin(admin.ModelAdmin):
             'fields': ('quantity', 'carbon_emission')
         }),
         ('附加信息', {
-            'fields': ('notes', 'created_at', 'updated_at'),
+            'fields': ('special_note', 'created_at', 'updated_at'),
             'classes': ('collapse',)
         }),
     )
