@@ -148,23 +148,34 @@ def coefficient_list(request):
     paginator = Paginator(coefficients, 20)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    
-    # Get all categories for datalist and filter dropdowns
-    level1_categories = EmissionCategory.objects.filter(level=1).order_by('name').values_list('name', flat=True)
-    level2_categories = EmissionCategory.objects.filter(level=2).order_by('name').values_list('name', flat=True)
-    # Level2 options filtered by selected level1
+
+    # Build filter dropdown options from the current result set
+    # Level1 options: distinct level1 values in results (ignoring active level1 filter so user can switch)
+    base_for_level1 = EmissionCoefficient.objects.select_related('category_level1', 'category_level2')
+    if search_form.is_valid():
+        q = search_form.cleaned_data.get('query')
+        if q:
+            base_for_level1 = base_for_level1.filter(
+                Q(category_level1__name__icontains=q) |
+                Q(category_level2__name__icontains=q) |
+                Q(coefficient__icontains=q)
+            )
+    level1_categories = sorted(set(
+        base_for_level1.values_list('category_level1__name', flat=True)
+    ))
+
+    # Level2 options: filtered by both search query and selected level1
+    base_for_level2 = base_for_level1
     if level1_filter:
-        level2_filter_options = EmissionCategory.objects.filter(
-            level=2, parent__name=level1_filter
-        ).order_by('name').values_list('name', flat=True)
-    else:
-        level2_filter_options = level2_categories
+        base_for_level2 = base_for_level2.filter(category_level1__name=level1_filter)
+    level2_filter_options = sorted(set(
+        base_for_level2.values_list('category_level2__name', flat=True)
+    ))
 
     context = {
         'page_obj': page_obj,
         'search_form': search_form,
         'level1_categories': level1_categories,
-        'level2_categories': level2_categories,
         'level2_filter_options': level2_filter_options,
         'current_sort': sort_by.lstrip('-'),
         'current_order': order,

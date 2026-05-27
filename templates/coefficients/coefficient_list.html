@@ -85,6 +85,8 @@ button.btn-primary {
             <form method="get" id="filterForm">
                 <input type="hidden" name="sort" value="{{ current_sort }}">
                 <input type="hidden" name="order" value="{{ current_order }}">
+                {% if level1_filter %}<input type="hidden" name="level1" value="{{ level1_filter }}">{% endif %}
+                {% if level2_filter %}<input type="hidden" name="level2" value="{{ level2_filter }}">{% endif %}
                 <!-- Single row: filters + buttons -->
                 <div class="d-flex align-items-center gap-2 flex-wrap">
                     <input type="text" name="query" value="{{ request.GET.query }}" class="form-control" style="width:270px;" placeholder="{{ search_form.query.field.widget.attrs.placeholder }}" title="{{ search_form.query.field.widget.attrs.placeholder }}">

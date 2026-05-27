@@ -88,13 +88,57 @@ def consumption_list(request):
     else:
         consumptions = consumptions.order_by('-order_date', '-consumption_time', '-created_at')
     
-    # Build filter option lists (distinct values from DB)
-    all_records = MaterialConsumption.objects.all()
+    # Build filter option lists based on current search+filter state (for cross-linking)
+    # Each dropdown shows values that exist in results when its own filter is ignored
+    base = MaterialConsumption.objects.all()
+    if query:
+        base = base.filter(Q(product_code__icontains=query) | Q(product_name__icontains=query))
+    if start_date:
+        base = base.filter(order_date__gte=start_date)
+    if end_date:
+        base = base.filter(order_date__lte=end_date)
+
+    # restaurants: apply all filters except restaurant itself
+    base_restaurant = base
+    if filter_product_code:
+        base_restaurant = base_restaurant.filter(product_code=filter_product_code)
+    if filter_category1:
+        base_restaurant = base_restaurant.filter(category_level1__name=filter_category1)
+    if filter_category2:
+        base_restaurant = base_restaurant.filter(category_level2__name=filter_category2)
+
+    # product_codes: apply all filters except product_code itself
+    base_product_code = base
+    if filter_restaurant:
+        base_product_code = base_product_code.filter(restaurant=filter_restaurant)
+    if filter_category1:
+        base_product_code = base_product_code.filter(category_level1__name=filter_category1)
+    if filter_category2:
+        base_product_code = base_product_code.filter(category_level2__name=filter_category2)
+
+    # category1: apply all filters except category1 itself
+    base_category1 = base
+    if filter_restaurant:
+        base_category1 = base_category1.filter(restaurant=filter_restaurant)
+    if filter_product_code:
+        base_category1 = base_category1.filter(product_code=filter_product_code)
+    if filter_category2:
+        base_category1 = base_category1.filter(category_level2__name=filter_category2)
+
+    # category2: apply all filters except category2 itself; if category1 selected, limit to its children
+    base_category2 = base
+    if filter_restaurant:
+        base_category2 = base_category2.filter(restaurant=filter_restaurant)
+    if filter_product_code:
+        base_category2 = base_category2.filter(product_code=filter_product_code)
+    if filter_category1:
+        base_category2 = base_category2.filter(category_level1__name=filter_category1)
+
     filter_options = {
-        'restaurants': all_records.values_list('restaurant', flat=True).distinct().order_by('restaurant'),
-        'product_codes': all_records.values_list('product_code', flat=True).distinct().order_by('product_code'),
-        'category1_list': EmissionCategory.objects.filter(level=1).order_by('name'),
-        'category2_list': EmissionCategory.objects.filter(level=2).order_by('name'),
+        'restaurants': sorted(set(base_restaurant.values_list('restaurant', flat=True))),
+        'product_codes': sorted(set(base_product_code.values_list('product_code', flat=True))),
+        'category1_list': sorted(set(base_category1.values_list('category_level1__name', flat=True))),
+        'category2_list': sorted(set(base_category2.values_list('category_level2__name', flat=True))),
     }
     
     # Pagination
