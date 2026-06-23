@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from coefficients.models import EmissionCoefficient, EmissionCategory
@@ -173,3 +174,36 @@ class ConsumerData(models.Model):
     
     def __str__(self):
         return f"{self.restaurant} ({self.order_date})"
+
+
+class ImportTask(models.Model):
+    """Tracks the status and progress of an async data import job"""
+
+    STATUS_PENDING = 'pending'
+    STATUS_PROCESSING = 'processing'
+    STATUS_DONE = 'done'
+    STATUS_FAILED = 'failed'
+    STATUS_CHOICES = [
+        (STATUS_PENDING, _('等待中')),
+        (STATUS_PROCESSING, _('处理中')),
+        (STATUS_DONE, _('完成')),
+        (STATUS_FAILED, _('失败')),
+    ]
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    status = models.CharField(_('状态'), max_length=20, choices=STATUS_CHOICES, default=STATUS_PENDING)
+    total_rows = models.IntegerField(_('总行数'), default=0)
+    processed_rows = models.IntegerField(_('已处理行数'), default=0)
+    success_count = models.IntegerField(_('成功数'), default=0)
+    error_details = models.JSONField(_('错误详情'), default=list)
+    error_message = models.TextField(_('错误信息'), blank=True)
+    created_at = models.DateTimeField(_('创建时间'), auto_now_add=True)
+    updated_at = models.DateTimeField(_('更新时间'), auto_now=True)
+
+    class Meta:
+        verbose_name = _('导入任务')
+        verbose_name_plural = _('导入任务')
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"ImportTask {self.id} [{self.status}]"

@@ -6,7 +6,8 @@ from django.core.paginator import Paginator
 from django.http import JsonResponse, HttpResponse
 from django.db import transaction
 from django.db.models import Q, Sum
-from .models import MaterialConsumption, ConsumerData
+import threading
+from .models import MaterialConsumption, ConsumerData, ImportTask
 from .forms import (
     MaterialConsumptionForm, 
     DataImportForm, 
@@ -266,54 +267,91 @@ def get_products_by_category(request):
 
 
 def data_import(request):
-    """Import material consumption data from Excel/CSV file"""
+    """Import material consumption data from Excel/CSV file (async)"""
     if request.method == 'POST':
         form = DataImportForm(request.POST, request.FILES)
         if form.is_valid():
             file = request.FILES['file']
-            
             try:
-                # Read file based on extension
                 if file.name.endswith('.csv'):
                     df = pd.read_csv(file)
                 else:
                     df = pd.read_excel(file)
-                
-                # Process the data
-                result = process_import_data(df)
-                
-                if result['success']:
-                    messages.success(
-                        request,
-                        gettext('成功导入 %(count)s 条记录') % {'count': result["success_count"]}
-                    )
-                    if result['errors']:
-                        messages.warning(
-                            request,
-                            gettext('失败 %(count)s 条记录，详情见下方') % {'count': len(result["errors"])}
-                        )
-                    return render(request, 'data_entry/import_result.html', {
-                        'result': result
-                    })
-                else:
-                    messages.error(request, gettext('导入失败：%(error)s') % {'error': result['error']})
-                    
+
+                task = ImportTask.objects.create(total_rows=len(df))
+
+                def run(task_id, dataframe):
+                    process_import_data_async(task_id, dataframe)
+
+                t = threading.Thread(target=run, args=(str(task.id), df), daemon=True)
+                t.start()
+
+                return redirect('import_progress', task_id=str(task.id))
             except Exception as e:
                 messages.error(request, gettext('文件处理失败：%(error)s') % {'error': str(e)})
     else:
         form = DataImportForm()
-    
-    context = {
-        'form': form,
-    }
+
+    context = {'form': form}
     return render(request, 'data_entry/import_form.html', context)
 
 
-def process_import_data(df):
+def import_progress(request, task_id):
+    """Show import progress page"""
+    task = get_object_or_404(ImportTask, id=task_id)
+    return render(request, 'data_entry/import_progress.html', {'task': task})
+
+
+def import_progress_api(request, task_id):
+    """JSON API for polling import task progress"""
+    task = get_object_or_404(ImportTask, id=task_id)
+    percent = 0
+    if task.total_rows > 0:
+        percent = int(task.processed_rows / task.total_rows * 100)
+    return JsonResponse({
+        'status': task.status,
+        'total_rows': task.total_rows,
+        'processed_rows': task.processed_rows,
+        'success_count': task.success_count,
+        'error_count': len(task.error_details),
+        'errors': task.error_details[:50],
+        'error_message': task.error_message,
+        'percent': percent,
+    })
+
+
+def _parse_date(val):
+    """Parse a date value from various formats, return date or raise ValueError."""
+    if isinstance(val, str):
+        date_str = val.strip()
+        for fmt in ('%Y-%m-%d', '%d/%m/%Y', '%m/%d/%Y', '%Y/%m/%d'):
+            try:
+                return datetime.strptime(date_str, fmt).date()
+            except ValueError:
+                continue
+        raise ValueError(date_str)
+    return pd.to_datetime(val).date()
+
+
+def _parse_time(val):
+    """Parse a time value, return time or raise ValueError."""
+    from datetime import time as time_type
+    if isinstance(val, time_type):
+        return val
+    if isinstance(val, str):
+        time_str = val.strip()
+        try:
+            return datetime.strptime(time_str, '%H:%M:%S').time()
+        except ValueError:
+            return datetime.strptime(time_str, '%H:%M').time()
+    if hasattr(val, 'time'):
+        return val.time() if callable(val.time) else val.time
+    return pd.to_datetime(val).time()
+
+
+def process_import_data(df, task=None):
     """Process imported data and validate"""
-    # Expected column mapping (Chinese to English)
     required_columns = ['餐厅', '产品编码', '一级分类', '二级分类', '产品名称', '订单日期', '消耗数量']
-    optional_columns = ['消耗时间']
     column_mapping = {
         '餐厅': 'restaurant',
         '产品编码': 'product_code',
@@ -324,207 +362,201 @@ def process_import_data(df):
         '消耗时间': 'consumption_time',
         '消耗数量': 'quantity',
     }
-    
-    # Check required columns only
+
     missing_columns = [col for col in required_columns if col not in df.columns]
     if missing_columns:
         return {
             'success': False,
             'error': gettext('缺少必需列：%(columns)s') % {'columns': ', '.join(missing_columns)}
         }
-    
-    # Rename columns (only those present)
+
     rename_map = {k: v for k, v in column_mapping.items() if k in df.columns}
     df = df.rename(columns=rename_map)
-    
-    # Results tracking
+
+    # Pre-load all categories and coefficients into memory to avoid per-row queries
+    level1_map = {obj.name: obj for obj in EmissionCategory.objects.filter(level=1)}
+    level2_map = {(obj.name, obj.parent_id): obj for obj in EmissionCategory.objects.filter(level=2)}
+    coeff_map = {
+        (obj.category_level1_id, obj.category_level2_id): obj
+        for obj in EmissionCoefficient.objects.all()
+    }
+
+    # Pre-load existing record unique keys to avoid per-row duplicate checks
+    existing_keys = set(
+        MaterialConsumption.objects.values_list(
+            'restaurant', 'category_level1_id', 'category_level2_id',
+            'product_name', 'order_date', 'consumption_time'
+        )
+    )
+
     success_count = 0
     errors = []
-    
-    # Process each row
-    with transaction.atomic():
-        for index, row in df.iterrows():
-            try:
-                # Validate and convert data
-                row_num = index + 2  # Excel row number (1-indexed + header)
-                
-                # Get restaurant
-                restaurant = str(row['restaurant']).strip()
-                if not restaurant:
-                    errors.append({
-                        'row': row_num,
-                        'error': gettext('餐厅不能为空')
-                    })
-                    continue
-                
-                # Get categories
-                level1_name = str(row['category_level1']).strip()
-                level2_name = str(row['category_level2']).strip()
-                
-                try:
-                    category_level1 = EmissionCategory.objects.get(name=level1_name, level=1)
-                except EmissionCategory.DoesNotExist:
-                    errors.append({
-                        'row': row_num,
-                        'error': gettext('一级分类 "%(category)s" 不存在') % {'category': level1_name}
-                    })
-                    continue
-                
-                try:
-                    category_level2 = EmissionCategory.objects.get(
-                        name=level2_name,
-                        level=2,
-                        parent=category_level1
-                    )
-                except EmissionCategory.DoesNotExist:
-                    errors.append({
-                        'row': row_num,
-                        'error': gettext('二级分类 "%(level2)s" 不存在或不属于 "%(level1)s"') % {'level2': level2_name, 'level1': level1_name}
-                    })
-                    continue
-                
-                # Get product code (required)
-                product_code = str(row['product_code']).strip() if pd.notna(row.get('product_code')) else ''
-                if not product_code:
-                    errors.append({
-                        'row': row_num,
-                        'error': gettext('产品编码不能为空')
-                    })
-                    continue
-                
-                # Get product name
-                product_name = str(row['product_name']).strip()
-                
-                # Get emission coefficient (optional - try to find matching coefficient)
-                coefficient = EmissionCoefficient.objects.filter(
-                    category_level1=category_level1,
-                    category_level2=category_level2,
-                    # product_name=product_name
-                ).first()
+    to_create = []
+    total = len(df)
 
-                if not coefficient:
-                    errors.append({
-                        'row': row_num,
-                        'error': gettext('未找到匹配的碳排放系数')
-                    })
-                    continue
-                
-                product_unit = coefficient.unit
-                emission_coefficient = coefficient.coefficient
-                
-                # Parse date
-                order_date = None
-                if pd.notna(row['order_date']):
-                    try:
-                        if isinstance(row['order_date'], str):
-                            date_str = row['order_date'].strip()
-                            date_formats = ['%Y-%m-%d', '%d/%m/%Y', '%m/%d/%Y', '%Y/%m/%d']
-                            parsed = False
-                            for fmt in date_formats:
-                                try:
-                                    order_date = datetime.strptime(date_str, fmt).date()
-                                    parsed = True
-                                    break
-                                except ValueError:
-                                    continue
-                            if not parsed:
-                                raise ValueError(date_str)
-                        else:
-                            order_date = pd.to_datetime(row['order_date']).date()
-                    except:
-                        errors.append({
-                            'row': row_num,
-                            'error': gettext('日期格式错误：%(date)s') % {'date': row['order_date']}
-                        })
-                        continue
-                
-                # Parse time (optional)
-                consumption_time = None
-                if 'consumption_time' in df.columns and pd.notna(row.get('consumption_time')):
-                    from datetime import time as time_type
-                    try:
-                        val = row['consumption_time']
-                        if isinstance(val, time_type):
-                            consumption_time = val
-                        elif isinstance(val, str):
-                            time_str = val.strip()
-                            try:
-                                consumption_time = datetime.strptime(time_str, '%H:%M:%S').time()
-                            except:
-                                consumption_time = datetime.strptime(time_str, '%H:%M').time()
-                        elif hasattr(val, 'time'):
-                            consumption_time = val.time() if hasattr(val.time, '__call__') else val.time
-                        else:
-                            consumption_time = pd.to_datetime(val).time()
-                    except Exception as e:
-                        errors.append({
-                            'row': row_num,
-                            'error': gettext('时间格式错误：%(time)s') % {'time': str(row['consumption_time'])}
-                        })
-                        continue
-                
-                # Parse quantity
-                try:
-                    quantity = float(row['quantity'])
-                    if quantity < 0:
-                        errors.append({
-                            'row': row_num,
-                            'error': gettext('消耗数量不能为负数')
-                        })
-                        continue
-                except:
-                    errors.append({
-                        'row': row_num,
-                        'error': gettext('消耗数量格式错误：%(quantity)s') % {'quantity': row['quantity']}
-                    })
-                    continue
+    for index, row in df.iterrows():
+        row_num = index + 2
+        try:
+            # Restaurant
+            restaurant = str(row['restaurant']).strip()
+            if not restaurant:
+                errors.append({'row': row_num, 'error': gettext('餐厅不能为空')})
+                continue
 
-                # Check if record already exists
-                existing_record = MaterialConsumption.objects.filter(
-                    restaurant=restaurant,
-                    category_level1=category_level1,
-                    category_level2=category_level2,
-                    product_name=product_name,
-                    order_date=order_date,
-                    consumption_time=consumption_time,
-                ).first()
-                
-                if existing_record:
-                    # Record already exists - treat as error
-                    errors.append({
-                        'row': row_num,
-                        'error': gettext('重复记录：该餐厅、产品在此日期已有消耗记录 (ID: %(id)s)') % {'id': existing_record.id}
-                    })
-                    continue
-                
-                # Create new record
-                MaterialConsumption.objects.create(
-                    restaurant=restaurant,
-                    product_code=product_code,
-                    category_level1=category_level1,
-                    category_level2=category_level2,
-                    product_name=product_name,
-                    order_date=order_date,
-                    consumption_time=consumption_time,
-                    quantity=Decimal(str(quantity)),
-                    product_unit=product_unit,
-                    emission_coefficient=emission_coefficient,
-                )
-                
-                success_count += 1
-                
-            except Exception as e:
+            # Categories (in-memory lookup)
+            level1_name = str(row['category_level1']).strip()
+            level2_name = str(row['category_level2']).strip()
+
+            category_level1 = level1_map.get(level1_name)
+            if not category_level1:
                 errors.append({
                     'row': row_num,
-                    'error': gettext('处理失败：%(error)s') % {'error': str(e)}
+                    'error': gettext('一级分类 "%(category)s" 不存在') % {'category': level1_name}
                 })
-    
+                continue
+
+            category_level2 = level2_map.get((level2_name, category_level1.pk))
+            if not category_level2:
+                errors.append({
+                    'row': row_num,
+                    'error': gettext('二级分类 "%(level2)s" 不存在或不属于 "%(level1)s"') % {
+                        'level2': level2_name, 'level1': level1_name
+                    }
+                })
+                continue
+
+            # Product code
+            product_code = str(row['product_code']).strip() if pd.notna(row.get('product_code')) else ''
+            if not product_code:
+                errors.append({'row': row_num, 'error': gettext('产品编码不能为空')})
+                continue
+
+            product_name = str(row['product_name']).strip()
+
+            # Coefficient (in-memory lookup)
+            coefficient = coeff_map.get((category_level1.pk, category_level2.pk))
+            if not coefficient:
+                errors.append({'row': row_num, 'error': gettext('未找到匹配的碳排放系数')})
+                continue
+
+            product_unit = coefficient.unit
+            emission_coefficient = coefficient.coefficient
+
+            # Parse date
+            order_date = None
+            if pd.notna(row['order_date']):
+                try:
+                    order_date = _parse_date(row['order_date'])
+                except Exception:
+                    errors.append({
+                        'row': row_num,
+                        'error': gettext('日期格式错误：%(date)s') % {'date': row['order_date']}
+                    })
+                    continue
+
+            # Parse time (optional)
+            consumption_time = None
+            if 'consumption_time' in df.columns and pd.notna(row.get('consumption_time')):
+                try:
+                    consumption_time = _parse_time(row['consumption_time'])
+                except Exception:
+                    errors.append({
+                        'row': row_num,
+                        'error': gettext('时间格式错误：%(time)s') % {'time': str(row['consumption_time'])}
+                    })
+                    continue
+
+            # Parse quantity
+            try:
+                quantity = float(row['quantity'])
+                if quantity < 0:
+                    errors.append({'row': row_num, 'error': gettext('消耗数量不能为负数')})
+                    continue
+            except Exception:
+                errors.append({
+                    'row': row_num,
+                    'error': gettext('消耗数量格式错误：%(quantity)s') % {'quantity': row['quantity']}
+                })
+                continue
+
+            # Duplicate check (in-memory)
+            dup_key = (restaurant, category_level1.pk, category_level2.pk, product_name, order_date, consumption_time)
+            if dup_key in existing_keys:
+                errors.append({
+                    'row': row_num,
+                    'error': gettext('重复记录：该餐厅、产品在此日期已有消耗记录')
+                })
+                continue
+
+            existing_keys.add(dup_key)
+            to_create.append(MaterialConsumption(  # noqa
+                restaurant=restaurant,
+                product_code=product_code,
+                category_level1=category_level1,
+                category_level2=category_level2,
+                product_name=product_name,
+                order_date=order_date,
+                consumption_time=consumption_time,
+                quantity=Decimal(str(quantity)),
+                product_unit=product_unit,
+                emission_coefficient=emission_coefficient,
+            ))
+            success_count += 1
+
+        except Exception as e:
+            errors.append({
+                'row': row_num,
+                'error': gettext('处理失败：%(error)s') % {'error': str(e)}
+            })
+
+        # Update progress every 500 rows
+        if task is not None and (index + 1) % 500 == 0:
+            task.processed_rows = index + 1
+            task.save(update_fields=['processed_rows', 'updated_at'])
+
+    # Pre-calculate carbon_emission (bulk_create skips save())
+    for obj in to_create:
+        obj.carbon_emission = obj.quantity * obj.emission_coefficient
+
+    # Bulk insert in batches of 2000
+    if to_create:
+        with transaction.atomic():
+            MaterialConsumption.objects.bulk_create(to_create, batch_size=2000)
+
     return {
         'success': True,
         'success_count': success_count,
         'errors': errors,
         'total_rows': len(df)
     }
+
+
+def process_import_data_async(task_id, df):
+    """Run process_import_data in background thread, updating ImportTask progress"""
+    import django
+    django.setup.__module__  # ensure app registry is ready
+
+    from .models import ImportTask
+    try:
+        task = ImportTask.objects.get(id=task_id)
+        task.status = ImportTask.STATUS_PROCESSING
+        task.save(update_fields=['status', 'updated_at'])
+
+        result = process_import_data(df, task=task)
+
+        task.status = ImportTask.STATUS_DONE
+        task.success_count = result['success_count']
+        task.error_details = result['errors']
+        task.processed_rows = result['total_rows']
+        task.save(update_fields=['status', 'success_count', 'error_details', 'processed_rows', 'updated_at'])
+    except Exception as e:
+        try:
+            task = ImportTask.objects.get(id=task_id)
+            task.status = ImportTask.STATUS_FAILED
+            task.error_message = str(e)
+            task.save(update_fields=['status', 'error_message', 'updated_at'])
+        except Exception:
+            pass
 
 
 def download_import_template(request):

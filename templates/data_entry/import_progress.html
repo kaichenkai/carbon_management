@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "导入进度" %} - {% trans "碳排放管理系统" %}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-upload"></i> {% trans "数据导入进度" %}</h2>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div id="status-pending" class="text-center py-4" style="display:none;">
+                <div class="spinner-border text-secondary mb-3" role="status"></div>
+                <p class="text-muted">{% trans "等待处理..." %}</p>
+            </div>
+
+            <div id="status-processing" style="display:none;">
+                <div class="d-flex justify-content-between mb-1">
+                    <span>{% trans "处理中..." %}</span>
+                    <span id="progress-text">0%</span>
+                </div>
+                <div class="progress mb-3" style="height:22px;">
+                    <div id="progress-bar" class="progress-bar progress-bar-striped progress-bar-animated bg-success"
+                         role="progressbar" style="width:0%"></div>
+                </div>
+                <p class="text-muted small mb-0">
+                    {% trans "已处理" %} <span id="processed-rows">0</span> /
+                    <span id="total-rows">{{ task.total_rows }}</span> {% trans "行" %}
+                </p>
+            </div>
+
+            <div id="status-done" style="display:none;">
+                <div class="alert alert-success">
+                    <i class="bi bi-check-circle-fill"></i>
+                    {% trans "导入完成！成功导入" %} <strong id="success-count">0</strong> {% trans "条记录。" %}
+                    <span id="error-summary"></span>
+                </div>
+                <div id="error-list-container" style="display:none;">
+                    <h6>{% trans "以下行导入失败：" %}</h6>
+                    <div class="table-responsive" style="max-height:300px;overflow-y:auto;">
+                        <table class="table table-sm table-bordered">
+                            <thead class="table-light"><tr><th>{% trans "行号" %}</th><th>{% trans "错误原因" %}</th></tr></thead>
+                            <tbody id="error-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <a href="{% url 'consumption_list' %}" class="btn btn-primary mt-3">
+                    <i class="bi bi-list"></i> {% trans "查看数据列表" %}
+                </a>
+                <a href="{% url 'data_import' %}" class="btn btn-outline-secondary mt-3 ms-2">
+                    <i class="bi bi-upload"></i> {% trans "继续导入" %}
+                </a>
+            </div>
+
+            <div id="status-failed" style="display:none;">
+                <div class="alert alert-danger">
+                    <i class="bi bi-x-circle-fill"></i>
+                    {% trans "导入失败：" %}<span id="error-message"></span>
+                </div>
+                <a href="{% url 'data_import' %}" class="btn btn-secondary mt-2">
+                    <i class="bi bi-arrow-left"></i> {% trans "重新导入" %}
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function () {
+    const apiUrl = "{% url 'import_progress_api' task.id %}";
+    let interval = null;
+
+    function showOnly(id) {
+        ['status-pending', 'status-processing', 'status-done', 'status-failed'].forEach(function (s) {
+            document.getElementById(s).style.display = (s === id) ? '' : 'none';
+        });
+    }
+
+    function poll() {
+        fetch(apiUrl)
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                if (data.status === 'pending') {
+                    showOnly('status-pending');
+                } else if (data.status === 'processing') {
+                    showOnly('status-processing');
+                    document.getElementById('progress-bar').style.width = data.percent + '%';
+                    document.getElementById('progress-text').textContent = data.percent + '%';
+                    document.getElementById('processed-rows').textContent = data.processed_rows;
+                    document.getElementById('total-rows').textContent = data.total_rows;
+                } else if (data.status === 'done') {
+                    clearInterval(interval);
+                    showOnly('status-done');
+                    document.getElementById('success-count').textContent = data.success_count;
+                    if (data.error_count > 0) {
+                        document.getElementById('error-summary').textContent =
+                            '，' + data.error_count + ' 条失败。';
+                        document.getElementById('error-list-container').style.display = '';
+                        const tbody = document.getElementById('error-table-body');
+                        tbody.innerHTML = '';
+                        data.errors.forEach(function (e) {
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = '<td>' + e.row + '</td><td>' + e.error + '</td>';
+                            tbody.appendChild(tr);
+                        });
+                    }
+                } else if (data.status === 'failed') {
+                    clearInterval(interval);
+                    showOnly('status-failed');
+                    document.getElementById('error-message').textContent = data.error_message;
+                }
+            })
+            .catch(function () {});
+    }
+
+    poll();
+    interval = setInterval(poll, 2000);
+})();
+</script>
+{% endblock %}
