@@ -145,6 +145,10 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Allow bulk operations (e.g. Django Admin delete) on large querysets.
+# Default is 1000, which causes 400/404 when selecting >1000 records.
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000000
+
 # Login settings
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'dashboard'
