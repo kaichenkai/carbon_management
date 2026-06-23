@@ -414,7 +414,7 @@ def process_import_data(df, task=None):
     existing_keys = set(
         MaterialConsumption.objects.values_list(
             'restaurant', 'category_level1_id', 'category_level2_id',
-            'product_name', 'order_date', 'consumption_time'
+            'product_name', 'order_date', 'consumption_time', 'quantity'
         )
     )
 
@@ -509,7 +509,7 @@ def process_import_data(df, task=None):
                 continue
 
             # Duplicate check (in-memory)
-            dup_key = (restaurant, category_level1.pk, category_level2.pk, product_name, order_date, consumption_time)
+            dup_key = (restaurant, category_level1.pk, category_level2.pk, product_name, order_date, consumption_time, Decimal(str(quantity)))
             if dup_key in existing_keys:
                 errors.append({
                     'row': row_num,
