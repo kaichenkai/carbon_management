@@ -513,7 +513,7 @@ def process_import_data(df, task=None):
             if dup_key in existing_keys:
                 errors.append({
                     'row': row_num,
-                    'error': gettext('重复记录：该餐厅、产品在此日期已有消耗记录')
+                    'error': gettext('重复记录：该餐厅、产品在此日期且消耗数量相同的记录已存在')
                 })
                 continue
 
