@@ -417,7 +417,18 @@ def process_import_data(df):
                 if pd.notna(row['order_date']):
                     try:
                         if isinstance(row['order_date'], str):
-                            order_date = datetime.strptime(row['order_date'], '%Y-%m-%d').date()
+                            date_str = row['order_date'].strip()
+                            date_formats = ['%Y-%m-%d', '%d/%m/%Y', '%m/%d/%Y', '%Y/%m/%d']
+                            parsed = False
+                            for fmt in date_formats:
+                                try:
+                                    order_date = datetime.strptime(date_str, fmt).date()
+                                    parsed = True
+                                    break
+                                except ValueError:
+                                    continue
+                            if not parsed:
+                                raise ValueError(date_str)
                         else:
                             order_date = pd.to_datetime(row['order_date']).date()
                     except:
@@ -455,10 +466,10 @@ def process_import_data(df):
                 # Parse quantity
                 try:
                     quantity = float(row['quantity'])
-                    if quantity <= 0:
+                    if quantity < 0:
                         errors.append({
                             'row': row_num,
-                            'error': gettext('消耗数量必须大于0')
+                            'error': gettext('消耗数量不能为负数')
                         })
                         continue
                 except:
