@@ -303,21 +303,50 @@ def import_progress(request, task_id):
 
 
 def import_progress_api(request, task_id):
-    """JSON API for polling import task progress"""
+    """JSON API for polling import task progress, supports ?page= for error pagination"""
     task = get_object_or_404(ImportTask, id=task_id)
     percent = 0
     if task.total_rows > 0:
         percent = int(task.processed_rows / task.total_rows * 100)
+    page_size = 100
+    try:
+        page = max(1, int(request.GET.get('page', 1)))
+    except (ValueError, TypeError):
+        page = 1
+    all_errors = task.error_details or []
+    start = (page - 1) * page_size
+    end = start + page_size
+    total_pages = max(1, (len(all_errors) + page_size - 1) // page_size)
     return JsonResponse({
         'status': task.status,
         'total_rows': task.total_rows,
         'processed_rows': task.processed_rows,
         'success_count': task.success_count,
-        'error_count': len(task.error_details),
-        'errors': task.error_details[:50],
+        'error_count': len(all_errors),
+        'errors': all_errors[start:end],
         'error_message': task.error_message,
         'percent': percent,
+        'page': page,
+        'total_pages': total_pages,
     })
+
+
+def import_error_export(request, task_id):
+    """Download all import errors as Excel file"""
+    task = get_object_or_404(ImportTask, id=task_id)
+    errors = task.error_details or []
+    df = pd.DataFrame(errors, columns=['row', 'error'])
+    df.columns = ['行号', '错误原因']
+    output = BytesIO()
+    with pd.ExcelWriter(output, engine='openpyxl') as writer:
+        df.to_excel(writer, index=False, sheet_name='导入错误')
+    output.seek(0)
+    response = HttpResponse(
+        output.getvalue(),
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    response['Content-Disposition'] = f'attachment; filename="import_errors_{task_id}.xlsx"'
+    return response
 
 
 def _parse_date(val):

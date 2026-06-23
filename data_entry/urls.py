@@ -9,6 +9,7 @@ urlpatterns = [
     path('import/', views.data_import, name='data_import'),
     path('import/progress/<uuid:task_id>/', views.import_progress, name='import_progress'),
     path('import/progress/<uuid:task_id>/api/', views.import_progress_api, name='import_progress_api'),
+    path('import/progress/<uuid:task_id>/errors/', views.import_error_export, name='import_error_export'),
     path('import/template/', views.download_import_template, name='download_import_template'),
     path('export/', views.consumption_export, name='consumption_export'),
     path('api/level2-categories/', views.get_level2_categories, name='get_level2_categories'),
