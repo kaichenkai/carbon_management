@@ -342,7 +342,7 @@ def import_progress_api(request, task_id):
 
 
 def import_error_export(request, task_id):
-    """Download failed import data file if available, otherwise download error report"""
+    """Download failed import rows with the failure reason in the last column"""
     task = get_object_or_404(ImportTask, id=task_id)
     if task.error_file:
         from django.conf import settings
@@ -357,19 +357,7 @@ def import_error_export(request, task_id):
             response['Content-Disposition'] = f'attachment; filename="failed_import_rows_{task_id}.xlsx"'
             return response
 
-    errors = task.error_details or []
-    df = pd.DataFrame(errors, columns=['row', 'error'])
-    df.columns = ['行号', '错误原因']
-    output = BytesIO()
-    with pd.ExcelWriter(output, engine='openpyxl') as writer:
-        df.to_excel(writer, index=False, sheet_name='导入错误')
-    output.seek(0)
-    response = HttpResponse(
-        output.getvalue(),
-        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    )
-    response['Content-Disposition'] = f'attachment; filename="import_errors_{task_id}.xlsx"'
-    return response
+    return HttpResponse(gettext('失败数据文件不存在，请重新导入后再下载。'), status=404)
 
 
 def _parse_date(val):
