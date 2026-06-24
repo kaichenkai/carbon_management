@@ -21,7 +21,6 @@ import pandas as pd
 from datetime import datetime, date, time
 from decimal import Decimal
 from io import BytesIO
-from decimal import Decimal
 
 
 def consumption_list(request):
@@ -318,15 +317,6 @@ def import_progress_api(request, task_id):
     start = (page - 1) * page_size
     end = start + page_size
     total_pages = max(1, (len(all_errors) + page_size - 1) // page_size)
-    error_file_url = ''
-    if task.error_file:
-        from django.conf import settings
-        import os
-        filepath = os.path.join(settings.MEDIA_ROOT, task.error_file)
-        if os.path.exists(filepath):
-            error_file_url = request.build_absolute_uri(settings.MEDIA_URL + task.error_file)
-        else:
-            error_file_url = ''
     return JsonResponse({
         'status': task.status,
         'total_rows': task.total_rows,
@@ -338,7 +328,6 @@ def import_progress_api(request, task_id):
         'percent': percent,
         'page': page,
         'total_pages': total_pages,
-        'error_file_url': error_file_url,
     })
 
 
@@ -434,7 +423,6 @@ def process_import_data(df, task=None):
     errors = []
     to_create = []
     total = len(df)
-    original_df = df.copy()
 
     for index, row in df.iterrows():
         row_num = index + 2
@@ -442,7 +430,7 @@ def process_import_data(df, task=None):
             # Restaurant
             restaurant = str(row['restaurant']).strip()
             if not restaurant:
-                errors.append({'row': row_num, 'index': index, 'error': gettext('餐厅不能为空')})
+                errors.append({'row': row_num, 'error': gettext('餐厅不能为空')})
                 continue
 
             # Categories (in-memory lookup)
@@ -453,7 +441,6 @@ def process_import_data(df, task=None):
             if not category_level1:
                 errors.append({
                     'row': row_num,
-                    'index': index,
                     'error': gettext('一级分类 "%(category)s" 不存在') % {'category': level1_name}
                 })
                 continue
@@ -462,7 +449,6 @@ def process_import_data(df, task=None):
             if not category_level2:
                 errors.append({
                     'row': row_num,
-                    'index': index,
                     'error': gettext('二级分类 "%(level2)s" 不存在或不属于 "%(level1)s"') % {
                         'level2': level2_name, 'level1': level1_name
                     }
@@ -472,7 +458,7 @@ def process_import_data(df, task=None):
             # Product code
             product_code = str(row['product_code']).strip() if pd.notna(row.get('product_code')) else ''
             if not product_code:
-                errors.append({'row': row_num, 'index': index, 'error': gettext('产品编码不能为空')})
+                errors.append({'row': row_num, 'error': gettext('产品编码不能为空')})
                 continue
 
             product_name = str(row['product_name']).strip()
@@ -480,7 +466,7 @@ def process_import_data(df, task=None):
             # Coefficient (in-memory lookup)
             coefficient = coeff_map.get((category_level1.pk, category_level2.pk))
             if not coefficient:
-                errors.append({'row': row_num, 'index': index, 'error': gettext('未找到匹配的碳排放系数')})
+                errors.append({'row': row_num, 'error': gettext('未找到匹配的碳排放系数')})
                 continue
 
             product_unit = coefficient.unit
@@ -494,7 +480,6 @@ def process_import_data(df, task=None):
                 except Exception:
                     errors.append({
                         'row': row_num,
-                        'index': index,
                         'error': gettext('日期格式错误：%(date)s') % {'date': row['order_date']}
                     })
                     continue
@@ -507,7 +492,6 @@ def process_import_data(df, task=None):
                 except Exception:
                     errors.append({
                         'row': row_num,
-                        'index': index,
                         'error': gettext('时间格式错误：%(time)s') % {'time': str(row['consumption_time'])}
                     })
                     continue
@@ -516,12 +500,11 @@ def process_import_data(df, task=None):
             try:
                 quantity = float(row['quantity'])
                 if quantity < 0:
-                    errors.append({'row': row_num, 'index': index, 'error': gettext('消耗数量不能为负数')})
+                    errors.append({'row': row_num, 'error': gettext('消耗数量不能为负数')})
                     continue
             except Exception:
                 errors.append({
                     'row': row_num,
-                    'index': index,
                     'error': gettext('消耗数量格式错误：%(quantity)s') % {'quantity': row['quantity']}
                 })
                 continue
@@ -531,7 +514,6 @@ def process_import_data(df, task=None):
             if dup_key in existing_keys:
                 errors.append({
                     'row': row_num,
-                    'index': index,
                     'error': gettext('重复记录：该餐厅、产品在此日期且消耗数量相同的记录已存在')
                 })
                 continue
@@ -554,7 +536,6 @@ def process_import_data(df, task=None):
         except Exception as e:
             errors.append({
                 'row': row_num,
-                'index': index,
                 'error': gettext('处理失败：%(error)s') % {'error': str(e)}
             })
 
@@ -593,14 +574,27 @@ def process_import_data_async(task_id, df, raw_df=None):
 
         result = process_import_data(df, task=task)
 
+        if not result.get('success'):
+            task.status = ImportTask.STATUS_FAILED
+            task.error_message = result.get('error', gettext('导入失败'))
+            task.processed_rows = task.total_rows
+            task.save(update_fields=['status', 'error_message', 'processed_rows', 'updated_at'])
+            return
+
         # Build error file if there are failed rows
         error_file_path = ''
         if result.get('errors'):
             from django.conf import settings
             import os
-            orig = raw_df if raw_df is not None else result.get('original_df')
-            error_positions = [e['row'] - 2 for e in result['errors'] if e.get('row') is not None and e['row'] >= 2]
-            error_reasons = {e['row'] - 2: e['error'] for e in result['errors'] if e.get('row') is not None and e['row'] >= 2}
+            orig = raw_df
+            error_positions = [
+                e['row'] - 2 for e in result['errors']
+                if e.get('row') is not None and e['row'] >= 2
+            ]
+            error_reasons = {
+                e['row'] - 2: e['error'] for e in result['errors']
+                if e.get('row') is not None and e['row'] >= 2
+            }
             if orig is not None and error_positions:
                 try:
                     valid_positions = [pos for pos in error_positions if 0 <= pos < len(orig)]
@@ -615,9 +609,8 @@ def process_import_data_async(task_id, df, raw_df=None):
                     if os.path.exists(filepath):
                         error_file_path = f'import_errors/{filename}'
                 except Exception as file_err:
-                    error_file_path = f'[ERROR] {file_err}'
+                    task.error_message = gettext('失败数据文件生成失败：%(error)s') % {'error': str(file_err)}
 
-        # Strip original_df before storing (not serialisable)
         errors_for_db = [{'row': e['row'], 'error': e['error']} for e in result['errors']]
 
         task.status = ImportTask.STATUS_DONE
@@ -625,7 +618,10 @@ def process_import_data_async(task_id, df, raw_df=None):
         task.error_details = errors_for_db
         task.processed_rows = result['total_rows']
         task.error_file = error_file_path
-        task.save(update_fields=['status', 'success_count', 'error_details', 'processed_rows', 'error_file', 'updated_at'])
+        task.save(update_fields=[
+            'status', 'success_count', 'error_details', 'processed_rows',
+            'error_file', 'error_message', 'updated_at'
+        ])
     except Exception as e:
         try:
             task = ImportTask.objects.get(id=task_id)
