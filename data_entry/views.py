@@ -601,7 +601,7 @@ def process_import_data_async(task_id, df):
             error_reasons = {e['index']: e['error'] for e in result['errors'] if 'index' in e}
             if orig is not None and error_indices:
                 try:
-                    err_df = orig.iloc[error_indices].copy()
+                    err_df = orig.loc[error_indices].copy()
                     err_df['失败原因'] = [error_reasons.get(i, '') for i in error_indices]
                     media_root = str(settings.MEDIA_ROOT)
                     save_dir = os.path.join(media_root, 'import_errors')
@@ -612,9 +612,7 @@ def process_import_data_async(task_id, df):
                     if os.path.exists(filepath):
                         error_file_path = f'import_errors/{filename}'
                 except Exception as file_err:
-                    error_file_path = ''
-                    import logging
-                    logging.getLogger(__name__).error(f'Failed to write import error file: {file_err}')
+                    error_file_path = f'[ERROR] {file_err}'
 
         # Strip original_df before storing (not serialisable)
         errors_for_db = [{'row': e['row'], 'error': e['error']} for e in result['errors']]
