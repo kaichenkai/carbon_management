@@ -317,10 +317,15 @@ def import_progress_api(request, task_id):
     start = (page - 1) * page_size
     end = start + page_size
     total_pages = max(1, (len(all_errors) + page_size - 1) // page_size)
-    from django.conf import settings
     error_file_url = ''
     if task.error_file:
-        error_file_url = settings.MEDIA_URL + task.error_file
+        from django.conf import settings
+        import os
+        filepath = os.path.join(settings.MEDIA_ROOT, task.error_file)
+        if os.path.exists(filepath):
+            error_file_url = request.build_absolute_uri(settings.MEDIA_URL + task.error_file)
+        else:
+            error_file_url = ''
     return JsonResponse({
         'status': task.status,
         'total_rows': task.total_rows,
@@ -595,14 +600,21 @@ def process_import_data_async(task_id, df):
             error_indices = [e['index'] for e in result['errors'] if 'index' in e]
             error_reasons = {e['index']: e['error'] for e in result['errors'] if 'index' in e}
             if orig is not None and error_indices:
-                err_df = orig.iloc[error_indices].copy()
-                err_df['失败原因'] = [error_reasons.get(i, '') for i in error_indices]
-                save_dir = os.path.join(settings.MEDIA_ROOT, 'import_errors')
-                os.makedirs(save_dir, exist_ok=True)
-                filename = f'import_errors_{task_id}.xlsx'
-                filepath = os.path.join(save_dir, filename)
-                err_df.to_excel(filepath, index=False)
-                error_file_path = f'import_errors/{filename}'
+                try:
+                    err_df = orig.iloc[error_indices].copy()
+                    err_df['失败原因'] = [error_reasons.get(i, '') for i in error_indices]
+                    media_root = str(settings.MEDIA_ROOT)
+                    save_dir = os.path.join(media_root, 'import_errors')
+                    os.makedirs(save_dir, exist_ok=True)
+                    filename = f'import_errors_{task_id}.xlsx'
+                    filepath = os.path.join(save_dir, filename)
+                    err_df.to_excel(filepath, index=False)
+                    if os.path.exists(filepath):
+                        error_file_path = f'import_errors/{filename}'
+                except Exception as file_err:
+                    error_file_path = ''
+                    import logging
+                    logging.getLogger(__name__).error(f'Failed to write import error file: {file_err}')
 
         # Strip original_df before storing (not serialisable)
         errors_for_db = [{'row': e['row'], 'error': e['error']} for e in result['errors']]
