@@ -596,7 +596,7 @@ def process_import_data_async(task_id, df):
             error_reasons = {e['index']: e['error'] for e in result['errors'] if 'index' in e}
             if orig is not None and error_indices:
                 err_df = orig.iloc[error_indices].copy()
-                err_df.insert(0, '失败原因', [error_reasons.get(i, '') for i in error_indices])
+                err_df['失败原因'] = [error_reasons.get(i, '') for i in error_indices]
                 save_dir = os.path.join(settings.MEDIA_ROOT, 'import_errors')
                 os.makedirs(save_dir, exist_ok=True)
                 filename = f'import_errors_{task_id}.xlsx'
