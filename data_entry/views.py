@@ -317,6 +317,10 @@ def import_progress_api(request, task_id):
     start = (page - 1) * page_size
     end = start + page_size
     total_pages = max(1, (len(all_errors) + page_size - 1) // page_size)
+    from django.conf import settings
+    error_file_url = ''
+    if task.error_file:
+        error_file_url = settings.MEDIA_URL + task.error_file
     return JsonResponse({
         'status': task.status,
         'total_rows': task.total_rows,
@@ -328,6 +332,7 @@ def import_progress_api(request, task_id):
         'percent': percent,
         'page': page,
         'total_pages': total_pages,
+        'error_file_url': error_file_url,
     })
 
 
@@ -422,6 +427,7 @@ def process_import_data(df, task=None):
     errors = []
     to_create = []
     total = len(df)
+    original_df = df.copy()
 
     for index, row in df.iterrows():
         row_num = index + 2
@@ -429,7 +435,7 @@ def process_import_data(df, task=None):
             # Restaurant
             restaurant = str(row['restaurant']).strip()
             if not restaurant:
-                errors.append({'row': row_num, 'error': gettext('餐厅不能为空')})
+                errors.append({'row': row_num, 'index': index, 'error': gettext('餐厅不能为空')})
                 continue
 
             # Categories (in-memory lookup)
@@ -440,6 +446,7 @@ def process_import_data(df, task=None):
             if not category_level1:
                 errors.append({
                     'row': row_num,
+                    'index': index,
                     'error': gettext('一级分类 "%(category)s" 不存在') % {'category': level1_name}
                 })
                 continue
@@ -448,6 +455,7 @@ def process_import_data(df, task=None):
             if not category_level2:
                 errors.append({
                     'row': row_num,
+                    'index': index,
                     'error': gettext('二级分类 "%(level2)s" 不存在或不属于 "%(level1)s"') % {
                         'level2': level2_name, 'level1': level1_name
                     }
@@ -457,7 +465,7 @@ def process_import_data(df, task=None):
             # Product code
             product_code = str(row['product_code']).strip() if pd.notna(row.get('product_code')) else ''
             if not product_code:
-                errors.append({'row': row_num, 'error': gettext('产品编码不能为空')})
+                errors.append({'row': row_num, 'index': index, 'error': gettext('产品编码不能为空')})
                 continue
 
             product_name = str(row['product_name']).strip()
@@ -465,7 +473,7 @@ def process_import_data(df, task=None):
             # Coefficient (in-memory lookup)
             coefficient = coeff_map.get((category_level1.pk, category_level2.pk))
             if not coefficient:
-                errors.append({'row': row_num, 'error': gettext('未找到匹配的碳排放系数')})
+                errors.append({'row': row_num, 'index': index, 'error': gettext('未找到匹配的碳排放系数')})
                 continue
 
             product_unit = coefficient.unit
@@ -479,6 +487,7 @@ def process_import_data(df, task=None):
                 except Exception:
                     errors.append({
                         'row': row_num,
+                        'index': index,
                         'error': gettext('日期格式错误：%(date)s') % {'date': row['order_date']}
                     })
                     continue
@@ -491,6 +500,7 @@ def process_import_data(df, task=None):
                 except Exception:
                     errors.append({
                         'row': row_num,
+                        'index': index,
                         'error': gettext('时间格式错误：%(time)s') % {'time': str(row['consumption_time'])}
                     })
                     continue
@@ -499,11 +509,12 @@ def process_import_data(df, task=None):
             try:
                 quantity = float(row['quantity'])
                 if quantity < 0:
-                    errors.append({'row': row_num, 'error': gettext('消耗数量不能为负数')})
+                    errors.append({'row': row_num, 'index': index, 'error': gettext('消耗数量不能为负数')})
                     continue
             except Exception:
                 errors.append({
                     'row': row_num,
+                    'index': index,
                     'error': gettext('消耗数量格式错误：%(quantity)s') % {'quantity': row['quantity']}
                 })
                 continue
@@ -513,6 +524,7 @@ def process_import_data(df, task=None):
             if dup_key in existing_keys:
                 errors.append({
                     'row': row_num,
+                    'index': index,
                     'error': gettext('重复记录：该餐厅、产品在此日期且消耗数量相同的记录已存在')
                 })
                 continue
@@ -535,6 +547,7 @@ def process_import_data(df, task=None):
         except Exception as e:
             errors.append({
                 'row': row_num,
+                'index': index,
                 'error': gettext('处理失败：%(error)s') % {'error': str(e)}
             })
 
@@ -573,11 +586,33 @@ def process_import_data_async(task_id, df):
 
         result = process_import_data(df, task=task)
 
+        # Build error file if there are failed rows
+        error_file_path = ''
+        if result['errors']:
+            from django.conf import settings
+            import os
+            orig = result['original_df']
+            error_indices = [e['index'] for e in result['errors'] if 'index' in e]
+            error_reasons = {e['index']: e['error'] for e in result['errors'] if 'index' in e}
+            if error_indices:
+                err_df = orig.iloc[error_indices].copy()
+                err_df.insert(0, '失败原因', [error_reasons.get(i, '') for i in error_indices])
+                save_dir = os.path.join(settings.MEDIA_ROOT, 'import_errors')
+                os.makedirs(save_dir, exist_ok=True)
+                filename = f'import_errors_{task_id}.xlsx'
+                filepath = os.path.join(save_dir, filename)
+                err_df.to_excel(filepath, index=False)
+                error_file_path = f'import_errors/{filename}'
+
+        # Strip original_df before storing (not serialisable)
+        errors_for_db = [{'row': e['row'], 'error': e['error']} for e in result['errors']]
+
         task.status = ImportTask.STATUS_DONE
         task.success_count = result['success_count']
-        task.error_details = result['errors']
+        task.error_details = errors_for_db
         task.processed_rows = result['total_rows']
-        task.save(update_fields=['status', 'success_count', 'error_details', 'processed_rows', 'updated_at'])
+        task.error_file = error_file_path
+        task.save(update_fields=['status', 'success_count', 'error_details', 'processed_rows', 'error_file', 'updated_at'])
     except Exception as e:
         try:
             task = ImportTask.objects.get(id=task_id)

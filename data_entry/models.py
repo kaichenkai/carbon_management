@@ -197,6 +197,7 @@ class ImportTask(models.Model):
     success_count = models.IntegerField(_('成功数'), default=0)
     error_details = models.JSONField(_('错误详情'), default=list)
     error_message = models.TextField(_('错误信息'), blank=True)
+    error_file = models.CharField(_('错误文件路径'), max_length=500, blank=True)
     created_at = models.DateTimeField(_('创建时间'), auto_now_add=True)
     updated_at = models.DateTimeField(_('更新时间'), auto_now=True)
 
