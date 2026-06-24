@@ -278,12 +278,13 @@ def data_import(request):
                 else:
                     df = pd.read_excel(file)
 
+                raw_df = df.copy()
                 task = ImportTask.objects.create(total_rows=len(df))
 
-                def run(task_id, dataframe):
-                    process_import_data_async(task_id, dataframe)
+                def run(task_id, dataframe, original_dataframe):
+                    process_import_data_async(task_id, dataframe, original_dataframe)
 
-                t = threading.Thread(target=run, args=(str(task.id), df), daemon=True)
+                t = threading.Thread(target=run, args=(str(task.id), df, raw_df), daemon=True)
                 t.start()
 
                 return redirect('import_progress', task_id=str(task.id))
@@ -579,7 +580,7 @@ def process_import_data(df, task=None):
     }
 
 
-def process_import_data_async(task_id, df):
+def process_import_data_async(task_id, df, raw_df=None):
     """Run process_import_data in background thread, updating ImportTask progress"""
     import django
     django.setup.__module__  # ensure app registry is ready
@@ -597,13 +598,14 @@ def process_import_data_async(task_id, df):
         if result.get('errors'):
             from django.conf import settings
             import os
-            orig = result.get('original_df')
-            error_indices = [e['index'] for e in result['errors'] if 'index' in e]
-            error_reasons = {e['index']: e['error'] for e in result['errors'] if 'index' in e}
-            if orig is not None and error_indices:
+            orig = raw_df if raw_df is not None else result.get('original_df')
+            error_positions = [e['row'] - 2 for e in result['errors'] if e.get('row') is not None and e['row'] >= 2]
+            error_reasons = {e['row'] - 2: e['error'] for e in result['errors'] if e.get('row') is not None and e['row'] >= 2}
+            if orig is not None and error_positions:
                 try:
-                    err_df = orig.loc[error_indices].copy()
-                    err_df['失败原因'] = [error_reasons.get(i, '') for i in error_indices]
+                    valid_positions = [pos for pos in error_positions if 0 <= pos < len(orig)]
+                    err_df = orig.iloc[valid_positions].copy()
+                    err_df['失败原因'] = [error_reasons.get(pos, '') for pos in valid_positions]
                     media_root = str(settings.MEDIA_ROOT)
                     save_dir = os.path.join(media_root, 'import_errors')
                     os.makedirs(save_dir, exist_ok=True)
