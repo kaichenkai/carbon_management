@@ -342,8 +342,21 @@ def import_progress_api(request, task_id):
 
 
 def import_error_export(request, task_id):
-    """Download all import errors as Excel file"""
+    """Download failed import data file if available, otherwise download error report"""
     task = get_object_or_404(ImportTask, id=task_id)
+    if task.error_file:
+        from django.conf import settings
+        import os
+        filepath = os.path.join(settings.MEDIA_ROOT, task.error_file)
+        if os.path.exists(filepath):
+            with open(filepath, 'rb') as f:
+                response = HttpResponse(
+                    f.read(),
+                    content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                )
+            response['Content-Disposition'] = f'attachment; filename="failed_import_rows_{task_id}.xlsx"'
+            return response
+
     errors = task.error_details or []
     df = pd.DataFrame(errors, columns=['row', 'error'])
     df.columns = ['行号', '错误原因']

@@ -42,14 +42,9 @@
                 <div id="error-list-container" style="display:none;">
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <h6 class="mb-0">{% trans "失败记录" %}（<span id="error-count-label">0</span> {% trans "条" %}）</h6>
-                        <div>
-                            <a id="download-error-file-btn" href="#" class="btn btn-sm btn-danger me-1" style="display:none;">
-                                <i class="bi bi-file-earmark-excel"></i> {% trans "下载失败数据文件" %}
-                            </a>
-                            <a id="download-errors-btn" href="#" class="btn btn-sm btn-outline-secondary">
-                                <i class="bi bi-download"></i> {% trans "下载错误报告" %}
-                            </a>
-                        </div>
+                        <a id="download-errors-btn" href="#" class="btn btn-sm btn-danger">
+                            <i class="bi bi-file-earmark-excel"></i> {% trans "下载失败数据文件" %}
+                        </a>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-sm table-bordered">
@@ -177,11 +172,6 @@
                             document.getElementById('page-info').textContent = '1 / ' + totalPages;
                             if (totalPages > 1) {
                                 document.getElementById('error-pagination').style.display = '';
-                            }
-                            if (data.error_file_url) {
-                                var btn = document.getElementById('download-error-file-btn');
-                                btn.href = data.error_file_url;
-                                btn.style.display = '';
                             }
                         }
                     }
