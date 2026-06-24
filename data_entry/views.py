@@ -588,13 +588,13 @@ def process_import_data_async(task_id, df):
 
         # Build error file if there are failed rows
         error_file_path = ''
-        if result['errors']:
+        if result.get('errors'):
             from django.conf import settings
             import os
-            orig = result['original_df']
+            orig = result.get('original_df')
             error_indices = [e['index'] for e in result['errors'] if 'index' in e]
             error_reasons = {e['index']: e['error'] for e in result['errors'] if 'index' in e}
-            if error_indices:
+            if orig is not None and error_indices:
                 err_df = orig.iloc[error_indices].copy()
                 err_df.insert(0, '失败原因', [error_reasons.get(i, '') for i in error_indices])
                 save_dir = os.path.join(settings.MEDIA_ROOT, 'import_errors')
