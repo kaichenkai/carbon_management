@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
+from django.db import connection
 from .models import MaterialConsumption
 
 
@@ -101,9 +102,25 @@ class MaterialConsumptionAdmin(admin.ModelAdmin):
     
     
     # Actions
-    actions = ['export_selected_records']
-    
+    actions = ['export_selected_records', 'fast_delete_selected']
+
     def export_selected_records(self, request, queryset):
         """Export selected records (placeholder for future implementation)"""
         self.message_user(request, f"已选择 {queryset.count()} 条记录进行导出")
     export_selected_records.short_description = "导出选中的记录"
+
+    def fast_delete_selected(self, request, queryset):
+        """Delete selected records in batches via direct SQL, avoiding ORM cascade queries"""
+        table = MaterialConsumption._meta.db_table
+        ids = list(queryset.values_list('pk', flat=True))
+        total = len(ids)
+        batch_size = 5000
+        deleted = 0
+        with connection.cursor() as cursor:
+            for i in range(0, total, batch_size):
+                batch = ids[i:i + batch_size]
+                placeholders = ','.join(['%s'] * len(batch))
+                cursor.execute(f'DELETE FROM "{table}" WHERE id IN ({placeholders})', batch)
+                deleted += len(batch)
+        self.message_user(request, f"已成功删除 {deleted} 条记录。")
+    fast_delete_selected.short_description = "快速删除选中记录（大批量）"
