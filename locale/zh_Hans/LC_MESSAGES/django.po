@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-26 21:01+0800\n"
+"POT-Creation-Date: 2026-06-26 22:12+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,7 +21,7 @@ msgstr ""
 msgid "额外信息"
 msgstr ""
 
-#: coefficients/apps.py:8 templates/base.html:225
+#: coefficients/apps.py:8 templates/base.html:230
 #: templates/coefficients/coefficient_form.html:19
 #: templates/coefficients/coefficient_import.html:14
 #: templates/coefficients/coefficient_list.html:4
@@ -56,20 +56,22 @@ msgid "记住我"
 msgstr "记住我"
 
 #: coefficients/forms.py:49 coefficients/models.py:51 coefficients/models.py:90
-#: coefficients/views.py:302 coefficients/views.py:358 data_entry/forms.py:14
-#: data_entry/models.py:27 data_entry/views.py:701
+#: coefficients/views.py:302 coefficients/views.py:358 dashboard/views.py:253
+#: data_entry/forms.py:14 data_entry/models.py:27 data_entry/views.py:701
 #: templates/coefficients/coefficient_list.html:131
 #: templates/dashboard/dashboard.html:44
+#: templates/dashboard/data_customization.html:55
 #: templates/data_entry/consumption_list.html:249
 #: templates/data_entry/import_form.html:32
 msgid "一级分类"
 msgstr "一级分类"
 
 #: coefficients/forms.py:59 coefficients/models.py:52 coefficients/models.py:97
-#: coefficients/views.py:302 coefficients/views.py:358 data_entry/forms.py:25
-#: data_entry/models.py:34 data_entry/views.py:702
+#: coefficients/views.py:302 coefficients/views.py:358 dashboard/views.py:257
+#: data_entry/forms.py:25 data_entry/models.py:34 data_entry/views.py:702
 #: templates/coefficients/coefficient_list.html:148
 #: templates/dashboard/dashboard.html:55
+#: templates/dashboard/data_customization.html:64
 #: templates/data_entry/consumption_list.html:266
 #: templates/data_entry/import_form.html:33
 msgid "二级分类"
@@ -293,12 +295,55 @@ msgstr "失败 %(count)s 条记录"
 msgid "文件处理失败: %(error)s"
 msgstr "文件处理失败: %(error)s"
 
-#: data_entry/forms.py:36 data_entry/models.py:39 data_entry/views.py:698
-#: templates/data_entry/consumption_form.html:119
+#: dashboard/views.py:261 data_entry/models.py:21 data_entry/models.py:126
+#: data_entry/views.py:696 templates/dashboard/dashboard.html:35
+#: templates/dashboard/data_customization.html:46
+#: templates/data_entry/consumer_import_form.html:27
+#: templates/data_entry/consumer_list.html:142
+#: templates/data_entry/consumption_list.html:164
+#: templates/data_entry/import_form.html:27
+msgid "餐厅"
+msgstr ""
+
+#: dashboard/views.py:265 data_entry/forms.py:36 data_entry/models.py:39
+#: data_entry/views.py:698 templates/data_entry/consumption_form.html:119
 #: templates/data_entry/consumption_list.html:199
 #: templates/data_entry/import_form.html:29
 msgid "产品名称"
 msgstr "产品名称"
+
+#: dashboard/views.py:271 data_entry/models.py:54 data_entry/views.py:705
+#: templates/dashboard/dashboard.html:309
+#: templates/dashboard/dashboard.html:365
+#: templates/data_entry/consumption_form.html:176
+#: templates/data_entry/consumption_list.html:302
+msgid "碳排放量(kgCO2e)"
+msgstr ""
+
+#: dashboard/views.py:276 data_entry/models.py:48 data_entry/views.py:704
+#: templates/data_entry/import_form.html:34
+msgid "消耗数量"
+msgstr ""
+
+#: dashboard/views.py:281
+#, fuzzy
+#| msgid "系数创建成功！"
+msgid "记录数"
+msgstr "系数创建成功！"
+
+#: dashboard/views.py:294
+msgid "3月"
+msgstr ""
+
+#: dashboard/views.py:295
+msgid "4月"
+msgstr ""
+
+#: dashboard/views.py:323 dashboard/views.py:324
+#, fuzzy
+#| msgid "一级分类"
+msgid "未分类"
+msgstr "一级分类"
 
 #: data_entry/forms.py:40
 #, fuzzy
@@ -385,15 +430,6 @@ msgstr ""
 msgid "F&B"
 msgstr ""
 
-#: data_entry/models.py:21 data_entry/models.py:126 data_entry/views.py:696
-#: templates/dashboard/dashboard.html:35
-#: templates/data_entry/consumer_import_form.html:27
-#: templates/data_entry/consumer_list.html:142
-#: templates/data_entry/consumption_list.html:164
-#: templates/data_entry/import_form.html:27
-msgid "餐厅"
-msgstr ""
-
 #: data_entry/models.py:38 data_entry/views.py:697
 #: templates/data_entry/consumption_list.html:181
 #: templates/data_entry/import_form.html:28
@@ -416,19 +452,6 @@ msgstr ""
 #: templates/data_entry/consumption_list.html:233
 #: templates/data_entry/import_form.html:31
 msgid "消耗时间"
-msgstr ""
-
-#: data_entry/models.py:48 data_entry/views.py:704
-#: templates/data_entry/import_form.html:34
-msgid "消耗数量"
-msgstr ""
-
-#: data_entry/models.py:54 data_entry/views.py:705
-#: templates/dashboard/dashboard.html:309
-#: templates/dashboard/dashboard.html:365
-#: templates/data_entry/consumption_form.html:176
-#: templates/data_entry/consumption_list.html:302
-msgid "碳排放量(kgCO2e)"
 msgstr ""
 
 #: data_entry/models.py:67 data_entry/models.py:68
@@ -703,6 +726,7 @@ msgstr ""
 #: templates/coefficients/coefficient_list.html:4
 #: templates/coefficients/dashboard.html:4 templates/coefficients/login.html:8
 #: templates/coefficients/profile.html:4 templates/dashboard/dashboard.html:5
+#: templates/dashboard/data_customization.html:4
 #: templates/data_entry/consumer_form.html:9
 #: templates/data_entry/consumer_import_form.html:4
 #: templates/data_entry/consumer_import_result.html:4
@@ -721,11 +745,16 @@ msgstr "碳排放管理系统"
 msgid "数据看板"
 msgstr "数据看板"
 
-#: templates/base.html:219 templates/coefficients/dashboard.html:60
+#: templates/base.html:219 templates/dashboard/data_customization.html:4
+#: templates/dashboard/data_customization.html:10
+msgid "数据定制"
+msgstr ""
+
+#: templates/base.html:224 templates/coefficients/dashboard.html:60
 msgid "数据录入"
 msgstr "数据录入"
 
-#: templates/base.html:247
+#: templates/base.html:252
 msgid "退出"
 msgstr "退出"
 
@@ -929,6 +958,9 @@ msgstr ""
 #: templates/coefficients/coefficient_list.html:155
 #: templates/dashboard/dashboard.html:37 templates/dashboard/dashboard.html:46
 #: templates/dashboard/dashboard.html:57 templates/dashboard/dashboard.html:517
+#: templates/dashboard/data_customization.html:48
+#: templates/dashboard/data_customization.html:57
+#: templates/dashboard/data_customization.html:66
 #: templates/data_entry/consumption_list.html:171
 #: templates/data_entry/consumption_list.html:188
 #: templates/data_entry/consumption_list.html:256
@@ -949,6 +981,7 @@ msgid "删除"
 msgstr "删除"
 
 #: templates/coefficients/coefficient_list.html:239
+#: templates/dashboard/data_customization.html:168
 msgid "暂无数据"
 msgstr "暂无数据"
 
@@ -1184,6 +1217,8 @@ msgid "消耗记录数据可视化分析"
 msgstr ""
 
 #: templates/dashboard/dashboard.html:21 templates/dashboard/dashboard.html:24
+#: templates/dashboard/data_customization.html:86
+#: templates/dashboard/data_customization.html:105
 #: templates/data_entry/consumer_list.html:94
 #: templates/data_entry/consumer_list.html:96
 #: templates/data_entry/consumption_list.html:114
@@ -1192,6 +1227,8 @@ msgid "开始日期"
 msgstr ""
 
 #: templates/dashboard/dashboard.html:28 templates/dashboard/dashboard.html:31
+#: templates/dashboard/data_customization.html:90
+#: templates/dashboard/data_customization.html:109
 #: templates/data_entry/consumer_list.html:101
 #: templates/data_entry/consumer_list.html:103
 #: templates/data_entry/consumption_list.html:121
@@ -1278,6 +1315,76 @@ msgstr ""
 
 #: templates/dashboard/dashboard.html:626
 msgid "人均碳排量"
+msgstr ""
+
+#: templates/dashboard/data_customization.html:11
+msgid "自由选择行标题、列标题、日期范围和指标，生成可对比的数据表格。"
+msgstr ""
+
+#: templates/dashboard/data_customization.html:15
+#, fuzzy
+#| msgid "数据看板"
+msgid "返回数据看板"
+msgstr "数据看板"
+
+#: templates/dashboard/data_customization.html:22
+msgid "定制条件"
+msgstr ""
+
+#: templates/dashboard/data_customization.html:27
+msgid "基础设置"
+msgstr ""
+
+#: templates/dashboard/data_customization.html:30
+msgid "行标题"
+msgstr ""
+
+#: templates/dashboard/data_customization.html:38
+msgid "指标"
+msgstr ""
+
+#: templates/dashboard/data_customization.html:75
+msgid "对比周期"
+msgstr ""
+
+#: templates/dashboard/data_customization.html:79
+msgid "对比列 1"
+msgstr ""
+
+#: templates/dashboard/data_customization.html:82
+msgid "列标题 1"
+msgstr ""
+
+#: templates/dashboard/data_customization.html:98
+msgid "对比列 2"
+msgstr ""
+
+#: templates/dashboard/data_customization.html:101
+msgid "列标题 2"
+msgstr ""
+
+#: templates/dashboard/data_customization.html:117
+msgid "生成表格"
+msgstr ""
+
+#: templates/dashboard/data_customization.html:127
+msgid "定制结果"
+msgstr ""
+
+#: templates/dashboard/data_customization.html:138
+msgid "差异"
+msgstr ""
+
+#: templates/dashboard/data_customization.html:139
+msgid "变化率"
+msgstr ""
+
+#: templates/dashboard/data_customization.html:142
+msgid "日期范围"
+msgstr ""
+
+#: templates/dashboard/data_customization.html:174
+msgid "合计"
 msgstr ""
 
 #: templates/data_entry/consumer_form.html:6

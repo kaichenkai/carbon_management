@@ -245,3 +245,121 @@ def dashboard_view(request):
     }
     
     return render(request, 'dashboard/dashboard.html', context)
+
+
+def data_customization_view(request):
+    row_options = {
+        'category_level1': {
+            'label': _('一级分类'),
+            'field': 'category_level1__name',
+        },
+        'category_level2': {
+            'label': _('二级分类'),
+            'field': 'category_level2__name',
+        },
+        'restaurant': {
+            'label': _('餐厅'),
+            'field': 'restaurant',
+        },
+        'product_name': {
+            'label': _('产品名称'),
+            'field': 'product_name',
+        },
+    }
+    metric_options = {
+        'carbon_emission': {
+            'label': _('碳排放量(kgCO2e)'),
+            'aggregate': Sum('carbon_emission'),
+            'format': 'float',
+        },
+        'quantity': {
+            'label': _('消耗数量'),
+            'aggregate': Sum('quantity'),
+            'format': 'float',
+        },
+        'count': {
+            'label': _('记录数'),
+            'aggregate': Count('id'),
+            'format': 'int',
+        },
+    }
+
+    selected_row = request.GET.get('row_dimension', 'category_level1')
+    selected_metric = request.GET.get('metric', 'carbon_emission')
+    if selected_row not in row_options:
+        selected_row = 'category_level1'
+    if selected_metric not in metric_options:
+        selected_metric = 'carbon_emission'
+
+    start_date_1 = request.GET.get('start_date_1') or '2024-03-01'
+    end_date_1 = request.GET.get('end_date_1') or '2024-03-31'
+    start_date_2 = request.GET.get('start_date_2') or '2024-04-01'
+    end_date_2 = request.GET.get('end_date_2') or '2024-04-30'
+    if start_date_1 > end_date_1:
+        start_date_1, end_date_1 = end_date_1, start_date_1
+    if start_date_2 > end_date_2:
+        start_date_2, end_date_2 = end_date_2, start_date_2
+    selected_restaurant = request.GET.get('restaurant', '')
+    selected_category_level1 = request.GET.get('category_level1', '')
+    selected_category_level2 = request.GET.get('category_level2', '')
+
+    def build_queryset(start_date, end_date):
+        qs = MaterialConsumption.objects.filter(order_date__range=[start_date, end_date])
+        if selected_restaurant:
+            qs = qs.filter(restaurant=selected_restaurant)
+        if selected_category_level1:
+            qs = qs.filter(category_level1_id=selected_category_level1)
+        if selected_category_level2:
+            qs = qs.filter(category_level2_id=selected_category_level2)
+        return qs
+
+    row_field = row_options[selected_row]['field']
+    metric_config = metric_options[selected_metric]
+
+    data_1 = build_queryset(start_date_1, end_date_1).values(row_field).annotate(value=metric_config['aggregate'])
+    data_2 = build_queryset(start_date_2, end_date_2).values(row_field).annotate(value=metric_config['aggregate'])
+    map_1 = {item[row_field] or _('未分类'): item['value'] or 0 for item in data_1}
+    map_2 = {item[row_field] or _('未分类'): item['value'] or 0 for item in data_2}
+
+    rows = []
+    for row_name in sorted(set(map_1.keys()) | set(map_2.keys())):
+        value_1 = float(map_1.get(row_name, 0))
+        value_2 = float(map_2.get(row_name, 0))
+        difference = value_2 - value_1
+        change_rate = None if value_1 == 0 else (difference / value_1) * 100
+        rows.append({
+            'name': row_name,
+            'value_1': value_1,
+            'value_2': value_2,
+            'difference': difference,
+            'change_rate': change_rate,
+        })
+    rows.sort(key=lambda item: item['value_1'] + item['value_2'], reverse=True)
+
+    categories_level1 = EmissionCategory.objects.filter(level=1).order_by('name')
+    categories_level2 = EmissionCategory.objects.filter(level=2).order_by('name')
+    restaurants = MaterialConsumption.objects.values_list('restaurant', flat=True).distinct().order_by('restaurant')
+
+    context = {
+        'row_options': row_options,
+        'metric_options': metric_options,
+        'selected_row': selected_row,
+        'selected_metric': selected_metric,
+        'selected_row_label': row_options[selected_row]['label'],
+        'selected_metric_label': metric_options[selected_metric]['label'],
+        'start_date_1': start_date_1,
+        'end_date_1': end_date_1,
+        'start_date_2': start_date_2,
+        'end_date_2': end_date_2,
+        'selected_restaurant': selected_restaurant,
+        'selected_category_level1': selected_category_level1,
+        'selected_category_level2': selected_category_level2,
+        'categories_level1': categories_level1,
+        'categories_level2': categories_level2,
+        'restaurants': restaurants,
+        'rows': rows,
+        'total_1': sum(row['value_1'] for row in rows),
+        'total_2': sum(row['value_2'] for row in rows),
+        'total_difference': sum(row['difference'] for row in rows),
+    }
+    return render(request, 'dashboard/data_customization.html', context)

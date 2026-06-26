@@ -7,9 +7,29 @@
 {% block content %}
 <div class="container-fluid mt-4">
     <div class="row mb-4">
-        <div class="col">
-            <h2><i class="bi bi-graph-up"></i> {% trans "数据看板" %}</h2>
-            <p class="text-muted">{% trans "消耗记录数据可视化分析" %}</p>
+        <div class="col-md-3 mb-3">
+            <div class="card h-100 border-primary shadow" style="border-width: 3px; background-color: #f8f9fa;">
+                <div class="card-body">
+                    <h4 class="card-title mb-2">
+                        <i class="bi bi-graph-up" style="font-size: 1.5rem;"></i>
+                        {% trans "数据看板" %}
+                    </h4>
+                    <p class="card-text text-muted mb-0">{% trans "消耗记录数据可视化分析" %}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <a href="{% url 'data_customization' %}" class="text-decoration-none">
+                <div class="card h-100 border-info shadow-sm" style="border-width: 2px; background-color: #f8f9fa; opacity: 0.6;">
+                    <div class="card-body">
+                        <h4 class="card-title mb-2">
+                            <i class="bi bi-table" style="font-size: 1.5rem;"></i>
+                            {% trans "数据定制" %}
+                        </h4>
+                        <p class="card-text text-muted mb-0">{% trans "自定义对比分析表格" %}</p>
+                    </div>
+                </div>
+            </a>
         </div>
     </div>
 
@@ -364,8 +384,8 @@ const departmentChart = new Chart(departmentCtx, {
         datasets: [{
             label: '{% trans "碳排放量(kgCO2e)" %}',
             data: sortedDeptEmissions,
-            backgroundColor: 'rgba(54, 114, 197, 0.8)',
-            borderColor: 'rgba(54, 114, 197, 1)',
+            backgroundColor: 'rgba(54, 162, 235, 0.5)',
+            borderColor: 'rgba(54, 162, 235, 1)',
             borderWidth: 1
         }]
     },
