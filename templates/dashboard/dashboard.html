@@ -142,10 +142,10 @@
         <div class="col-lg-4">
             <div class="card h-100">
                 <div class="card-header">
-                    <h5 class="mb-0"><i class="bi bi-pie-chart"></i> {% trans "部门碳排放分布" %}</h5>
+                    <h5 class="mb-0"><i class="bi bi-bar-chart-horizontal"></i> {% trans "餐厅碳排放分布" %}</h5>
                 </div>
-                <div class="card-body d-flex align-items-center">
-                    <canvas id="departmentChart" height="80"></canvas>
+                <div class="card-body">
+                    <canvas id="departmentChart" style="min-height: 280px;"></canvas>
                 </div>
             </div>
         </div>
@@ -350,50 +350,48 @@ document.querySelectorAll('.period-btn').forEach(btn => {
 // Initialize with auto-detected period
 updateChart(initialPeriod);
 
-// Department Pie Chart
+// Restaurant Bar Chart (sorted descending)
+const deptPairs = departmentLabels.map((l, i) => [l, departmentEmissions[i]]);
+deptPairs.sort((a, b) => b[1] - a[1]);
+const sortedDeptLabels = deptPairs.map(p => p[0]);
+const sortedDeptEmissions = deptPairs.map(p => p[1]);
+
 const departmentCtx = document.getElementById('departmentChart').getContext('2d');
 const departmentChart = new Chart(departmentCtx, {
-    type: 'doughnut',
+    type: 'bar',
     data: {
-        labels: departmentLabels,
+        labels: sortedDeptLabels,
         datasets: [{
-            data: departmentEmissions,
-            backgroundColor: [
-                // 'rgba(255, 99, 132, 0.7)',
-                'rgba(54, 162, 235, 0.7)',
-                'rgba(255, 206, 86, 0.7)',
-                'rgba(75, 192, 192, 0.7)',
-                'rgba(153, 102, 255, 0.7)',
-                'rgba(255, 159, 64, 0.7)',
-                'rgba(199, 199, 199, 0.7)',
-                'rgba(83, 102, 255, 0.7)'
-            ],
+            label: '{% trans "碳排放量(kgCO2e)" %}',
+            data: sortedDeptEmissions,
+            backgroundColor: 'rgba(54, 114, 197, 0.8)',
+            borderColor: 'rgba(54, 114, 197, 1)',
             borderWidth: 1
         }]
     },
     options: {
+        indexAxis: 'y',
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-            legend: {
-                position: 'bottom',
-                labels: {
-                    padding: 10,
-                    font: {
-                        size: 11
-                    }
-                }
-            },
+            legend: { display: false },
             tooltip: {
                 callbacks: {
                     label: function(context) {
-                        const label = context.label || '';
-                        const value = context.parsed.toFixed(2);
-                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                        const percentage = ((context.parsed / total) * 100).toFixed(1);
-                        return label + ': ' + value + ' kgCO2e (' + percentage + '%)';
+                        return context.parsed.x.toFixed(2) + ' kgCO2e';
                     }
                 }
+            }
+        },
+        scales: {
+            x: {
+                beginAtZero: true,
+                ticks: {
+                    callback: function(value) { return value.toFixed(0); }
+                }
+            },
+            y: {
+                ticks: { font: { size: 12 } }
             }
         }
     }

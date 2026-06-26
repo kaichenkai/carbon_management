@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-26 20:43+0800\n"
+"POT-Creation-Date: 2026-06-26 21:01+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -425,6 +425,7 @@ msgstr ""
 
 #: data_entry/models.py:54 data_entry/views.py:705
 #: templates/dashboard/dashboard.html:309
+#: templates/dashboard/dashboard.html:365
 #: templates/data_entry/consumption_form.html:176
 #: templates/data_entry/consumption_list.html:302
 msgid "碳排放量(kgCO2e)"
@@ -927,7 +928,7 @@ msgstr ""
 #: templates/coefficients/coefficient_list.html:138
 #: templates/coefficients/coefficient_list.html:155
 #: templates/dashboard/dashboard.html:37 templates/dashboard/dashboard.html:46
-#: templates/dashboard/dashboard.html:57 templates/dashboard/dashboard.html:519
+#: templates/dashboard/dashboard.html:57 templates/dashboard/dashboard.html:517
 #: templates/data_entry/consumption_list.html:171
 #: templates/data_entry/consumption_list.html:188
 #: templates/data_entry/consumption_list.html:256
@@ -1235,7 +1236,7 @@ msgid "按月"
 msgstr ""
 
 #: templates/dashboard/dashboard.html:145
-msgid "部门碳排放分布"
+msgid "餐厅碳排放分布"
 msgstr ""
 
 #: templates/dashboard/dashboard.html:159
@@ -1247,7 +1248,7 @@ msgid "月度人均碳排量"
 msgstr ""
 
 #: templates/dashboard/dashboard.html:186
-#: templates/dashboard/dashboard.html:495
+#: templates/dashboard/dashboard.html:493
 msgid "一级分类碳排放量"
 msgstr "一级分类碳排放量"
 
@@ -1257,25 +1258,25 @@ msgstr "一级分类碳排放量"
 msgid "返回"
 msgstr "返回首页"
 
-#: templates/dashboard/dashboard.html:412
+#: templates/dashboard/dashboard.html:410
 msgid "碳排放量"
 msgstr ""
 
-#: templates/dashboard/dashboard.html:466
+#: templates/dashboard/dashboard.html:464
 msgid "该分类下没有二级分类数据"
 msgstr ""
 
-#: templates/dashboard/dashboard.html:478
+#: templates/dashboard/dashboard.html:476
 #, fuzzy
 #| msgid "一级分类碳排放量"
 msgid "二级分类碳排放量"
 msgstr "一级分类碳排放量"
 
-#: templates/dashboard/dashboard.html:572
+#: templates/dashboard/dashboard.html:570
 msgid "调整后碳排量"
 msgstr ""
 
-#: templates/dashboard/dashboard.html:628
+#: templates/dashboard/dashboard.html:626
 msgid "人均碳排量"
 msgstr ""
 
