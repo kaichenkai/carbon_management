@@ -171,12 +171,8 @@ def consumption_create(request):
     else:
         form = MaterialConsumptionForm()
     
-    # Get all product codes for datalist
-    product_names = EmissionCoefficient.objects.values_list('product_name', flat=True)
-    
     context = {
         'form': form,
-        'product_names': product_names,
     }
     return render(request, 'data_entry/consumption_form.html', context)
 
@@ -194,12 +190,8 @@ def consumption_edit(request, pk):
     else:
         form = MaterialConsumptionForm(instance=consumption)
     
-    # Get all product_names for datalist
-    product_names = EmissionCoefficient.objects.values_list('product_name', flat=True)
-    
     context = {
         'form': form,
-        'product_names': product_names,
         'consumption': consumption,
     }
     return render(request, 'data_entry/consumption_form.html', context)
