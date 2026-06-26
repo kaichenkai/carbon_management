@@ -29,6 +29,7 @@ def dashboard_view(request):
     start_date = request.GET.get('start_date')
     category_level1_id = request.GET.get('category_level1')
     category_level2_id = request.GET.get('category_level2')
+    selected_restaurant = request.GET.get('restaurant', '')
     
     if end_date:
         end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
@@ -47,11 +48,13 @@ def dashboard_view(request):
         order_date__range=[start_date, end_date]
     )
     
-    # Apply category filters if provided
+    # Apply category and restaurant filters if provided
     if category_level1_id:
         consumptions_base = consumptions_base.filter(category_level1_id=category_level1_id)
     if category_level2_id:
         consumptions_base = consumptions_base.filter(category_level2_id=category_level2_id)
+    if selected_restaurant:
+        consumptions_base = consumptions_base.filter(restaurant=selected_restaurant)
     
     # Use select_related to fetch related objects in one query
     consumptions = consumptions_base.select_related(
@@ -135,9 +138,10 @@ def dashboard_view(request):
     latest_record = MaterialConsumption.objects.order_by('-order_date').first()
     latest_date = latest_record.order_date if latest_record else end_date
     
-    # Get all categories for filter dropdowns
+    # Get all categories and restaurants for filter dropdowns
     categories_level1 = EmissionCategory.objects.filter(level=1).order_by('name')
     categories_level2 = EmissionCategory.objects.filter(level=2).order_by('name')
+    restaurants = MaterialConsumption.objects.values_list('restaurant', flat=True).distinct().order_by('restaurant')
     
     # Build category hierarchy for cascade dropdown
     category_hierarchy = {}
@@ -229,6 +233,8 @@ def dashboard_view(request):
         'categories_level1': categories_level1,
         'categories_level2': categories_level2,
         'category_hierarchy_json': json.dumps(category_hierarchy),
+        'restaurants': restaurants,
+        'selected_restaurant': selected_restaurant,
         'selected_category_level1': category_level1_id,
         'selected_category_level2': category_level2_id,
         # Consumer data charts
