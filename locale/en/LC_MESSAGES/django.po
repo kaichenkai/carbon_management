@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-26 21:34+0800\n"
+"POT-Creation-Date: 2026-06-26 20:43+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,7 +19,7 @@ msgstr ""
 
 #: coefficients/admin.py:21
 msgid "额外信息"
-msgstr ""
+msgstr "Additional Info"
 
 #: coefficients/apps.py:8 templates/base.html:225
 #: templates/coefficients/coefficient_form.html:19
@@ -56,20 +56,20 @@ msgid "记住我"
 msgstr "Remember Me"
 
 #: coefficients/forms.py:49 coefficients/models.py:51 coefficients/models.py:90
-#: coefficients/views.py:291 coefficients/views.py:347 data_entry/forms.py:14
-#: data_entry/models.py:26 data_entry/views.py:549
-#: templates/coefficients/coefficient_list.html:129
-#: templates/dashboard/dashboard.html:35
+#: coefficients/views.py:302 coefficients/views.py:358 data_entry/forms.py:14
+#: data_entry/models.py:27 data_entry/views.py:701
+#: templates/coefficients/coefficient_list.html:131
+#: templates/dashboard/dashboard.html:44
 #: templates/data_entry/consumption_list.html:249
 #: templates/data_entry/import_form.html:32
 msgid "一级分类"
 msgstr "Level 1 Category"
 
 #: coefficients/forms.py:59 coefficients/models.py:52 coefficients/models.py:97
-#: coefficients/views.py:291 coefficients/views.py:347 data_entry/forms.py:25
-#: data_entry/models.py:33 data_entry/views.py:550
-#: templates/coefficients/coefficient_list.html:146
-#: templates/dashboard/dashboard.html:46
+#: coefficients/views.py:302 coefficients/views.py:358 data_entry/forms.py:25
+#: data_entry/models.py:34 data_entry/views.py:702
+#: templates/coefficients/coefficient_list.html:148
+#: templates/dashboard/dashboard.html:55
 #: templates/data_entry/consumption_list.html:266
 #: templates/data_entry/import_form.html:33
 msgid "二级分类"
@@ -80,7 +80,7 @@ msgid "产品举例（可选）"
 msgstr "Product Examples (Optional)"
 
 #: coefficients/forms.py:128 data_entry/forms.py:181 data_entry/forms.py:244
-#: templates/dashboard/dashboard.html:58
+#: templates/dashboard/dashboard.html:67
 msgid "搜索"
 msgstr "Search"
 
@@ -90,25 +90,25 @@ msgstr "Search category or product examples..."
 
 #: coefficients/migrations/0002_emissioncoefficient_department.py:19
 #: coefficients/migrations/0003_alter_emissioncoefficient_department.py:36
-#: data_entry/models.py:8
+#: data_entry/models.py:9
 msgid "生产部"
 msgstr "Production"
 
 #: coefficients/migrations/0002_emissioncoefficient_department.py:20
 #: coefficients/migrations/0003_alter_emissioncoefficient_department.py:37
-#: data_entry/models.py:9
+#: data_entry/models.py:10
 msgid "研发部"
 msgstr "R&D"
 
 #: coefficients/migrations/0002_emissioncoefficient_department.py:21
 #: coefficients/migrations/0003_alter_emissioncoefficient_department.py:38
-#: data_entry/models.py:10
+#: data_entry/models.py:11
 msgid "行政部"
 msgstr "Administration"
 
 #: coefficients/migrations/0002_emissioncoefficient_department.py:22
 #: coefficients/migrations/0003_alter_emissioncoefficient_department.py:39
-#: data_entry/models.py:11
+#: data_entry/models.py:12
 msgid "后勤部"
 msgstr "Logistics"
 
@@ -126,13 +126,14 @@ msgid "酒店名称(英文)"
 msgstr "Hotel Name (English)"
 
 #: coefficients/models.py:12 coefficients/models.py:66
-#: coefficients/models.py:104 data_entry/models.py:62 data_entry/models.py:146
-#: data_entry/views.py:555
+#: coefficients/models.py:104 data_entry/models.py:63 data_entry/models.py:147
+#: data_entry/models.py:201 data_entry/views.py:707
 msgid "创建时间"
 msgstr "Created At"
 
-#: coefficients/models.py:13 coefficients/models.py:67 data_entry/models.py:63
-#: data_entry/models.py:147 templates/data_entry/consumer_list.html:208
+#: coefficients/models.py:13 coefficients/models.py:67 data_entry/models.py:64
+#: data_entry/models.py:148 data_entry/models.py:202
+#: templates/data_entry/consumer_list.html:208
 msgid "更新时间"
 msgstr "Updated At"
 
@@ -192,36 +193,35 @@ msgstr "Emission Category"
 
 #: coefficients/models.py:83
 msgid "KG"
-msgstr ""
+msgstr "KG"
 
 #: coefficients/models.py:84
 msgid "L"
-msgstr ""
+msgstr "L"
 
-#: coefficients/models.py:101 coefficients/views.py:292
-#: coefficients/views.py:348 templates/coefficients/coefficient_list.html:161
-#: templates/dashboard/dashboard.html:90
+#: coefficients/models.py:101 coefficients/views.py:303
+#: coefficients/views.py:359 templates/coefficients/coefficient_list.html:163
 #: templates/data_entry/consumption_form.html:125
 msgid "单位"
 msgstr "Unit"
 
 #: coefficients/models.py:102 coefficients/models.py:115
-#: coefficients/models.py:116 coefficients/views.py:292
-#: coefficients/views.py:348 data_entry/models.py:40 data_entry/views.py:551
-#: templates/coefficients/coefficient_list.html:165
+#: coefficients/models.py:116 coefficients/views.py:303
+#: coefficients/views.py:359 data_entry/models.py:41 data_entry/views.py:703
+#: templates/coefficients/coefficient_list.html:167
 #: templates/data_entry/consumption_list.html:281
 msgid "碳排放系数"
 msgstr "Emission Coefficient"
 
-#: coefficients/models.py:103 data_entry/models.py:59 data_entry/views.py:554
+#: coefficients/models.py:103 data_entry/models.py:60 data_entry/views.py:706
 #: templates/data_entry/consumer_import_form.html:30
 #: templates/data_entry/consumer_list.html:209
 #: templates/data_entry/consumption_list.html:316
 msgid "特殊备注"
 msgstr "Special Notes"
 
-#: coefficients/models.py:105 coefficients/views.py:292
-#: templates/coefficients/coefficient_list.html:182
+#: coefficients/models.py:105 coefficients/views.py:303
+#: templates/coefficients/coefficient_list.html:184
 msgid "最后更新"
 msgstr "Last Updated"
 
@@ -250,49 +250,49 @@ msgstr "You have successfully logged out"
 msgid "个人信息更新成功！"
 msgstr "Profile updated successfully!"
 
-#: coefficients/views.py:201
+#: coefficients/views.py:212
 msgid "系数添加成功！"
 msgstr "Coefficient added successfully!"
 
-#: coefficients/views.py:230
+#: coefficients/views.py:241
 msgid "系数更新成功！"
 msgstr "Coefficient updated successfully!"
 
-#: coefficients/views.py:256
+#: coefficients/views.py:267
 msgid "系数删除成功！"
 msgstr "Coefficient deleted successfully!"
 
-#: coefficients/views.py:287 coefficients/views.py:327
+#: coefficients/views.py:298 coefficients/views.py:338
 msgid "碳排放系数库"
 msgstr "Carbon Emission Coefficient Database"
 
-#: coefficients/views.py:292 coefficients/views.py:348
+#: coefficients/views.py:303 coefficients/views.py:359
 #: templates/coefficients/coefficient_confirm_delete.html:33
 #: templates/coefficients/coefficient_form.html:91
-#: templates/coefficients/coefficient_list.html:196
+#: templates/coefficients/coefficient_list.html:198
 msgid "产品举例"
 msgstr "Product Examples"
 
-#: coefficients/views.py:390
+#: coefficients/views.py:401
 msgid "碳排放系数导入模板"
 msgstr "Carbon_Coefficient_Import_Template"
 
-#: coefficients/views.py:462 data_entry/views.py:244 data_entry/views.py:778
+#: coefficients/views.py:473 data_entry/views.py:930
 #, python-format
 msgid "成功导入 %(count)s 条记录"
 msgstr "Successfully imported %(count)s records"
 
-#: coefficients/views.py:464
+#: coefficients/views.py:475
 #, python-format
 msgid "失败 %(count)s 条记录"
 msgstr "Failed %(count)s records"
 
-#: coefficients/views.py:469
+#: coefficients/views.py:480
 #, python-format
 msgid "文件处理失败: %(error)s"
 msgstr "File processing failed: %(error)s"
 
-#: data_entry/forms.py:36 data_entry/models.py:38 data_entry/views.py:546
+#: data_entry/forms.py:36 data_entry/models.py:39 data_entry/views.py:698
 #: templates/data_entry/consumption_form.html:119
 #: templates/data_entry/consumption_list.html:199
 #: templates/data_entry/import_form.html:29
@@ -370,11 +370,12 @@ msgstr "Consumer count cannot be negative"
 msgid "搜索餐厅..."
 msgstr "Search restaurant..."
 
-#: data_entry/models.py:12
+#: data_entry/models.py:13
 msgid "F&B"
 msgstr "F&B"
 
-#: data_entry/models.py:20 data_entry/models.py:125 data_entry/views.py:544
+#: data_entry/models.py:21 data_entry/models.py:126 data_entry/views.py:696
+#: templates/dashboard/dashboard.html:35
 #: templates/data_entry/consumer_import_form.html:27
 #: templates/data_entry/consumer_list.html:142
 #: templates/data_entry/consumption_list.html:164
@@ -382,17 +383,17 @@ msgstr "F&B"
 msgid "餐厅"
 msgstr "Restaurant"
 
-#: data_entry/models.py:37 data_entry/views.py:545
+#: data_entry/models.py:38 data_entry/views.py:697
 #: templates/data_entry/consumption_list.html:181
 #: templates/data_entry/import_form.html:28
 msgid "产品编码"
 msgstr "Product Code"
 
-#: data_entry/models.py:39
+#: data_entry/models.py:40
 msgid "产品单位"
 msgstr "Product Unit"
 
-#: data_entry/models.py:43 data_entry/models.py:128 data_entry/views.py:547
+#: data_entry/models.py:44 data_entry/models.py:129 data_entry/views.py:699
 #: templates/data_entry/consumer_import_form.html:28
 #: templates/data_entry/consumer_list.html:159
 #: templates/data_entry/consumption_list.html:216
@@ -400,45 +401,45 @@ msgstr "Product Unit"
 msgid "订单日期"
 msgstr "Order Date"
 
-#: data_entry/models.py:44 data_entry/views.py:548
+#: data_entry/models.py:45 data_entry/views.py:700
 #: templates/data_entry/consumption_list.html:233
 #: templates/data_entry/import_form.html:31
 msgid "消耗时间"
 msgstr "Consumption Time"
 
-#: data_entry/models.py:47 data_entry/views.py:552
+#: data_entry/models.py:48 data_entry/views.py:704
 #: templates/data_entry/import_form.html:34
 msgid "消耗数量"
 msgstr "Consumption Quantity"
 
-#: data_entry/models.py:53 data_entry/views.py:553
-#: templates/dashboard/dashboard.html:300
+#: data_entry/models.py:54 data_entry/views.py:705
+#: templates/dashboard/dashboard.html:309
 #: templates/data_entry/consumption_form.html:176
 #: templates/data_entry/consumption_list.html:302
 msgid "碳排放量(kgCO2e)"
 msgstr "Carbon Emission (kgCO2e)"
 
-#: data_entry/models.py:66 data_entry/models.py:67
+#: data_entry/models.py:67 data_entry/models.py:68
 #: templates/data_entry/consumer_list.html:62
 #: templates/data_entry/consumption_list.html:4
 #: templates/data_entry/consumption_list.html:82
 msgid "物料消耗记录"
 msgstr "Material Consumption Records"
 
-#: data_entry/models.py:131 templates/data_entry/consumer_import_form.html:29
+#: data_entry/models.py:132 templates/data_entry/consumer_import_form.html:29
 #: templates/data_entry/consumer_list.html:176
 msgid "消费者人数"
 msgstr "Consumer Count"
 
-#: data_entry/models.py:135
+#: data_entry/models.py:136
 msgid "当日碳排总量(kgCO2e)"
 msgstr "Daily Total Carbon Emission (kgCO2e)"
 
-#: data_entry/models.py:143
+#: data_entry/models.py:144
 msgid "备注"
 msgstr "Notes"
 
-#: data_entry/models.py:150 data_entry/models.py:151
+#: data_entry/models.py:151 data_entry/models.py:152
 #: templates/data_entry/consumer_form.html:27
 #: templates/data_entry/consumer_list.html:4
 #: templates/data_entry/consumer_list.html:75
@@ -446,147 +447,216 @@ msgstr "Notes"
 msgid "消费者数据"
 msgstr "Consumer Data"
 
-#: data_entry/views.py:125
+#: data_entry/models.py:187
+msgid "等待中"
+msgstr "Pending"
+
+#: data_entry/models.py:188
+msgid "处理中"
+msgstr "Processing"
+
+#: data_entry/models.py:189
+msgid "完成"
+msgstr "Done"
+
+#: data_entry/models.py:190
+msgid "失败"
+msgstr "Failed"
+
+#: data_entry/models.py:194
+#, fuzzy
+#| msgid "账号状态"
+msgid "状态"
+msgstr "Account Status"
+
+#: data_entry/models.py:195 templates/data_entry/consumer_import_result.html:32
+#: templates/data_entry/import_result.html:32
+msgid "总行数"
+msgstr "Total Rows"
+
+#: data_entry/models.py:196
+msgid "已处理行数"
+msgstr "Processed Rows"
+
+#: data_entry/models.py:197
+msgid "成功数"
+msgstr "Success Count"
+
+#: data_entry/models.py:198 templates/data_entry/consumer_import_result.html:55
+#: templates/data_entry/import_result.html:55
+msgid "错误详情"
+msgstr "Error Details"
+
+#: data_entry/models.py:199 templates/data_entry/consumer_import_result.html:68
+#: templates/data_entry/import_result.html:68
+msgid "错误信息"
+msgstr "Error Message"
+
+#: data_entry/models.py:200
+msgid "错误文件路径"
+msgstr "Error File Path"
+
+#: data_entry/models.py:205 data_entry/models.py:206
+msgid "导入任务"
+msgstr "Import Task"
+
+#: data_entry/views.py:169
 msgid "消耗记录创建成功"
 msgstr "Consumption record created successfully"
 
-#: data_entry/views.py:148
+#: data_entry/views.py:188
 msgid "消耗记录更新成功"
 msgstr "Consumption record updated successfully"
 
-#: data_entry/views.py:168
+#: data_entry/views.py:204
 msgid "消耗记录删除成功"
 msgstr "Consumption record deleted successfully"
 
-#: data_entry/views.py:193
+#: data_entry/views.py:229
 msgid "一级分类不存在"
 msgstr "Level 1 category does not exist"
 
-#: data_entry/views.py:249 data_entry/views.py:783
-#, python-format
-msgid "失败 %(count)s 条记录，详情见下方"
-msgstr "Failed %(count)s records, see details below"
-
-#: data_entry/views.py:255 data_entry/views.py:789
-#, python-format
-msgid "导入失败：%(error)s"
-msgstr "Import failed: %(error)s"
-
-#: data_entry/views.py:258 data_entry/views.py:792
+#: data_entry/views.py:283 data_entry/views.py:944
 #, python-format
 msgid "文件处理失败：%(error)s"
 msgstr "File processing failed: %(error)s"
 
-#: data_entry/views.py:289 data_entry/views.py:816
+#: data_entry/views.py:342
+msgid "失败数据文件不存在，请重新导入后再下载。"
+msgstr "Failed data file not found. Please re-import and try again."
+
+#: data_entry/views.py:392 data_entry/views.py:968
 #, python-format
 msgid "缺少必需列：%(columns)s"
 msgstr "Missing required columns: %(columns)s"
 
-#: data_entry/views.py:312 data_entry/views.py:841
+#: data_entry/views.py:425 data_entry/views.py:993
 #, fuzzy
 #| msgid "酒店名称不能为空"
 msgid "餐厅不能为空"
 msgstr "Hotel name cannot be empty"
 
-#: data_entry/views.py:325
+#: data_entry/views.py:436
 #, python-format
 msgid "一级分类 \"%(category)s\" 不存在"
 msgstr "Level 1 category \"%(category)s\" does not exist"
 
-#: data_entry/views.py:338
+#: data_entry/views.py:444
 #, python-format
 msgid "二级分类 \"%(level2)s\" 不存在或不属于 \"%(level1)s\""
 msgstr ""
 "Level 2 category \"%(level2)s\" does not exist or does not belong to "
 "\"%(level1)s\""
 
-#: data_entry/views.py:347
+#: data_entry/views.py:453
 msgid "产品编码不能为空"
 msgstr "Product code cannot be empty"
 
-#: data_entry/views.py:364
+#: data_entry/views.py:461
 msgid "未找到匹配的碳排放系数"
 msgstr "No matching emission coefficient found"
 
-#: data_entry/views.py:382 data_entry/views.py:851
+#: data_entry/views.py:475 data_entry/views.py:1003
 #, python-format
 msgid "日期格式错误：%(date)s"
 msgstr "Date format error: %(date)s"
 
-#: data_entry/views.py:407
+#: data_entry/views.py:487
 #, fuzzy, python-format
 #| msgid "时间格式错误：%(time)s (%(error)s)"
 msgid "时间格式错误：%(time)s"
 msgstr "Time format error: %(time)s (%(error)s)"
 
-#: data_entry/views.py:417
-msgid "消耗数量必须大于0"
-msgstr "Consumption quantity must be greater than 0"
+#: data_entry/views.py:495
+#, fuzzy
+#| msgid "消费者人数不能为负数"
+msgid "消耗数量不能为负数"
+msgstr "Consumer count cannot be negative"
 
-#: data_entry/views.py:423
+#: data_entry/views.py:500
 #, python-format
 msgid "消耗数量格式错误：%(quantity)s"
 msgstr "Consumption quantity format error: %(quantity)s"
 
-#: data_entry/views.py:441
-#, fuzzy, python-format
+#: data_entry/views.py:509
+#, fuzzy
 #| msgid "重复记录：该酒店、部门、产品在此日期时间已有消耗记录 (ID: %(id)s)"
-msgid "重复记录：该餐厅、产品在此日期已有消耗记录 (ID: %(id)s)"
-msgstr ""
-"Duplicate record: A consumption record already exists for this hotel, "
-"department, and product at this date and time (ID: %(id)s)"
+msgid "重复记录：该餐厅、产品在此日期且消耗数量相同的记录已存在"
+msgstr "Duplicate record: A record with the same restaurant, product, date and quantity already exists"
 
-#: data_entry/views.py:464 data_entry/views.py:902
+#: data_entry/views.py:531 data_entry/views.py:1054
 #, python-format
 msgid "处理失败：%(error)s"
 msgstr "Processing failed: %(error)s"
 
-#: data_entry/views.py:564 data_entry/views.py:567
+#: data_entry/views.py:571
+#, fuzzy
+#| msgid "导入失败：%(error)s"
+msgid "导入失败"
+msgstr "Import failed: %(error)s"
+
+#: data_entry/views.py:604
+#, fuzzy, python-format
+#| msgid "文件处理失败：%(error)s"
+msgid "失败数据文件生成失败：%(error)s"
+msgstr "File processing failed: %(error)s"
+
+#: data_entry/views.py:716 data_entry/views.py:719
 msgid "消耗记录"
 msgstr "Consumption Records"
 
-#: data_entry/views.py:694
+#: data_entry/views.py:846
 msgid "消费者数据创建成功"
 msgstr "Consumer data created successfully"
 
-#: data_entry/views.py:697
+#: data_entry/views.py:849
 #, python-format
 msgid "创建失败：%(error)s"
 msgstr "Creation failed: %(error)s"
 
-#: data_entry/views.py:716
+#: data_entry/views.py:868
 msgid "消费者数据更新成功"
 msgstr "Consumer data updated successfully"
 
-#: data_entry/views.py:719
+#: data_entry/views.py:871
 #, python-format
 msgid "更新失败：%(error)s"
 msgstr "Update failed: %(error)s"
 
-#: data_entry/views.py:734
+#: data_entry/views.py:886
 msgid "消费者数据删除成功"
 msgstr "Consumer data deleted successfully"
 
-#: data_entry/views.py:751
+#: data_entry/views.py:903
 #, python-format
 msgid "成功刷新 %(count)s 条记录的碳排放数据"
 msgstr "Successfully refreshed carbon emission data for %(count)s records"
 
-#: data_entry/views.py:753
+#: data_entry/views.py:905
 #, python-format
 msgid "刷新失败：%(error)s"
 msgstr "Refresh failed: %(error)s"
 
-#: data_entry/views.py:861
+#: data_entry/views.py:935
+#, python-format
+msgid "失败 %(count)s 条记录，详情见下方"
+msgstr "Failed %(count)s records, see details below"
+
+#: data_entry/views.py:941
+#, python-format
+msgid "导入失败：%(error)s"
+msgstr "Import failed: %(error)s"
+
+#: data_entry/views.py:1013
 msgid "消费者人数必须大于0"
 msgstr "Consumer count must be greater than 0"
 
-#: data_entry/views.py:867
+#: data_entry/views.py:1019
 #, python-format
 msgid "消费者人数格式错误：%(count)s"
 msgstr "Consumer count format error: %(count)s"
 
-#: data_entry/views.py:886
+#: data_entry/views.py:1038
 #, python-format
 msgid "记录已存在（ID: %(id)s）"
 msgstr "Record already exists (ID: %(id)s)"
@@ -605,6 +675,7 @@ msgstr "Record already exists (ID: %(id)s)"
 #: templates/data_entry/consumption_form.html:5
 #: templates/data_entry/consumption_list.html:4
 #: templates/data_entry/import_form.html:4
+#: templates/data_entry/import_progress.html:4
 #: templates/data_entry/import_result.html:4
 msgid "碳排放管理系统"
 msgstr "Carbon Emission Management System"
@@ -663,7 +734,7 @@ msgstr "Edit Coefficient"
 
 #: templates/coefficients/coefficient_form.html:5
 #: templates/coefficients/coefficient_form.html:14
-#: templates/coefficients/coefficient_list.html:98
+#: templates/coefficients/coefficient_list.html:100
 msgid "新增系数"
 msgstr "Add Coefficient"
 
@@ -673,7 +744,7 @@ msgid "首页"
 msgstr "Home"
 
 #: templates/coefficients/coefficient_form.html:21
-#: templates/coefficients/coefficient_list.html:225
+#: templates/coefficients/coefficient_list.html:227
 #: templates/data_entry/consumer_form.html:30
 #: templates/data_entry/consumer_list.html:241
 #: templates/data_entry/consumption_list.html:372
@@ -702,7 +773,7 @@ msgstr "Save"
 
 #: templates/coefficients/coefficient_import.html:4
 #: templates/coefficients/coefficient_import.html:15
-#: templates/coefficients/coefficient_list.html:101
+#: templates/coefficients/coefficient_list.html:103
 #: templates/data_entry/consumer_list.html:116
 #: templates/data_entry/consumption_list.html:136
 msgid "批量导入"
@@ -779,33 +850,33 @@ msgstr "Carbon Emission Coefficient Management"
 msgid "统一管理碳排放系数库"
 msgstr "Unified management of carbon emission coefficient database"
 
-#: templates/coefficients/coefficient_list.html:93
+#: templates/coefficients/coefficient_list.html:95
 #: templates/data_entry/consumer_list.html:108
 #: templates/data_entry/consumption_list.html:128
 msgid "清除筛选"
 msgstr "Clear Filters"
 
-#: templates/coefficients/coefficient_list.html:104
+#: templates/coefficients/coefficient_list.html:106
 #: templates/data_entry/consumer_list.html:119
 #: templates/data_entry/consumption_list.html:139
 msgid "下载模板"
 msgstr "Download Template"
 
-#: templates/coefficients/coefficient_list.html:108
-#: templates/coefficients/coefficient_list.html:371
+#: templates/coefficients/coefficient_list.html:110
+#: templates/coefficients/coefficient_list.html:373
 #: templates/data_entry/consumption_list.html:143
 #: templates/data_entry/consumption_list.html:572
 msgid "导出数据"
 msgstr "Export Data"
 
-#: templates/coefficients/coefficient_list.html:126
+#: templates/coefficients/coefficient_list.html:128
 #: templates/data_entry/consumer_list.html:138
 #: templates/data_entry/consumption_list.html:161
 msgid "序号"
 msgstr "Number"
 
-#: templates/coefficients/coefficient_list.html:135
-#: templates/coefficients/coefficient_list.html:152
+#: templates/coefficients/coefficient_list.html:137
+#: templates/coefficients/coefficient_list.html:154
 #: templates/data_entry/consumption_list.html:170
 #: templates/data_entry/consumption_list.html:187
 #: templates/data_entry/consumption_list.html:255
@@ -813,10 +884,10 @@ msgstr "Number"
 msgid "搜索..."
 msgstr "Search..."
 
-#: templates/coefficients/coefficient_list.html:136
-#: templates/coefficients/coefficient_list.html:153
-#: templates/dashboard/dashboard.html:37 templates/dashboard/dashboard.html:48
-#: templates/dashboard/dashboard.html:510
+#: templates/coefficients/coefficient_list.html:138
+#: templates/coefficients/coefficient_list.html:155
+#: templates/dashboard/dashboard.html:37 templates/dashboard/dashboard.html:46
+#: templates/dashboard/dashboard.html:57 templates/dashboard/dashboard.html:519
 #: templates/data_entry/consumption_list.html:171
 #: templates/data_entry/consumption_list.html:188
 #: templates/data_entry/consumption_list.html:256
@@ -824,55 +895,56 @@ msgstr "Search..."
 msgid "全部"
 msgstr "All"
 
-#: templates/coefficients/coefficient_list.html:197
+#: templates/coefficients/coefficient_list.html:199
 #: templates/data_entry/consumer_list.html:210
 #: templates/data_entry/consumption_list.html:317
 msgid "操作"
 msgstr "Actions"
 
-#: templates/coefficients/coefficient_list.html:228
+#: templates/coefficients/coefficient_list.html:230
 #: templates/data_entry/consumer_list.html:244
 #: templates/data_entry/consumption_list.html:375
 msgid "删除"
 msgstr "Delete"
 
-#: templates/coefficients/coefficient_list.html:237
+#: templates/coefficients/coefficient_list.html:239
 msgid "暂无数据"
 msgstr "No data available"
 
-#: templates/coefficients/coefficient_list.html:286
+#: templates/coefficients/coefficient_list.html:288
 #: templates/data_entry/consumer_list.html:302
 #: templates/data_entry/consumption_list.html:433
 msgid "第"
 msgstr "Page"
 
-#: templates/coefficients/coefficient_list.html:286
+#: templates/coefficients/coefficient_list.html:288
 #: templates/data_entry/consumer_list.html:302
 #: templates/data_entry/consumption_list.html:433
 msgid "页，共"
 msgstr "of"
 
-#: templates/coefficients/coefficient_list.html:286
+#: templates/coefficients/coefficient_list.html:288
 #: templates/data_entry/consumer_list.html:302
 #: templates/data_entry/consumption_list.html:433
 msgid "页"
 msgstr "pages"
 
-#: templates/coefficients/coefficient_list.html:286
+#: templates/coefficients/coefficient_list.html:288
 #: templates/data_entry/consumer_list.html:302
 #: templates/data_entry/consumption_list.html:433
 msgid "总计"
 msgstr "Total"
 
-#: templates/coefficients/coefficient_list.html:286
-#: templates/dashboard/dashboard.html:74
+#: templates/coefficients/coefficient_list.html:288
+#: templates/dashboard/dashboard.html:83
 #: templates/data_entry/consumer_list.html:302
 #: templates/data_entry/consumption_list.html:433
 #: templates/data_entry/consumption_list.html:449
+#: templates/data_entry/import_progress.html:44
 msgid "条"
 msgstr "items"
 
-#: templates/coefficients/coefficient_list.html:367
+#: templates/coefficients/coefficient_list.html:369
 #: templates/data_entry/consumption_list.html:565
 msgid "导出选中"
 msgstr "Export Selected"
@@ -1088,74 +1160,78 @@ msgstr "Start Date"
 msgid "结束日期"
 msgstr "End Date"
 
-#: templates/dashboard/dashboard.html:72
+#: templates/dashboard/dashboard.html:81
 msgid "总记录数"
 msgstr "Total Records"
 
-#: templates/dashboard/dashboard.html:88
+#: templates/dashboard/dashboard.html:97
 #: templates/data_entry/consumption_list.html:453
 msgid "总消耗数量"
 msgstr "Total Quantity"
 
-#: templates/dashboard/dashboard.html:104
+#: templates/dashboard/dashboard.html:99
+msgid "单位（KG）"
+msgstr "Unit (KG)"
+
+#: templates/dashboard/dashboard.html:113
 #: templates/data_entry/consumption_list.html:458
 msgid "总碳排放量"
 msgstr "Total Carbon Emission"
 
-#: templates/dashboard/dashboard.html:106
+#: templates/dashboard/dashboard.html:115
 msgid "千克二氧化碳当量"
 msgstr "kgCO2e"
 
-#: templates/dashboard/dashboard.html:122
+#: templates/dashboard/dashboard.html:131
 msgid "碳排放量趋势"
 msgstr "Carbon Emissions Trend"
 
-#: templates/dashboard/dashboard.html:124
+#: templates/dashboard/dashboard.html:133
 msgid "按日"
 msgstr "By Day"
 
-#: templates/dashboard/dashboard.html:125
+#: templates/dashboard/dashboard.html:134
 msgid "按月"
 msgstr "By Month"
 
-#: templates/dashboard/dashboard.html:136
+#: templates/dashboard/dashboard.html:145
 msgid "部门碳排放分布"
 msgstr "Department Emission Distribution"
 
-#: templates/dashboard/dashboard.html:150
+#: templates/dashboard/dashboard.html:159
 msgid "调整后的日碳排量"
 msgstr "Adjusted Carbon Emission Trend"
 
-#: templates/dashboard/dashboard.html:160
+#: templates/dashboard/dashboard.html:169
 msgid "月度人均碳排量"
 msgstr "Monthly Per Capita Carbon Emission"
 
-#: templates/dashboard/dashboard.html:177
-#: templates/dashboard/dashboard.html:486
+#: templates/dashboard/dashboard.html:186
+#: templates/dashboard/dashboard.html:495
 msgid "一级分类碳排放量"
 msgstr "Primary Category Emissions"
 
-#: templates/dashboard/dashboard.html:180
+#: templates/dashboard/dashboard.html:189
 msgid "返回"
 msgstr "Back"
 
-#: templates/dashboard/dashboard.html:403
+#: templates/dashboard/dashboard.html:412
 msgid "碳排放量"
 msgstr "Carbon Emission"
 
-#: templates/dashboard/dashboard.html:457
+#: templates/dashboard/dashboard.html:466
 msgid "该分类下没有二级分类数据"
-msgstr ""
+msgstr "No sub-categories found for this category"
 
-#: templates/dashboard/dashboard.html:469
+#: templates/dashboard/dashboard.html:478
 msgid "二级分类碳排放量"
 msgstr "Secondary Category Emissions"
 
-#: templates/dashboard/dashboard.html:563
+#: templates/dashboard/dashboard.html:572
 msgid "调整后碳排量"
 msgstr "Adjusted Carbon Emission"
 
-#: templates/dashboard/dashboard.html:619
+#: templates/dashboard/dashboard.html:628
 msgid "人均碳排量"
 msgstr "Per Capita Emission"
 
@@ -1290,25 +1366,16 @@ msgstr "Data import completed"
 msgid "导入统计"
 msgstr "Import Statistics"
 
-#: templates/data_entry/consumer_import_result.html:32
-#: templates/data_entry/import_result.html:32
-msgid "总行数"
-msgstr "Total Rows"
-
 #: templates/data_entry/consumer_import_result.html:38
 #: templates/data_entry/import_result.html:38
 msgid "成功导入"
 msgstr "Successfully Imported"
 
 #: templates/data_entry/consumer_import_result.html:44
+#: templates/data_entry/import_progress.html:44
 #: templates/data_entry/import_result.html:44
 msgid "失败记录"
 msgstr "Failed Records"
-
-#: templates/data_entry/consumer_import_result.html:55
-#: templates/data_entry/import_result.html:55
-msgid "错误详情"
-msgstr "Error Details"
 
 #: templates/data_entry/consumer_import_result.html:60
 #: templates/data_entry/import_result.html:60
@@ -1317,14 +1384,10 @@ msgstr ""
 "The following records failed to import, please check the data and re-import:"
 
 #: templates/data_entry/consumer_import_result.html:67
+#: templates/data_entry/import_progress.html:52
 #: templates/data_entry/import_result.html:67
 msgid "行号"
 msgstr "Row Number"
-
-#: templates/data_entry/consumer_import_result.html:68
-#: templates/data_entry/import_result.html:68
-msgid "错误信息"
-msgstr "Error Message"
 
 #: templates/data_entry/consumer_import_result.html:89
 #, fuzzy, python-format
@@ -1354,6 +1417,7 @@ msgstr[1] ""
 "        "
 
 #: templates/data_entry/consumer_import_result.html:101
+#: templates/data_entry/import_progress.html:77
 #: templates/data_entry/import_result.html:101
 msgid "继续导入"
 msgstr "Continue Import"
@@ -1512,6 +1576,64 @@ msgstr "Product must exist under the corresponding category"
 msgid "日期和时间格式必须正确"
 msgstr "Date and time formats must be correct"
 
+#: templates/data_entry/import_progress.html:4
+msgid "导入进度"
+msgstr "Import Progress"
+
+#: templates/data_entry/import_progress.html:10
+msgid "数据导入进度"
+msgstr "Data Import Progress"
+
+#: templates/data_entry/import_progress.html:18
+msgid "等待处理..."
+msgstr "Waiting to process..."
+
+#: templates/data_entry/import_progress.html:23
+msgid "处理中..."
+msgstr "Processing..."
+
+#: templates/data_entry/import_progress.html:31
+msgid "已处理"
+msgstr "Processed"
+
+#: templates/data_entry/import_progress.html:32
+msgid "行"
+msgstr "rows"
+
+#: templates/data_entry/import_progress.html:39
+#, fuzzy
+#| msgid "成功导入"
+msgid "导入完成！成功导入"
+msgstr "Successfully Imported"
+
+#: templates/data_entry/import_progress.html:39
+#, fuzzy
+#| msgid "消耗记录"
+msgid "条记录"
+msgstr "Consumption Records"
+
+#: templates/data_entry/import_progress.html:46
+msgid "下载失败数据文件"
+msgstr "Download Failed Data File"
+
+#: templates/data_entry/import_progress.html:52
+msgid "错误原因"
+msgstr "Error Reason"
+
+#: templates/data_entry/import_progress.html:74
+msgid "查看数据列表"
+msgstr "View Data List"
+
+#: templates/data_entry/import_progress.html:85
+#, fuzzy
+#| msgid "导入失败：%(error)s"
+msgid "导入失败："
+msgstr "Import failed: %(error)s"
+
+#: templates/data_entry/import_progress.html:88
+msgid "重新导入"
+msgstr "Re-import"
+
 #: templates/data_entry/import_result.html:4
 #: templates/data_entry/import_result.html:17
 msgid "导入结果"
@@ -1535,6 +1657,9 @@ msgstr[1] ""
 "\n"
 "            Successfully imported %(counter)s records!\n"
 "        "
+
+#~ msgid "消耗数量必须大于0"
+#~ msgstr "Consumption quantity must be greater than 0"
 
 #~ msgid "产品名称(英文)"
 #~ msgstr "Product Name (English)"
