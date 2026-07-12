@@ -771,7 +771,19 @@ def consumer_list(request):
         consumers = consumers.filter(order_date__gte=start_date)
     if end_date:
         consumers = consumers.filter(order_date__lte=end_date)
-    
+
+    # Restaurant filter
+    filter_restaurant = request.GET.get('filter_restaurant', '').strip()
+    if filter_restaurant:
+        consumers = consumers.filter(restaurant=filter_restaurant)
+
+    # Build filter options (all restaurants, unfiltered)
+    restaurant_list = list(
+        ConsumerData.objects.values_list('restaurant', flat=True)
+        .distinct().order_by('restaurant')
+    )
+    filter_options = {'restaurant_list': restaurant_list}
+
     # Sorting
     sort_by = request.GET.get('sort', '-order_date')
     order = request.GET.get('order', 'desc')
@@ -800,30 +812,31 @@ def consumer_list(request):
     
     # Calculate adjusted carbon emission for each record in current page
     for consumer in page_obj:
-        # Get the year and month of this record
         if not consumer.order_date:
-            consumer.adjusted_emission = None
+            consumer.adjusted_daily_carbon_emission = Decimal('0')
             continue
         year = consumer.order_date.year
         month = consumer.order_date.month
-        
-        # Query all records for the same restaurant and month
-        monthly_data = ConsumerData.objects.filter(
+
+        # 当月该餐厅所有物料消耗的碳排总和（实时查询）
+        monthly_emission = MaterialConsumption.objects.filter(
             restaurant=consumer.restaurant,
             order_date__year=year,
             order_date__month=month
-        ).aggregate(
-            total_emission=Sum('daily_carbon_emission'),
-            total_consumers=Sum('consumer_count')
-        )
-        
-        # Calculate adjusted carbon emission
-        total_emission = monthly_data['total_emission'] or Decimal('0')
-        total_consumers = monthly_data['total_consumers'] or 0
-        
-        if total_consumers > 0:
-            # Formula: (当月总碳排 / 当月总人数) × 当日消费者人数
-            consumer.adjusted_daily_carbon_emission = (total_emission / Decimal(total_consumers)) * Decimal(consumer.consumer_count)
+        ).aggregate(total=Sum('carbon_emission'))['total'] or Decimal('0')
+
+        # 当月该餐厅消费者总人数
+        monthly_consumers = ConsumerData.objects.filter(
+            restaurant=consumer.restaurant,
+            order_date__year=year,
+            order_date__month=month
+        ).aggregate(total=Sum('consumer_count'))['total'] or 0
+
+        if monthly_consumers > 0:
+            # 公式：当月碳排总和 / 当月消费者总人数 × 当日消费者人数
+            consumer.adjusted_daily_carbon_emission = (
+                Decimal(monthly_emission) / Decimal(monthly_consumers)
+            ) * Decimal(consumer.consumer_count)
         else:
             consumer.adjusted_daily_carbon_emission = Decimal('0')
     
@@ -832,6 +845,8 @@ def consumer_list(request):
         'current_sort': sort_by.lstrip('-'),
         'current_order': order,
         'search_form': search_form,
+        'filter_restaurant': filter_restaurant,
+        'filter_options': filter_options,
     }
     return render(request, 'data_entry/consumer_list.html', context)
 

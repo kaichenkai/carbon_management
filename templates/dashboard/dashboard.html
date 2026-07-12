@@ -186,7 +186,7 @@
         <div class="col-lg-4">
             <div class="card h-100">
                 <div class="card-header">
-                    <h5 class="mb-0"><i class="bi bi-graph-up"></i> {% trans "月度人均碳排量" %}</h5>
+                    <h5 class="mb-0"><i class="bi bi-people"></i> {% trans "餐厅人均碳排量" %}</h5>
                 </div>
                 <div class="card-body d-flex align-items-center">
                     <canvas id="perCapitaChart" height="80"></canvas>
@@ -579,6 +579,8 @@ const adjustedDates = {{ adjusted_dates_json|safe }};
 const adjustedEmissions = {{ adjusted_emissions_json|safe }};
 const monthlyPerCapitaDates = {{ monthly_per_capita_dates_json|safe }};
 const monthlyPerCapitaEmissions = {{ monthly_per_capita_emissions_json|safe }};
+const perCapitaRestaurantLabels = {{ per_capita_restaurant_labels_json|safe }};
+const perCapitaRestaurantEmissions = {{ per_capita_restaurant_emissions_json|safe }};
 
 // Adjusted Daily Carbon Emission Chart (Bar Chart)
 const adjustedDailyCtx = document.getElementById('adjustedDailyChart').getContext('2d');
@@ -636,35 +638,24 @@ const adjustedDailyChart = new Chart(adjustedDailyCtx, {
     }
 });
 
-// Monthly Per Capita Carbon Emission Chart (Line Chart)
+// Per-Restaurant Per Capita Carbon Emission Chart (Horizontal Bar Chart)
 const perCapitaCtx = document.getElementById('perCapitaChart').getContext('2d');
 const perCapitaChart = new Chart(perCapitaCtx, {
-    type: 'line',
+    type: 'bar',
     data: {
-        labels: monthlyPerCapitaDates,
+        labels: perCapitaRestaurantLabels,
         datasets: [{
             label: '{% trans "人均碳排量" %} (kgCO2e)',
-            data: monthlyPerCapitaEmissions,
-            // backgroundColor: 'rgba(54, 162, 235, 0.2)',
-            // borderColor: 'rgba(54, 162, 235, 1)',
-            borderWidth: 1,
-            fill: true,
-            tension: 0.4,  // 轻微到中等平滑曲线
-            pointRadius: 3,
-            pointHoverRadius: 5,
-            // pointBackgroundColor: 'rgba(54, 162, 235, 1)',
-            // pointBorderColor: '#fff',
-            pointBorderWidth:1
+            data: perCapitaRestaurantEmissions,
+            backgroundColor: 'rgba(54, 162, 235, 0.6)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
         }]
     },
     options: {
+        indexAxis: 'y',
         responsive: true,
         maintainAspectRatio: true,
-        layout: {
-            padding: {
-                bottom: 0
-            }
-        },
         plugins: {
             legend: {
                 display: true,
@@ -673,27 +664,23 @@ const perCapitaChart = new Chart(perCapitaCtx, {
             tooltip: {
                 callbacks: {
                     label: function(context) {
-                        return context.dataset.label + ': ' + context.parsed.y.toFixed(6);
+                        return context.dataset.label + ': ' + context.parsed.x.toFixed(4);
                     }
                 }
             }
         },
         scales: {
-            y: {
+            x: {
                 beginAtZero: true,
-                grace: '5%',
                 ticks: {
-                    stepSize: 1,
                     callback: function(value) {
                         return value.toFixed(2);
                     }
                 }
             },
-            x: {
+            y: {
                 ticks: {
-                    maxRotation: 0,
-                    minRotation: 0,
-                    padding: 5
+                    autoSkip: false
                 }
             }
         }

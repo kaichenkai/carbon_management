@@ -157,61 +157,91 @@ def dashboard_view(request):
             })
     
     # Query consumer data for adjusted daily carbon emission chart
-    consumer_data = ConsumerData.objects.filter(
+    # If restaurant filter is applied, only show that restaurant's data
+    consumer_data_qs = ConsumerData.objects.filter(
         order_date__range=[start_date, end_date]
-    ).order_by('order_date')
-    
+    )
+    if selected_restaurant:
+        consumer_data_qs = consumer_data_qs.filter(restaurant=selected_restaurant)
+    consumer_data = consumer_data_qs.order_by('order_date')
+
+    # Cache monthly MaterialConsumption totals to avoid repeated DB queries
+    # key: (restaurant, year, month) -> total carbon_emission from MaterialConsumption
+    monthly_material_emission_cache = {}
+    monthly_consumer_count_cache = {}
+
+    def get_monthly_material_emission(restaurant, year, month):
+        key = (restaurant, year, month)
+        if key not in monthly_material_emission_cache:
+            total = MaterialConsumption.objects.filter(
+                restaurant=restaurant,
+                order_date__year=year,
+                order_date__month=month
+            ).aggregate(total=Sum('carbon_emission'))['total'] or Decimal('0')
+            monthly_material_emission_cache[key] = Decimal(total)
+        return monthly_material_emission_cache[key]
+
+    def get_monthly_consumer_count(restaurant, year, month):
+        key = (restaurant, year, month)
+        if key not in monthly_consumer_count_cache:
+            total = ConsumerData.objects.filter(
+                restaurant=restaurant,
+                order_date__year=year,
+                order_date__month=month
+            ).aggregate(total=Sum('consumer_count'))['total'] or 0
+            monthly_consumer_count_cache[key] = total
+        return monthly_consumer_count_cache[key]
+
     # Calculate adjusted daily carbon emission for each record
+    # Formula: (当月该餐厅MaterialConsumption碳排总和 / 当月消费者总人数) × 当日消费者人数
     adjusted_daily_stats = defaultdict(lambda: Decimal('0'))
-    
+
     for consumer in consumer_data:
-        # Get the year and month of this record
         year = consumer.order_date.year
         month = consumer.order_date.month
-        
-        # Query all records for the same restaurant and month
-        monthly_data = ConsumerData.objects.filter(
-            restaurant=consumer.restaurant,
-            order_date__year=year,
-            order_date__month=month
-        ).aggregate(
-            total_emission=Sum('daily_carbon_emission'),
-            total_consumers=Sum('consumer_count')
-        )
-        
-        # Calculate adjusted carbon emission
-        total_emission = monthly_data['total_emission'] or Decimal('0')
-        total_consumers = monthly_data['total_consumers'] or 0
-        
-        if total_consumers > 0:
-            # Formula: (当月总碳排 / 当月总人数) × 当日消费者人数
-            adjusted_emission = (total_emission / Decimal(total_consumers)) * Decimal(consumer.consumer_count)
+        monthly_emission = get_monthly_material_emission(consumer.restaurant, year, month)
+        monthly_consumers = get_monthly_consumer_count(consumer.restaurant, year, month)
+
+        if monthly_consumers > 0:
+            adjusted_emission = (monthly_emission / Decimal(monthly_consumers)) * Decimal(consumer.consumer_count)
             date_key = consumer.order_date.strftime('%Y-%m-%d')
             adjusted_daily_stats[date_key] += adjusted_emission
-    
+
     # Prepare adjusted daily carbon emission data
     adjusted_dates = sorted(adjusted_daily_stats.keys())
     adjusted_emissions = [float(adjusted_daily_stats[date]) for date in adjusted_dates]
-    
-    # Calculate monthly per capita carbon emission
-    monthly_per_capita_stats = defaultdict(lambda: {'total_emission': Decimal('0'), 'total_consumers': 0})
-    
+
+    # Calculate per-restaurant per capita carbon emission within the date range
+    # Formula: 某餐厅在日期范围内所有月份的MaterialConsumption碳排总和 / 消费者总人数
+    restaurant_emission_stats = defaultdict(lambda: {'total_emission': Decimal('0'), 'total_consumers': 0})
+
+    # Collect unique (restaurant, year, month) combos from consumer_data
+    seen_restaurant_months = set()
     for consumer in consumer_data:
-        month_key = consumer.order_date.strftime('%Y-%m')
-        monthly_per_capita_stats[month_key]['total_emission'] += consumer.daily_carbon_emission
-        monthly_per_capita_stats[month_key]['total_consumers'] += consumer.consumer_count
-    
-    # Prepare monthly per capita data
-    monthly_per_capita_dates = sorted(monthly_per_capita_stats.keys())
-    monthly_per_capita_emissions = []
-    
-    for month in monthly_per_capita_dates:
-        stats = monthly_per_capita_stats[month]
+        key = (consumer.restaurant, consumer.order_date.year, consumer.order_date.month)
+        seen_restaurant_months.add(key)
+        restaurant_emission_stats[consumer.restaurant]['total_consumers'] += consumer.consumer_count
+
+    for (restaurant, year, month) in seen_restaurant_months:
+        monthly_emission = get_monthly_material_emission(restaurant, year, month)
+        restaurant_emission_stats[restaurant]['total_emission'] += monthly_emission
+
+    # Sort by per capita emission descending
+    restaurant_per_capita = []
+    for restaurant, stats in restaurant_emission_stats.items():
         if stats['total_consumers'] > 0:
             per_capita = float(stats['total_emission'] / Decimal(stats['total_consumers']))
         else:
             per_capita = 0
-        monthly_per_capita_emissions.append(per_capita)
+        restaurant_per_capita.append((restaurant, per_capita))
+    restaurant_per_capita.sort(key=lambda x: x[1], reverse=True)
+
+    per_capita_restaurant_labels = [item[0] for item in restaurant_per_capita]
+    per_capita_restaurant_emissions = [item[1] for item in restaurant_per_capita]
+
+    # Keep old keys for backward compat (unused but avoids template errors)
+    monthly_per_capita_dates = []
+    monthly_per_capita_emissions = []
     
     context = {
         'start_date': start_date,
@@ -242,6 +272,8 @@ def dashboard_view(request):
         'adjusted_emissions_json': json.dumps(adjusted_emissions),
         'monthly_per_capita_dates_json': json.dumps(monthly_per_capita_dates),
         'monthly_per_capita_emissions_json': json.dumps(monthly_per_capita_emissions),
+        'per_capita_restaurant_labels_json': json.dumps(per_capita_restaurant_labels),
+        'per_capita_restaurant_emissions_json': json.dumps(per_capita_restaurant_emissions),
     }
     
     return render(request, 'dashboard/dashboard.html', context)
