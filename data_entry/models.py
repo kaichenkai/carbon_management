@@ -126,7 +126,7 @@ class ConsumerData(models.Model):
     restaurant = models.CharField(_('餐厅'), max_length=50, default='')
     
     # Date information
-    order_date = models.DateField(_('订单日期'), null=True)
+    order_date = models.DateField(_('进店日期'), null=True)
     
     # Consumer count
     consumer_count = models.IntegerField(_('消费者人数'), default=0)

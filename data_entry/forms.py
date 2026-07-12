@@ -227,7 +227,7 @@ class ConsumerDataForm(forms.ModelForm):
         if order_date:
             from datetime import date
             if order_date > date.today():
-                raise forms.ValidationError(_('订单日期不能是未来日期'))
+                raise forms.ValidationError(_('进店日期不能是未来日期'))
         
         # Validate consumer count is positive
         consumer_count = cleaned_data.get('consumer_count')
