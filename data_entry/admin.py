@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.html import format_html
 from django.db import connection
-from .models import MaterialConsumption
+from .models import MaterialConsumption, ConsumerData
 
 
 @admin.register(MaterialConsumption)
@@ -124,3 +124,69 @@ class MaterialConsumptionAdmin(admin.ModelAdmin):
                 deleted += len(batch)
         self.message_user(request, f"已成功删除 {deleted} 条记录。")
     fast_delete_selected.short_description = "快速删除选中记录（大批量）"
+
+
+@admin.register(ConsumerData)
+class ConsumerDataAdmin(admin.ModelAdmin):
+    """Admin interface for Consumer Data records"""
+
+    list_display = [
+        'restaurant',
+        'order_date',
+        'consumer_count',
+        'daily_carbon_emission_display',
+        'created_at',
+        'updated_at',
+    ]
+
+    list_filter = [
+        'restaurant',
+        'order_date',
+        'created_at',
+    ]
+
+    search_fields = [
+        'restaurant',
+        'notes',
+    ]
+
+    readonly_fields = [
+        'daily_carbon_emission',
+        'created_at',
+        'updated_at',
+    ]
+
+    fieldsets = (
+        ('基本信息', {
+            'fields': ('restaurant', 'order_date')
+        }),
+        ('消费者数据', {
+            'fields': ('consumer_count', 'daily_carbon_emission')
+        }),
+        ('附加信息', {
+            'fields': ('notes', 'created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+
+    ordering = ['-order_date', '-created_at']
+    date_hierarchy = 'order_date'
+    list_per_page = 25
+
+    def daily_carbon_emission_display(self, obj):
+        """Display carbon emission with color coding"""
+        if obj.daily_carbon_emission:
+            if obj.daily_carbon_emission > 1000:
+                color = 'red'
+            elif obj.daily_carbon_emission > 500:
+                color = 'orange'
+            else:
+                color = 'green'
+            return format_html(
+                '<span style="color: {}; font-weight: bold;">{} kgCO2e</span>',
+                color,
+                f'{obj.daily_carbon_emission:.2f}'
+            )
+        return '-'
+    daily_carbon_emission_display.short_description = '当日碳排总量'
+    daily_carbon_emission_display.admin_order_field = 'daily_carbon_emission'
