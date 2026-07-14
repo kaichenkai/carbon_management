@@ -194,7 +194,7 @@ body > table.fixed-header-table thead th {
                                 </div>
                             </th>
                             <th>
-                                <a href="?sort=product_name&order={% if current_sort == 'product_name' and current_order == 'asc' %}desc{% else %}asc{% endif %}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}" 
+                                <a href="?sort=product_name&order={% if current_sort == 'product_name' and current_order == 'asc' %}desc{% else %}asc{% endif %}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if filter_restaurant %}&filter_restaurant={{ filter_restaurant }}{% endif %}{% if filter_product_code %}&filter_product_code={{ filter_product_code }}{% endif %}{% if filter_category1 %}&filter_category1={{ filter_category1 }}{% endif %}{% if filter_category2 %}&filter_category2={{ filter_category2 }}{% endif %}" 
                                    class="text-decoration-none text-dark d-inline-flex align-items-center">
                                     {% trans "产品名称" %}
                                     <span class="ms-1">
@@ -211,7 +211,7 @@ body > table.fixed-header-table thead th {
                                 </a>
                             </th>
                             <th>
-                                <a href="?sort=order_date&order={% if current_sort == 'order_date' and current_order == 'asc' %}desc{% else %}asc{% endif %}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}" 
+                                <a href="?sort=order_date&order={% if current_sort == 'order_date' and current_order == 'asc' %}desc{% else %}asc{% endif %}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if filter_restaurant %}&filter_restaurant={{ filter_restaurant }}{% endif %}{% if filter_product_code %}&filter_product_code={{ filter_product_code }}{% endif %}{% if filter_category1 %}&filter_category1={{ filter_category1 }}{% endif %}{% if filter_category2 %}&filter_category2={{ filter_category2 }}{% endif %}" 
                                    class="text-decoration-none text-dark d-inline-flex align-items-center">
                                     {% trans "订单日期" %}
                                     <span class="ms-1">
@@ -228,7 +228,7 @@ body > table.fixed-header-table thead th {
                                 </a>
                             </th>
                             <th>
-                                <a href="?sort=consumption_time&order={% if current_sort == 'consumption_time' and current_order == 'asc' %}desc{% else %}asc{% endif %}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}" 
+                                <a href="?sort=consumption_time&order={% if current_sort == 'consumption_time' and current_order == 'asc' %}desc{% else %}asc{% endif %}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if filter_restaurant %}&filter_restaurant={{ filter_restaurant }}{% endif %}{% if filter_product_code %}&filter_product_code={{ filter_product_code }}{% endif %}{% if filter_category1 %}&filter_category1={{ filter_category1 }}{% endif %}{% if filter_category2 %}&filter_category2={{ filter_category2 }}{% endif %}" 
                                    class="text-decoration-none text-dark d-inline-flex align-items-center">
                                     {% trans "消耗时间" %}
                                     <span class="ms-1">
@@ -280,7 +280,7 @@ body > table.fixed-header-table thead th {
                             </th>
                             <th>{% trans "碳排放系数" %}</th>
                             <th>
-                                <a href="?sort=quantity&order={% if current_sort == 'quantity' and current_order == 'asc' %}desc{% else %}asc{% endif %}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}" 
+                                <a href="?sort=quantity&order={% if current_sort == 'quantity' and current_order == 'asc' %}desc{% else %}asc{% endif %}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if filter_restaurant %}&filter_restaurant={{ filter_restaurant }}{% endif %}{% if filter_product_code %}&filter_product_code={{ filter_product_code }}{% endif %}{% if filter_category1 %}&filter_category1={{ filter_category1 }}{% endif %}{% if filter_category2 %}&filter_category2={{ filter_category2 }}{% endif %}" 
                                    class="text-decoration-none text-dark d-inline-flex align-items-center">
                                     {% trans "消耗数量(KG)" %}
                                     <span class="ms-1">
@@ -297,7 +297,7 @@ body > table.fixed-header-table thead th {
                                 </a>
                             </th>
                             <th>
-                                <a href="?sort=carbon_emission&order={% if current_sort == 'carbon_emission' and current_order == 'asc' %}desc{% else %}asc{% endif %}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}" 
+                                <a href="?sort=carbon_emission&order={% if current_sort == 'carbon_emission' and current_order == 'asc' %}desc{% else %}asc{% endif %}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if filter_restaurant %}&filter_restaurant={{ filter_restaurant }}{% endif %}{% if filter_product_code %}&filter_product_code={{ filter_product_code }}{% endif %}{% if filter_category1 %}&filter_category1={{ filter_category1 }}{% endif %}{% if filter_category2 %}&filter_category2={{ filter_category2 }}{% endif %}" 
                                    class="text-decoration-none text-dark d-inline-flex align-items-center">
                                     {% trans "碳排放量(kgCO2e)" %}
                                     <span class="ms-1">
@@ -395,12 +395,12 @@ body > table.fixed-header-table thead th {
                 <ul class="pagination justify-content-center">
                     {% if page_obj.has_previous %}
                     <li class="page-item">
-                        <a class="page-link" href="?page=1&sort={{ current_sort }}&order={{ current_order }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}">
+                        <a class="page-link" href="?page=1&sort={{ current_sort }}&order={{ current_order }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if filter_restaurant %}&filter_restaurant={{ filter_restaurant }}{% endif %}{% if filter_product_code %}&filter_product_code={{ filter_product_code }}{% endif %}{% if filter_category1 %}&filter_category1={{ filter_category1 }}{% endif %}{% if filter_category2 %}&filter_category2={{ filter_category2 }}{% endif %}">
                             <i class="bi bi-chevron-double-left"></i>
                         </a>
                     </li>
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}&sort={{ current_sort }}&order={{ current_order }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}&sort={{ current_sort }}&order={{ current_order }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if filter_restaurant %}&filter_restaurant={{ filter_restaurant }}{% endif %}{% if filter_product_code %}&filter_product_code={{ filter_product_code }}{% endif %}{% if filter_category1 %}&filter_category1={{ filter_category1 }}{% endif %}{% if filter_category2 %}&filter_category2={{ filter_category2 }}{% endif %}">
                             <i class="bi bi-chevron-left"></i>
                         </a>
                     </li>
@@ -411,19 +411,19 @@ body > table.fixed-header-table thead th {
                         <li class="page-item active"><span class="page-link">{{ num }}</span></li>
                         {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
                         <li class="page-item">
-                            <a class="page-link" href="?page={{ num }}&sort={{ current_sort }}&order={{ current_order }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}">{{ num }}</a>
+                            <a class="page-link" href="?page={{ num }}&sort={{ current_sort }}&order={{ current_order }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if filter_restaurant %}&filter_restaurant={{ filter_restaurant }}{% endif %}{% if filter_product_code %}&filter_product_code={{ filter_product_code }}{% endif %}{% if filter_category1 %}&filter_category1={{ filter_category1 }}{% endif %}{% if filter_category2 %}&filter_category2={{ filter_category2 }}{% endif %}">{{ num }}</a>
                         </li>
                         {% endif %}
                     {% endfor %}
                     
                     {% if page_obj.has_next %}
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.next_page_number }}&sort={{ current_sort }}&order={{ current_order }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}&sort={{ current_sort }}&order={{ current_order }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if filter_restaurant %}&filter_restaurant={{ filter_restaurant }}{% endif %}{% if filter_product_code %}&filter_product_code={{ filter_product_code }}{% endif %}{% if filter_category1 %}&filter_category1={{ filter_category1 }}{% endif %}{% if filter_category2 %}&filter_category2={{ filter_category2 }}{% endif %}">
                             <i class="bi bi-chevron-right"></i>
                         </a>
                     </li>
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&sort={{ current_sort }}&order={{ current_order }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}">
+                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&sort={{ current_sort }}&order={{ current_order }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if filter_restaurant %}&filter_restaurant={{ filter_restaurant }}{% endif %}{% if filter_product_code %}&filter_product_code={{ filter_product_code }}{% endif %}{% if filter_category1 %}&filter_category1={{ filter_category1 }}{% endif %}{% if filter_category2 %}&filter_category2={{ filter_category2 }}{% endif %}">
                             <i class="bi bi-chevron-double-right"></i>
                         </a>
                     </li>
