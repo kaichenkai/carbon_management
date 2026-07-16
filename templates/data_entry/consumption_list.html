@@ -390,8 +390,8 @@ body > table.fixed-header-table thead th {
             </div>
             
             <!-- Pagination -->
-            {% if page_obj.has_other_pages %}
             <nav aria-label="Page navigation" class="mt-4">
+                {% if page_obj.has_other_pages %}
                 <ul class="pagination justify-content-center">
                     {% if page_obj.has_previous %}
                     <li class="page-item">
@@ -429,11 +429,13 @@ body > table.fixed-header-table thead th {
                     </li>
                     {% endif %}
                 </ul>
+                {% endif %}
+                {% if page_obj.paginator.count > 0 %}
                 <p class="text-center text-muted">
                     {% trans "第" %} {{ page_obj.number }} {% trans "页，共" %} {{ page_obj.paginator.num_pages }} {% trans "页" %} | {% trans "总计" %} {{ page_obj.paginator.count }} {% trans "条" %}
                 </p>
+                {% endif %}
             </nav>
-            {% endif %}
         </div>
     </div>
 </div>
@@ -465,6 +467,46 @@ body > table.fixed-header-table thead th {
         </button>
     </div>
 </div>
+
+<!-- Auto Filter Statistics Toolbar -->
+{% if has_filter %}
+<div id="filterStatsToolbar" class="position-fixed bottom-0 start-50 translate-middle-x {% if filtered_stats %}bg-primary{% else %}bg-warning{% endif %} text-white rounded-top shadow-lg" style="z-index: 1049; min-width: 650px; padding: 20px 30px;">
+    <div class="d-flex justify-content-between align-items-center">
+        {% if filtered_stats %}
+        <div class="d-flex gap-4 flex-grow-1">
+            <div>
+                <i class="bi bi-funnel-fill me-2"></i>
+                <span class="fw-bold">{% trans "筛选结果" %}:</span>
+                <span class="fs-5 fw-bold ms-2">{{ filtered_count }}</span>
+                <span class="ms-1">{% trans "条" %}</span>
+            </div>
+            <div class="border-start border-white border-opacity-25 ps-4">
+                <i class="bi bi-calculator me-2"></i>
+                <span class="fw-bold">{% trans "总消耗数量" %}:</span>
+                <span class="fs-5 fw-bold ms-2">{{ filtered_stats.total_quantity|floatformat:2 }}</span>
+            </div>
+            <div class="border-start border-white border-opacity-25 ps-4">
+                <i class="bi bi-cloud me-2"></i>
+                <span class="fw-bold">{% trans "总碳排放量" %}:</span>
+                <span class="fs-5 fw-bold ms-2">{{ filtered_stats.total_emission|floatformat:2 }}</span>
+                <span class="ms-1">kgCO2e</span>
+            </div>
+        </div>
+        {% else %}
+        <div class="d-flex align-items-center gap-3 flex-grow-1">
+            <i class="bi bi-exclamation-triangle-fill fs-4"></i>
+            <span class="fw-bold">{% trans "筛选结果" %}: {{ filtered_count|floatformat:0 }} {% trans "条" %}</span>
+            <span class="border-start border-white border-opacity-25 ps-3">
+                {% trans "数据量超过100,000条，为避免页面卡顿，未自动计算汇总统计。可缩小数据范围后查看统计信息。" %}
+            </span>
+        </div>
+        {% endif %}
+        <button type="button" class="btn btn-outline-light btn-sm ms-4 fw-bold" onclick="document.getElementById('filterStatsToolbar').style.display='none'" style="border-width: 2px;">
+            <i class="bi bi-x-circle me-1"></i> {% trans "清除" %}
+        </button>
+    </div>
+</div>
+{% endif %}
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -560,6 +602,8 @@ document.addEventListener('DOMContentLoaded', function() {
             totalEmissionSpan.textContent = totalEmission.toFixed(2);
             
             statsToolbar.style.display = 'block';
+            const filterBar = document.getElementById('filterStatsToolbar');
+            if (filterBar) filterBar.style.display = 'none';
             
             // Update export button
             exportBtnText.textContent = '{% trans "导出选中" %} (' + count + ')';
@@ -567,8 +611,8 @@ document.addEventListener('DOMContentLoaded', function() {
             exportBtn.classList.add('btn-warning');
         } else {
             statsToolbar.style.display = 'none';
-            
-            // Reset export button
+            const filterBar = document.getElementById('filterStatsToolbar');
+            if (filterBar) filterBar.style.display = 'flex';
             exportBtnText.textContent = '{% trans "导出数据" %}';
             exportBtn.classList.remove('btn-warning');
             exportBtn.classList.add('btn-primary');

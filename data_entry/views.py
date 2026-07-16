@@ -145,7 +145,25 @@ def consumption_list(request):
     paginator = Paginator(consumptions, 20)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    
+
+    # Calculate aggregate stats for all filtered records (before pagination)
+    # Only calculate if total count is within a reasonable limit to avoid performance issues
+    filtered_count = paginator.count
+    filtered_stats = None
+    if filtered_count <= 100000:
+        agg = consumptions.aggregate(
+            total_quantity=Sum('quantity'),
+            total_emission=Sum('carbon_emission'),
+        )
+        filtered_stats = {
+            'total_quantity': float(agg['total_quantity'] or 0),
+            'total_emission': float(agg['total_emission'] or 0),
+        }
+
+    # Check if any filter is active
+    has_filter = bool(filtered_count > 0 and (filter_restaurant or filter_product_code
+                      or filter_category1 or filter_category2 or start_date or end_date))
+
     context = {
         'page_obj': page_obj,
         'current_sort': sort_by.lstrip('-'),
@@ -156,6 +174,9 @@ def consumption_list(request):
         'filter_product_code': filter_product_code,
         'filter_category1': filter_category1,
         'filter_category2': filter_category2,
+        'filtered_count': filtered_count,
+        'filtered_stats': filtered_stats,
+        'has_filter': has_filter,
     }
     return render(request, 'data_entry/consumption_list.html', context)
 

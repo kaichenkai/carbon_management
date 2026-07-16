@@ -245,8 +245,8 @@ button.btn-primary {
             </div>
             
             <!-- Pagination -->
-            {% if page_obj.has_other_pages %}
             <nav aria-label="Page navigation" class="mt-4">
+                {% if page_obj.has_other_pages %}
                 <ul class="pagination justify-content-center">
                     {% if page_obj.has_previous %}
                     <li class="page-item">
@@ -284,11 +284,13 @@ button.btn-primary {
                     </li>
                     {% endif %}
                 </ul>
+                {% endif %}
+                {% if page_obj.paginator.count > 0 %}
                 <p class="text-center text-muted">
                     {% trans "第" %} {{ page_obj.number }} {% trans "页，共" %} {{ page_obj.paginator.num_pages }} {% trans "页" %} | {% trans "总计" %} {{ page_obj.paginator.count }} {% trans "条" %}
                 </p>
+                {% endif %}
             </nav>
-            {% endif %}
         </div>
     </div>
 </div>
