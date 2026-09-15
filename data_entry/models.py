@@ -59,7 +59,7 @@ class MaterialConsumption(models.Model):
 
     # Cost of the material consumption
     cost = models.DecimalField(
-        _('成本'),
+        _('成本(HK$)'),
         max_digits=12,
         decimal_places=2,
         default=0,

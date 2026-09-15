@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-15 16:52+0800\n"
+"POT-Creation-Date: 2026-09-15 17:03+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -441,10 +441,9 @@ msgstr ""
 msgid "消耗时间"
 msgstr ""
 
-#: data_entry/models.py:62 data_entry/views.py:753
-#: templates/data_entry/consumption_list.html:316
-msgid "成本"
-msgstr "成本"
+#: data_entry/models.py:62
+msgid "成本(HK$)"
+msgstr "成本(HK$)"
 
 #: data_entry/models.py:77 data_entry/models.py:78
 #: templates/data_entry/consumer_list.html:62
@@ -626,6 +625,10 @@ msgstr "导入失败"
 #, python-format
 msgid "失败数据文件生成失败：%(error)s"
 msgstr "失败数据文件生成失败：%(error)s"
+
+#: data_entry/views.py:753 templates/data_entry/consumption_list.html:316
+msgid "成本"
+msgstr "成本"
 
 #: data_entry/views.py:764 data_entry/views.py:767
 msgid "消耗记录"
