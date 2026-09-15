@@ -63,27 +63,32 @@ def dashboard_view(request):
     ).order_by('order_date')
     
     # Single pass through data to collect all statistics
-    daily_stats = defaultdict(lambda: {'quantity': 0, 'emission': 0, 'count': 0})
-    department_stats = defaultdict(lambda: {'emission': 0, 'count': 0})
+    daily_stats = defaultdict(lambda: {'quantity': 0, 'emission': 0, 'count': 0, 'cost': 0})
+    department_stats = defaultdict(lambda: {'emission': 0, 'count': 0, 'cost': 0})
     category_level1_stats = defaultdict(lambda: {'emission': 0, 'count': 0})
     category_level2_by_level1 = defaultdict(lambda: defaultdict(float))
     
     total_records = 0
     total_emission = 0
     total_quantity = 0
+    total_cost = 0
     
     # Single iteration to gather all statistics
     for consumption in consumptions:
+        cost_val = float(consumption.cost) if consumption.cost is not None else 0
+        
         # Daily stats
         date_key = consumption.order_date.strftime('%Y-%m-%d')
         daily_stats[date_key]['quantity'] += float(consumption.quantity)
         daily_stats[date_key]['emission'] += float(consumption.carbon_emission)
         daily_stats[date_key]['count'] += 1
+        daily_stats[date_key]['cost'] += cost_val
         
         # Restaurant stats
         dept = consumption.restaurant
         department_stats[dept]['emission'] += float(consumption.carbon_emission)
         department_stats[dept]['count'] += 1
+        department_stats[dept]['cost'] += cost_val
         
         # Category level 1 stats
         cat1_name = consumption.category_level1.name
@@ -98,12 +103,14 @@ def dashboard_view(request):
         total_records += 1
         total_emission += float(consumption.carbon_emission)
         total_quantity += float(consumption.quantity)
+        total_cost += cost_val
     
     # Prepare daily data for Chart.js
     dates = sorted(daily_stats.keys())
     quantities = [daily_stats[date]['quantity'] for date in dates]
     emissions = [daily_stats[date]['emission'] for date in dates]
     record_counts = [daily_stats[date]['count'] for date in dates]
+    daily_costs = [daily_stats[date]['cost'] for date in dates]
     
     # Prepare department data
     sorted_departments = sorted(department_stats.items(), key=lambda x: x[1]['emission'], reverse=True)
@@ -114,6 +121,16 @@ def dashboard_view(request):
         dept_name = dict(DEPARTMENT_CHOICES).get(dept, dept)
         department_labels.append(force_str(dept_name))
         department_emissions.append(stats['emission'])
+    
+    # Prepare restaurant cost data (sorted by cost descending)
+    sorted_departments_by_cost = sorted(department_stats.items(), key=lambda x: x[1]['cost'], reverse=True)
+    department_cost_labels = []
+    department_costs = []
+    
+    for dept, stats in sorted_departments_by_cost:
+        dept_name = dict(DEPARTMENT_CHOICES).get(dept, dept)
+        department_cost_labels.append(force_str(dept_name))
+        department_costs.append(stats['cost'])
     
     # Prepare category level 1 data
     sorted_categories = sorted(category_level1_stats.items(), key=lambda x: x[1]['emission'], reverse=True)
@@ -251,12 +268,16 @@ def dashboard_view(request):
         'total_records': total_records,
         'total_emission': total_emission,
         'total_quantity': total_quantity,
+        'total_cost': total_cost,
         'dates_json': json.dumps(dates),
         'quantities_json': json.dumps(quantities),
         'emissions_json': json.dumps(emissions),
         'record_counts_json': json.dumps(record_counts),
         'department_labels_json': json.dumps(department_labels),
         'department_emissions_json': json.dumps(department_emissions),
+        'daily_costs_json': json.dumps(daily_costs),
+        'department_cost_labels_json': json.dumps(department_cost_labels),
+        'department_costs_json': json.dumps(department_costs),
         'category_level1_labels_json': json.dumps(category_level1_labels),
         'category_level1_emissions_json': json.dumps(category_level1_emissions),
         'category_level2_data_json': json.dumps(category_level2_data),
@@ -313,6 +334,11 @@ def data_customization_view(request):
             'label': _('记录数'),
             'aggregate': Count('id'),
             'format': 'int',
+        },
+        'cost': {
+            'label': _('总成本(HK$)'),
+            'aggregate': Sum('cost'),
+            'format': 'float',
         },
     }
 

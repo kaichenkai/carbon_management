@@ -177,7 +177,18 @@
                                 <input type="text" class="form-control" id="calculatedEmission" readonly value="{% if consumption %}{{ consumption.carbon_emission }}{% else %}0.00{% endif %}">
                                 <div class="form-text">{% trans "自动计算：数量 × 碳排放系数" %}</div>
                             </div>
-                            
+
+                            <!-- 成本 -->
+                            <div class="col-md-6">
+                                <label for="{{ form.cost.id_for_label }}" class="form-label">
+                                    {{ form.cost.label }}
+                                </label>
+                                {{ form.cost }}
+                                {% if form.cost.errors %}
+                                    <div class="text-danger small mt-1">{{ form.cost.errors }}</div>
+                                {% endif %}
+                            </div>
+
                             <!-- 备注 -->
                             <div class="col-md-12">
                                 <label for="{{ form.special_note.id_for_label }}" class="form-label">

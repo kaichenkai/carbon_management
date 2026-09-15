@@ -404,6 +404,8 @@ def process_import_data(df, task=None):
         '订单日期': 'order_date',
         '消耗时间': 'consumption_time',
         '消耗数量': 'quantity',
+        '成本': 'cost',
+        '特殊备注': 'special_note',
     }
 
     missing_columns = [col for col in required_columns if col not in df.columns]
@@ -531,6 +533,26 @@ def process_import_data(df, task=None):
                 })
                 continue
 
+            # Parse cost (optional)
+            cost = None
+            if 'cost' in df.columns and pd.notna(row.get('cost')):
+                try:
+                    cost = Decimal(str(row['cost']))
+                    if cost < 0:
+                        errors.append({'row': row_num, 'error': gettext('成本不能为负数')})
+                        continue
+                except Exception:
+                    errors.append({
+                        'row': row_num,
+                        'error': gettext('成本格式错误：%(cost)s') % {'cost': row['cost']}
+                    })
+                    continue
+
+            # Parse special note (optional)
+            special_note = ''
+            if 'special_note' in df.columns and pd.notna(row.get('special_note')):
+                special_note = str(row['special_note']).strip()
+
             existing_keys.add(dup_key)
             to_create.append(MaterialConsumption(  # noqa
                 restaurant=restaurant,
@@ -543,6 +565,8 @@ def process_import_data(df, task=None):
                 quantity=Decimal(str(quantity)),
                 product_unit=product_unit,
                 emission_coefficient=emission_coefficient,
+                cost=cost,
+                special_note=special_note,
             ))
             success_count += 1
 
@@ -656,7 +680,8 @@ def download_import_template(request):
         '消耗时间',
         '一级分类',
         '二级分类',
-        '消耗数量'
+        '消耗数量',
+        '成本'
     ])
     
     # Add sample data
@@ -668,7 +693,8 @@ def download_import_template(request):
         '10:30:00',
         '示例一级分类',
         '示例二级分类',
-        '100'
+        '100',
+        '50.00'
     ]
     
     # Create Excel file in memory
@@ -724,6 +750,7 @@ def consumption_export(request):
             gettext('碳排放系数'): float(consumption.emission_coefficient),
             gettext('消耗数量'): float(consumption.quantity),
             gettext('碳排放量(kgCO2e)'): float(consumption.carbon_emission),
+            gettext('成本'): float(consumption.cost) if consumption.cost is not None else 0,
             gettext('特殊备注'): consumption.special_note,
             gettext('创建时间'): consumption.created_at.strftime('%Y-%m-%d %H:%M:%S'),
         })

@@ -56,7 +56,17 @@ class MaterialConsumption(models.Model):
         decimal_places=6,
         editable=False
     )
-    
+
+    # Cost of the material consumption
+    cost = models.DecimalField(
+        _('成本'),
+        max_digits=12,
+        decimal_places=2,
+        default=0,
+        blank=True,
+        null=True
+    )
+
     special_note = models.TextField(_('特殊备注'), blank=True)
     
     # Additional info

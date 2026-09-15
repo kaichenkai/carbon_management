@@ -313,6 +313,7 @@ body > table.fixed-header-table thead th {
                                     </span>
                                 </a>
                             </th>
+                            <th>{% trans "成本" %}</th>
                             <th>{% trans "特殊备注" %}</th>
                             <th>{% trans "操作" %}</th>
                         </tr>
@@ -324,7 +325,8 @@ body > table.fixed-header-table thead th {
                                 <input type="checkbox" class="form-check-input consumption-checkbox" 
                                        value="{{ consumption.pk }}"
                                        data-quantity="{{ consumption.quantity }}"
-                                       data-emission="{{ consumption.carbon_emission }}">
+                                       data-emission="{{ consumption.carbon_emission }}"
+                                       data-cost="{{ consumption.cost|default_if_none:'0' }}">
                             </td>
                             <td>{{ forloop.counter|add:page_obj.start_index|add:"-1" }}</td>
                             <td>{{ consumption.restaurant }}</td>
@@ -357,6 +359,13 @@ body > table.fixed-header-table thead th {
                             <td>
                                 <span class="badge bg-success">{{ consumption.carbon_emission|floatformat:3 }}</span>
                             </td>
+                            <td>
+                                {% if consumption.cost %}
+                                {{ consumption.cost|floatformat:2 }}
+                                {% else %}
+                                <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
 
                             <td style="max-width:160px; white-space:normal; overflow:hidden;">
                                 {% if consumption.special_note %}
@@ -379,7 +388,7 @@ body > table.fixed-header-table thead th {
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="13" class="text-center py-5">
+                            <td colspan="14" class="text-center py-5">
                                 <i class="bi bi-inbox" style="font-size: 48px; color: #ccc;"></i>
                                 <p class="text-muted mt-3">{% trans "暂无消耗记录" %}</p>
                             </td>
@@ -460,6 +469,11 @@ body > table.fixed-header-table thead th {
                 <span class="fw-bold">{% trans "总碳排放量" %}:</span>
                 <span id="totalEmission" class="fs-5 fw-bold ms-2">0</span>
                 <span class="ms-1">kgCO2e</span>
+            </div>
+            <div class="border-start border-white border-opacity-25 ps-4">
+                <i class="bi bi-cash-coin me-2"></i>
+                <span class="fw-bold">{% trans "总成本" %}:</span>
+                <span id="totalCost" class="fs-5 fw-bold ms-2">0</span>
             </div>
         </div>
         <button type="button" class="btn btn-outline-light btn-sm ms-4 fw-bold" onclick="clearSelection()" style="border-width: 2px;">
@@ -558,6 +572,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const selectedCountSpan = document.getElementById('selectedCount');
     const totalQuantitySpan = document.getElementById('totalQuantity');
     const totalEmissionSpan = document.getElementById('totalEmission');
+    const totalCostSpan = document.getElementById('totalCost');
     
     // Select/deselect all
     selectAllCheckbox.addEventListener('change', function() {
@@ -591,15 +606,18 @@ document.addEventListener('DOMContentLoaded', function() {
         if (count > 0) {
             let totalQuantity = 0;
             let totalEmission = 0;
+            let totalCost = 0;
             
             checkedCheckboxes.forEach(checkbox => {
                 totalQuantity += parseFloat(checkbox.dataset.quantity) || 0;
                 totalEmission += parseFloat(checkbox.dataset.emission) || 0;
+                totalCost += parseFloat(checkbox.dataset.cost) || 0;
             });
             
             selectedCountSpan.textContent = count;
             totalQuantitySpan.textContent = totalQuantity.toFixed(2);
             totalEmissionSpan.textContent = totalEmission.toFixed(2);
+            totalCostSpan.textContent = totalCost.toFixed(2);
             
             statsToolbar.style.display = 'block';
             const filterBar = document.getElementById('filterStatsToolbar');

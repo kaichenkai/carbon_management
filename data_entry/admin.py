@@ -17,6 +17,7 @@ class MaterialConsumptionAdmin(admin.ModelAdmin):
         'product_unit',
         'emission_coefficient',
         'carbon_emission_display',
+        'cost',
         'order_date',
         'consumption_time',
         'created_at',
@@ -64,7 +65,7 @@ class MaterialConsumptionAdmin(admin.ModelAdmin):
             'fields': (('order_date', 'consumption_time'),)
         }),
         ('消耗数据', {
-            'fields': ('quantity', 'carbon_emission')
+            'fields': ('quantity', 'carbon_emission', 'cost')
         }),
         ('附加信息', {
             'fields': ('special_note', 'created_at', 'updated_at'),

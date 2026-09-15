@@ -48,7 +48,7 @@ class MaterialConsumptionForm(forms.ModelForm):
             'restaurant', 'product_code', 'category_level1', 'category_level2',
             'product_name',
             'order_date', 'consumption_time',
-            'quantity', 'special_note'
+            'quantity', 'cost', 'special_note'
         ]
         widgets = {
             'restaurant': forms.TextInput(attrs={
@@ -72,6 +72,12 @@ class MaterialConsumptionForm(forms.ModelForm):
                 'step': '0.01',
                 'min': '0',
                 'placeholder': _('输入消耗数量')
+            }),
+            'cost': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'step': '0.01',
+                'min': '0',
+                'placeholder': _('输入成本（可选）')
             }),
             'special_note': forms.Textarea(attrs={
                 'class': 'form-control',
